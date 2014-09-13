@@ -1,0 +1,79 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div ng-controller="ScheduleCtrl" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Mitt matschema...</h1>
+            <div class="btn-toolbar">
+                <div class="btn-group" data-toggles="buttons">
+                    <label class="btn btn-default" ng-click="scheduleConfig.nbrDays = 14" ng-class="scheduleConfig.nbrDays == 14 ? 'active' : ''">2 veckor</label>
+                    <label class="btn btn-default" ng-click="scheduleConfig.nbrDays = 28" ng-class="scheduleConfig.nbrDays == 28 ? 'active' : ''">4 veckor</label>
+                    <label class="btn btn-default" ng-click="scheduleConfig.nbrDays = 56" ng-class="scheduleConfig.nbrDays == 56 ? 'active' : ''">8 veckor</label>
+                </div>
+                <script type="text/ng-template" id="dayConfigTemplate.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Välj de dagar du vill ha med i schemat</h3>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li class="list-group-item" ng-repeat="day in days"
+                                ng-class="day.state ? 'active' : ''"
+                                ng-click="toggleDayState($index)">{{day.name}}</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" ng-click="ok()">OK</button>
+                        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                    </div>
+                </script>
+                <label class="btn btn-default" ng-click="open('sm')">...</label>
+            </div>
+            <ul class="list-group schedule-list">
+                <li class="list-group-item clearfix"
+                    ng-repeat="day in viewSchedule"
+                    ng-drop="true" ng-drop-success="onDropComplete($index, $data,$event)">
+                    <div>
+                        <span>{{days[(day.day - 1) % 7].abbr}} - </span>
+                        <span ng-drag="true" ng-drag-data="day">{{day.meal.name}}</span>
+                    <span class="pull-right">
+                        <button class="btn btn-xs btn-warning" ng-click="clearScheduleDay($index)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h2>Mina måltider</h2>
+            <p>Dra recepten till ditt schema för att planera en läcker måltid.</p>
+            <form class="form-inline">
+                <input type="text" class="rec-search form-control" placeholder="Sök bland recept"/><button type="btn" class="close" data-dismiss="rec-search"></button>
+            </form>
+            <div ng-controller="MealListCtrl">
+                <ul class="list-group">
+                    <li class="list-group-item clearfix"
+                        ng-repeat="meal in meals">
+                        <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
+                    <span class="pull-right">
+                        <button class="btn btn-xs btn-warning" ng-click="editMeal($index)">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <button class="btn btn-xs btn-warning" ng-click="deleteMeal($index)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </span>
+                    </li>
+                </ul>
+                <form name="newMeal">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-minlength="4" ng-model="newMealTitle" placeholder="Namn på ny måltid">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit" ng-disabled="newMeal.$invalid" ng-click="addMeal(newMealTitle)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                        </span>
+                    </div><!-- /input-group -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

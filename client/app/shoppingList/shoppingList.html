@@ -1,0 +1,55 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container" ng-controller="ShoppingListCtrl">
+    <h1>Min inköpslista</h1>
+    <p>Här kan du välja hur många dagar du vill handla för. Och lägga till de där extra grejorna som bara behövs.</p>
+
+    <div class="btn-toolbar">
+        <div class="btn-group" data-toggles="buttons" ng-show="listMode == 'planning'">
+            <label class="btn btn-default" ng-click="setTimeframe(1)">Idag</label>
+            <label class="btn btn-default" ng-click="setTimeframe(2)">2 dagar</label>
+            <label class="btn btn-default" ng-click="setTimeframe(7)">En vecka</label>
+            <label class="btn btn-default" ng-click="setTimeframe(7)">...</label>
+        </div>
+        <div class="btn-group pull-right" data-toggles="buttons">
+            <label class="btn btn-default" ng-class="listMode == 'planning' ? 'active' : ''" ng-click="toggleListMode()">Planera</label>
+            <label class="btn btn-default" ng-class="listMode == 'picking' ? 'active' : ''" ng-click="toggleListMode()">Handla</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="list-group">
+                <li class="list-group-item clearfix"
+                    ng-click="active = !active"
+                    ng-class="active ? 'active' : ''"
+                    ng-repeat="ingredient in shoppingList">
+                    {{ingredient.name}}
+                    <span class="pull-right">
+                        <button class="btn btn-xs btn-warning" ng-click="mainClkAction($index)">
+                            <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
+                        </button>
+                    </span>
+                </li>
+            </ul>
+            <form name="newItem">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="newIngredient" placeholder="Skriv något du behöver handla"
+                           typeahead="i as ingredient.name for ingredient in ingredients | filter:$viewValue | limitTo:8" class="form-control"
+                           typeahead-on-select="onSelect($item, $model, $label)"/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" ng-click="addItemName(newIngredient)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                    </span>
+                </div><!-- /input-group -->
+            </form>
+        </div>
+    </div>
+
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="meal in meals">
+            <a ng-href="#/meal/{{meal._id}}">{{meal.name}}</a>
+            <button type="btn btn-xs btn-warning pull-right" ng-click="deleteMeal($index)" class="close"><span class="glyphicon glyphicon-trash"></span></button>
+        </li>
+    </ul>
+
+</div> <!-- end Angular controller -->
+
