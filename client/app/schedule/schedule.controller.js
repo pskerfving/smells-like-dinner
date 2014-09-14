@@ -6,14 +6,6 @@ angular.module('sldApp')
     scheduleService.loadSchedule().then(function(value) {
         // Success!
 
-        $scope.$watch('scheduleConfig.nbrDays', function(newValue, oldValue) {
-          scheduleService.changeScheduleNbrDays();
-        });
-
-        $scope.$watch('scheduleConfig.days', function(newValue, oldValue) {
-          scheduleService.setupViewSchedule();
-        });
-
         $scope.viewSchedule = scheduleService.setupViewSchedule();
 //        $scope.schedule = value.days;
         $scope.scheduleConfig = value.config;
@@ -55,14 +47,28 @@ angular.module('sldApp')
             state: $scope.scheduleConfig.days.indexOf(7) > -1
           }];
 
+      // TODO: These are called when loading the page.
+
+      $scope.$watch('scheduleConfig.nbrDays', function(newValue, oldValue) {
+        if (newValue !== oldValue) {
+          scheduleService.changeScheduleNbrDays();
+          scheduleService.saveSchedule();
+        }
       });
 
+      $scope.$watch('scheduleConfig.days', function(newValue, oldValue) {
+        if (newValue !== oldValue) {
+          scheduleService.setupViewSchedule();
+          scheduleService.saveSchedule();
+        }
+      });
+
+    });
 
     $scope.clearScheduleDay = function (index) {
       $scope.viewSchedule[index].mealid = 0;
         $scope.viewSchedule[index].meal = undefined;
     };
-
 
     $scope.open = function (size) {
 
@@ -100,6 +106,7 @@ angular.module('sldApp')
         $scope.viewSchedule[index].meal = data;
         $scope.viewSchedule[index].mealid = data._id;
       }
+      scheduleService.saveSchedule();
     };
 
   }).controller('ModalInstanceCtrl', function($scope, $modalInstance, items) {

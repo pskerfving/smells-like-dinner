@@ -28,16 +28,12 @@ exports.create = function(req, res) {
   console.log('CREATE');
   Meal.create(req.body, function(err, meal) {
     if(err) { return handleError(res, err); }
-    console.log('meal created : ' + meal)
     return res.json(201, meal);
   });
 };
 
 // Updates an existing meal in the DB.
 exports.update = function(req, res) {
-  console.log('UPDATE');
-  console.log(req.body);
-  console.log(req.params.id);
   if(req.body._id) { delete req.body._id; }
   Meal.findById(req.params.id, function (err, meal) {
     if (err) { return handleError(res, err); }

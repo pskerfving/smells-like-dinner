@@ -55,6 +55,7 @@ angular.module('sldApp')
       return deferred.promise;
     };
 
+    // Calculate what days are to be shown (viewSchedule) in the listing based on the configuration.
     this.setupViewSchedule = function(nbrDays) {
       // Fastest way to empty an array! :-O
       if (cache) {
@@ -72,6 +73,12 @@ angular.module('sldApp')
         }
       }
       return vsCache;
+    };
+
+    this.saveSchedule = function() {
+      console.log('saving schedule');
+      cache.$save();
+      // TODO: Handle failure. Show a message.
     };
 
     this.changeScheduleNbrDays = function() {
