@@ -28,6 +28,7 @@ angular.module('sldApp')
     };
 
     this.createIngredient = function(ingredient) {
+      console.log('creating new ingredient');
       Ingredient.save(ingredient, function(response) {
         ingredient._id = response._id;
       });

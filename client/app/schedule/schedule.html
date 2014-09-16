@@ -47,13 +47,18 @@
         <div class="col-md-4">
             <h2>Mina måltider</h2>
             <p>Dra recepten till ditt schema för att planera en läcker måltid.</p>
-            <form class="form-inline">
-                <input type="text" class="rec-search form-control" placeholder="Sök bland recept"/><button type="btn" class="close" data-dismiss="rec-search"></button>
+            <form name="mealFilter">
+                <div class="input-group">
+                    <input ng-model="filterStr" type="text" class="rec-search form-control" placeholder="Sök bland recept"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="filterStr = ''"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                        </span>
+                </div><!-- /input-group -->
             </form>
             <div ng-controller="MealListCtrl">
                 <ul class="list-group">
                     <li class="list-group-item clearfix"
-                        ng-repeat="meal in meals">
+                        ng-repeat="meal in meals | filter:filterStr">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
                     <span class="pull-right">
                         <button class="btn btn-xs btn-warning" ng-click="editMeal($index)">

@@ -1,6 +1,7 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
 <div class="container" ng-controller="MealCtrl">
+
     <div class="row">
         <div class="col-md-12">
             <h1 ng-model="editMeal" ng-hide="editMeal" ng-click="editMeal = !editMeal">{{meal.name}}</h1>
@@ -20,13 +21,7 @@
                         </div>
                     </li>
                 </ul>
-                <div class="input-group">
-                    <input type="text" class="form-control" ng-model="newIngredient" placeholder="Ny ingredient">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" ng-click="addIngredient(newIngredient)" type="button"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
-                    </span>
-                </div><!-- /input-group -->
-
+                <div ingredient-box adder="addIngredient"></div>
 
                 <h4>Tillbehör</h4>
                 <ul class="list-group">
@@ -42,13 +37,7 @@
                         </div>
                     </li>
                 </ul>
-                <div class="input-group">
-                    <input type="text" class="form-control" ng-model="newSide" placeholder="Nytt tillbehör">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" ng-click="addSide(newSide)" type="button"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
-                    </span>
-                </div><!-- /input-group -->
-
+                <div ingredient-box adder="addSide"></div>
             </div>
         </div>
     </div>

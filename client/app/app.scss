@@ -19,6 +19,15 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
 // injector
 @import 'account/login/login.scss';
 @import 'admin/admin.scss';
+@import 'ingredientBox/ingredientBox.scss';
 @import 'main/main.scss';
 @import 'modal/modal.scss';
 // endinjector
+
+[ng-drop].drag-enter{
+  background: lightgray;
+}
+
+.list-group-item {
+  cursor:default;
+}

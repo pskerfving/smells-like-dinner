@@ -1,0 +1,10 @@
+<form name="newItem">
+    <div class="input-group">
+        <input type="text" class="form-control" ng-model="newItemName" placeholder="Skriv något du behöver handla"
+               typeahead="i as ingredient.name for ingredient in ingredients | filter:$viewValue | limitTo:8" class="form-control"
+               typeahead-on-select="onSelect($item, $model, $label)"/>
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="submit" ng-click="addItemBox()"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+  </span>
+    </div>
+</form>

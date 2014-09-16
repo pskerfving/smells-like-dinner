@@ -55,7 +55,6 @@ angular.module('sldApp')
 
     this.updateShoppingList = function(nbrDays) {
       cache.config.nbrDays = nbrDays;
-      console.log('calling update : ' + cache.config.nbrDays);
       viewSchedule = scheduleService.setupViewSchedule(cache.config.nbrDays);
       sList = assembleShoppingList();
       return sList;

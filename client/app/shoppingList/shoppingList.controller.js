@@ -32,6 +32,7 @@ angular.module('sldApp')
     };
 
     $scope.addItemName = function(newName) {
+      console.log('addItemName');
       var newItem = { name: newName };
       $scope.ingredients.push(newItem);
       $scope.addItem(newItem);

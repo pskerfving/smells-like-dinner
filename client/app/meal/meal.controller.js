@@ -19,12 +19,11 @@ angular.module('sldApp')
 
     });
 
-    $scope.addIngredient = function(newIngredientName) {
+    $scope.addIngredient = function(newIngredient) {
       if (!$scope.meal.ingredients) {
         $scope.meal.ingredients = [];
       }
-      $scope.meal.ingredients.push({ name: newIngredientName });
-      $scope.newIngredient = ''; // Is this a good idea to pass it as a parameter AND resetting like this?
+      $scope.meal.ingredients.push(newIngredient);
       mealService.updateMeal($scope.meal);
     };
 
@@ -41,8 +40,7 @@ angular.module('sldApp')
       if (!$scope.meal.sides) {
         $scope.meal.sides = [];
       }
-      $scope.meal.sides.push({ name: newSide });
-      $scope.newSide = '';
+      $scope.meal.sides.push(newSide);
       mealService.updateMeal($scope.meal);
     };
 
