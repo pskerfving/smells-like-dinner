@@ -32,6 +32,6 @@ angular.module('sldApp')
       Ingredient.save(ingredient, function(response) {
         ingredient._id = response._id;
       });
-    }
+    };
 
   });

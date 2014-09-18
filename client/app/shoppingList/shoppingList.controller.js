@@ -7,7 +7,7 @@ angular.module('sldApp')
 
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
     $scope.additionals = []; // The stuff that is stored in the shopping list in the DB.
-    $scope.listMode = "planning";
+    $scope.listMode = 'planning';
 
     $q.all([
       ingredientService.loadIngredients(), shoppingListService.loadShoppingList()
@@ -20,11 +20,11 @@ angular.module('sldApp')
     });
 
     $scope.toggleListMode = function() {
-      $scope.listMode = ($scope.listMode == "planning" ? "picking" : "planning");
+      $scope.listMode = ($scope.listMode === 'planning' ? 'picking' : 'planning');
     };
 
     $scope.mainClkAction = function(index) {
-      if ($scope.listMode == "planning") {
+      if ($scope.listMode === 'planning') {
         $scope.shoppingList.splice(index, 1);
       } else {
         $scope.shoppingList[index].picked = true;
@@ -36,16 +36,26 @@ angular.module('sldApp')
       var newItem = { name: newName };
       $scope.ingredients.push(newItem);
       $scope.addItem(newItem);
-      $scope.newIngredient = "";
+      $scope.newIngredient = '';
       // TODO: Check that the ingredient is unique
       mealService.createIngredient(newItem);
     };
 
-    $scope.addItem = function (newItem) {
-      $scope.shoppingList.push(newItem);
+//    $scope.addItem = function (newItem) {
+//      $scope.shoppingList.push(newItem);
+//    };
+
+    $scope.addItem = function(newItem) {
+      console.log('shoppingList.addItem entered.');
+      if (!$scope.additionals) {
+        $scope.additionals = [];
+      }
+      $scope.additionals.push(newItem); // Detta sparas inte till servicen.
+      $scope.shoppingList = shoppingListService.updateShoppingList($scope.timeframe);
+      // TODO: Save to database.
     };
 
-    $scope.onSelect = function($item, $model, $label) {
+    $scope.onSelect = function($item/*, $model, $label */) {
       $scope.addItem($item);
     };
 

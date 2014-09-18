@@ -12,38 +12,38 @@ angular.module('sldApp')
         $scope.days = [
           {
             day: 1,
-            name: "Måndag",
-            abbr: "Må",
+            name: 'Måndag',
+            abbr: 'Må',
             state: $scope.scheduleConfig.days.indexOf(1) > -1
           }, {
             day: 2,
-            name: "Tisdag",
-            abbr: "Ti",
+            name: 'Tisdag',
+            abbr: 'Ti',
             state: $scope.scheduleConfig.days.indexOf(2) > -1
           }, {
             day: 3,
-            name: "Onsdag",
-            abbr: "On",
+            name: 'Onsdag',
+            abbr: 'On',
             state: $scope.scheduleConfig.days.indexOf(3) > -1
           }, {
             day: 4,
-            name: "Torsdag",
-            abbr: "To",
+            name: 'Torsdag',
+            abbr: 'To',
             state: $scope.scheduleConfig.days.indexOf(4) > -1
           }, {
             day: 5,
-            name: "Fredag",
-            abbr: "Fr",
+            name: 'Fredag',
+            abbr: 'Fr',
             state: $scope.scheduleConfig.days.indexOf(5) > -1
           }, {
             day: 6,
-            name: "Lördag",
-            abbr: "Lö",
+            name: 'Lördag',
+            abbr: 'Lö',
             state: $scope.scheduleConfig.days.indexOf(6) > -1
           }, {
             day: 7,
-            name: "Söndag",
-            abbr: "Sö",
+            name: 'Söndag',
+            abbr: 'Sö',
             state: $scope.scheduleConfig.days.indexOf(7) > -1
           }];
 
@@ -91,7 +91,7 @@ angular.module('sldApp')
       });
     };
 
-    $scope.onDropComplete = function(index, data, evt){
+    $scope.onDropComplete = function(index, data/*, evt*/){
       if (data.day) {
         var droppedMeal = data.meal;
         var droppedID = data.mealid;
@@ -114,7 +114,7 @@ angular.module('sldApp')
     $scope.days = items;
 
     $scope.toggleDayState = function (index) {
-      console.log("changing day state");
+      console.log('changing day state');
       $scope.days[index].state = !$scope.days[index].state;
     };
 

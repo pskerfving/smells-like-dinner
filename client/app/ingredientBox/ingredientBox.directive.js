@@ -19,7 +19,7 @@ angular.module('sldApp')
 
 
 
-        $scope.onSelect = function($item, $model, $label) {
+        $scope.onSelect = function($item/*, $model, $label */) {
           console.log('Directive onSelect() called! : ' + $item.name);
           // The user has selected an item from the dropdown. Now add it to the ng-model.
           $scope.callback($item);
@@ -32,7 +32,7 @@ angular.module('sldApp')
           ingredientService.createIngredient(newItem);  // TODO: Handle async and errors.
           $scope.callback(newItem);
           $scope.newItemName = '';
-        }
+        };
       }
     };
   });

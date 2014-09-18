@@ -12,7 +12,7 @@ angular.module('sldApp')
       var newMeal = { name: newMealTitle };
       mealService.createMeal(newMeal);
       $scope.meals.push(newMeal);
-      $scope.newMealTitle = ""; // Removes the name from the input field.
+      $scope.newMealTitle = ''; // Removes the name from the input field.
     };
 
     $scope.deleteMeal = function(index) {
@@ -21,8 +21,8 @@ angular.module('sldApp')
     };
 
     $scope.editMeal = function(index) {
-      var path = "/meal/" + $scope.meals[index]._id;
+      var path = '/meal/' + $scope.meals[index]._id;
       $location.path(path);
-    }
+    };
 
   });

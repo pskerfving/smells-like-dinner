@@ -38,7 +38,7 @@ angular.module('sldApp')
       Meal.update(meal, function() {
         console.log('Meal updated on server');
       }, function() {
-        console.log('Failed to update meal on server')
+        console.log('Failed to update meal on server');
       });
     };
 

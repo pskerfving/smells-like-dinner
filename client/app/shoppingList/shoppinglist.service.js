@@ -77,7 +77,7 @@ angular.module('sldApp')
         // Remove duplicates.
         // TODO: Does this work????
         list = dupList.filter( function(item, pos) {
-          return dupList.indexOf(item) == pos;
+          return dupList.indexOf(item) === pos;
         });
       }
       return list;
