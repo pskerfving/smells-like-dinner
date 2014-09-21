@@ -10,7 +10,7 @@ describe('Controller: ShoppinglistCtrl', function () {
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    ShoppinglistCtrl = $controller('ShoppinglistCtrl', {
+    ShoppinglistCtrl = $controller('ShoppingListCtrl', {
       $scope: scope
     });
   }));

@@ -7,8 +7,8 @@ describe('Service: shoppinglist', function () {
 
   // instantiate service
   var shoppinglist;
-  beforeEach(inject(function (_shoppinglist_) {
-    shoppinglist = _shoppinglist_;
+  beforeEach(inject(function (_shoppingListService_) {
+    shoppinglist = _shoppingListService_;
   }));
 
   it('should do something', function () {
