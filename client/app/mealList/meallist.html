@@ -1,0 +1,41 @@
+<div ng-controller="MealListCtrl">
+    <div class="col-md-6">
+        <h2>Mina måltider</h2>
+        <p>Dra recepten till ditt schema för att planera en läcker måltid.</p>
+        <form name="mealFilter">
+            <div class="input-group">
+                <input ng-model="filterStr" type="text" class="rec-search form-control" placeholder="Sök bland recept"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="filterStr = ''"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                            </span>
+            </div><!-- /input-group -->
+        </form>
+        <div>
+            <ul class="list-group">
+                <li class="list-group-item clearfix"
+                    ng-repeat="meal in meals | filter:filterStr">
+                    <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-warning" ng-click="editMeal($index)">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </button>
+                            <button class="btn btn-xs btn-warning" ng-click="deleteMeal($index)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <form name="newMeal">
+            <div class="input-group">
+                <input type="text" class="form-control" ng-minlength="4" ng-model="newMealTitle" placeholder="Namn på ny måltid">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" ng-disabled="newMeal.$invalid" ng-click="addMeal(newMealTitle)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                            </span>
+            </div><!-- /input-group -->
+        </form>
+
+    </div>
+</div>
