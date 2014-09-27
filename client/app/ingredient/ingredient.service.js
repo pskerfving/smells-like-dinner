@@ -9,6 +9,7 @@ angular.module('sldApp')
 
     this.loadIngredients = function() {
       if (ingredientsCache) {
+        console.log('hit in ingredients cache');
         return $q.when(ingredientsCache);
       }
       else {

@@ -15,6 +15,8 @@ angular.module('sldApp')
       }
       if (!$scope.meal) {
         // Redirect to 404
+        // Temporarily set to first meal
+        $scope.meal = $scope.meals[0];
       }
 
     });
@@ -46,6 +48,7 @@ angular.module('sldApp')
 
     $scope.removeSide = function(index) {
       $scope.meal.sides.splice(index, 1);
+      mealService.updateMeal($scope.meal);
     };
 
   });

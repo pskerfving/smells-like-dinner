@@ -256,16 +256,23 @@ a:focus {
     padding-top: 100px;
 }
 
-.download-section {
+.schedule-section, .shoppinglist-section {
     width: 100%;
     padding: 50px 0;
     color: #fff;
-    background: url(../assets/images/bestick.png) no-repeat center center scroll;
     background-color: #000;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
+}
+
+.schedule-section {
+    background: url(../assets/images/bestick.png) no-repeat center center scroll;
+}
+
+.shoppinglist-section {
+    background: url(../assets/images/salt.png) no-repeat center center scroll
 }
 
 #map {
@@ -364,24 +371,4 @@ img::-moz-selection {
 
 body {
     webkit-tap-highlight-color: rgba(255,255,255,.2);
-}
-
-/* ADDITIONS */
-
-.list-group-item {
-background-color: transparent;
-text-align: left;
-}
-
-.btn-info {
-    color: #219ab3;
-    background-color: transparent;
-    border: 1px solid #219ab3;
-}
-
-.btn-info:hover,
-.btn-info:focus,
-.btn-info:active {
-    color: white;
-    background-color: #219ab3;
 }

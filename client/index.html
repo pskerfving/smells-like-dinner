@@ -37,15 +37,6 @@
     <![endif]-->
 
 
-
-
-
-
-
-
-
-
-
     <!-- Navigation -->
     <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
         <div class="container">
@@ -66,13 +57,13 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#about">Måltider</a>
+                        <a class="page-scroll" href="#meals">Måltider</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#download">Schema</a>
+                        <a class="page-scroll" href="#schedule">Schema</a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact">Inköp</a>
+                        <a class="page-scroll" href="#shoppinglist">Inköp</a>
                     </li>
                 </ul>
             </div>
@@ -89,7 +80,7 @@
                     <div class="col-md-8 col-md-offset-2">
                         <h1 class="brand-heading">smells like dinner</h1>
                         <p class="intro-text">Få styr på familjens vardagsmiddagar. Sätt upp ett rullande schema.<br>En lösning i 4 enkla steg.</p>
-                        <a href="#about" class="btn btn-circle page-scroll">
+                        <a href="#meals" class="btn btn-circle page-scroll">
                             <i class="fa fa-angle-double-down animated"></i>
                         </a>
                     </div>
@@ -98,15 +89,15 @@
         </div>
     </header>
 
-    <!-- About Section -->
-    <section id="about" class="container content-section text-center">
+    <!-- Meal Section -->
+    <section id="meals" class="container content-section">
         <div class="row">
             <div class="col-lg-2">
                 <div class="row">
                     <h1 class="big-step-number">1.</h1>
                 </div>
                 <div class="row">
-                    <a href="#download" class="btn btn-circle page-scroll">
+                    <a href="#schedule" class="btn btn-circle page-scroll">
                         <i class="fa fa-angle-double-down animated"></i>
                     </a>
                 </div>
@@ -120,9 +111,9 @@
         </div>
     </section>
 
-    <!-- Download Section -->
-    <section id="download" class="content-section text-center">
-        <div class="download-section">
+    <!-- Schedule Section -->
+    <section id="schedule" class="content-section">
+        <div class="schedule-section">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-2">
@@ -130,19 +121,17 @@
                             <h1 class="big-step-number">2.</h1>
                         </div>
                         <div class="row">
-                            <a href="#contact" class="btn btn-circle page-scroll">
+                            <a href="#ingredients" class="btn btn-circle page-scroll">
                                 <i class="fa fa-angle-double-down animated"></i>
                             </a>
                         </div>
 
                     </div>
                     <div class="col-lg-8">
-                        <h2>Sätt ihop ett rullande schema.</h2>
+                        <h2>Sätt ihop ett rullande schema</h2>
 
                         <div ng-include="'app/schedule/schedule.html'"></div>
 
-                        <p>Dra rätter till den dag ni ska äta.</p>
-                        <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
 
 
                         <!-- Add your site or application content here -->
@@ -154,8 +143,66 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="container content-section text-center">
+    <!-- Shopping List Section -->
+    <section id="ingredients" class="container content-section">
+
+        <div class="row">
+            <div class="col-lg-2">
+                <div class="row">
+                    <h1 class="big-step-number">3.</h1>
+                </div>
+                <div class="row">
+                    <a href="#shoppinglist" class="btn btn-circle page-scroll">
+                        <i class="fa fa-angle-double-down animated"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <h2>Skriv in allt som behövs för en lyckad middag</h2>
+
+                <!--<div ng-include="'app/shoppingList/shoppingList.html'"></div>-->
+                <div class="col-lg-6">
+                    <div ng-include="'app/upcomingSchedule/upcomingSchedule.html'"></div>
+                </div>
+                <div class="col-lg-6">
+                    <div ng-include="'app/meal/meal.html'"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Shopping List Section -->
+    <section id="shoppinglist" class="content-section">
+        <div class="shoppinglist-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="row">
+                            <h1 class="big-step-number">4.</h1>
+                        </div>
+                        <div class="row">
+                            <a href="#meals" class="btn btn-circle page-scroll">
+                                <i class="fa fa-angle-double-up animated"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-10">
+                        <h2>Dax att handla. Här är din handlingslista. Varsågod!</h2>
+
+                        <div ng-include="'app/shoppingList/shoppingList.html'"></div>
+
+                        <!-- Add your site or application content here -->
+                        <!--<div ng-view=""></div>-->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="slask" ng-hide="true">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>Contact Start Bootstrap</h2>
@@ -163,7 +210,7 @@
                 <p><a href="mailto:feedback@startbootstrap.com">feedback@startbootstrap.com</a>
                 </p>
 
-                <div ng-include="'app/main/main.html'"></div>
+                <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
 
 
                 <ul class="list-inline banner-social-buttons">
@@ -246,6 +293,7 @@
           <script src="app/meal/meal.controller.js"></script>
           <script src="app/meal/meal.js"></script>
           <script src="app/meal/meal.service.js"></script>
+          <script src="app/mealList/columnize/columnize.filter.js"></script>
           <script src="app/mealList/mealList.controller.js"></script>
           <script src="app/schedule/schedule.controller.js"></script>
           <script src="app/schedule/schedule.js"></script>
@@ -253,6 +301,7 @@
           <script src="app/shoppingList/shoppingList.controller.js"></script>
           <script src="app/shoppingList/shoppingList.js"></script>
           <script src="app/shoppingList/shoppinglist.service.js"></script>
+          <script src="app/upcomingSchedule/upcomingSchedule.controller.js"></script>
           <script src="components/auth/auth.service.js"></script>
           <script src="components/auth/user.service.js"></script>
           <script src="components/grayscale/grayscale.js"></script>

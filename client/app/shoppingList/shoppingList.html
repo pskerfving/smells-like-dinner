@@ -1,8 +1,4 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
-
-<div class="container" ng-controller="ShoppingListCtrl">
-    <h1>Min inköpslista</h1>
-    <p>Här kan du välja hur många dagar du vill handla för. Och lägga till de där extra grejorna som bara behövs.</p>
+<div ng-controller="ShoppingListCtrl">
 
     <div class="btn-toolbar">
         <div class="btn-group" data-toggles="buttons" ng-show="listMode == 'planning'">
@@ -18,14 +14,14 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <ul class="list-group">
+            <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
                     ng-click="active = !active"
                     ng-class="active ? 'active' : ''"
                     ng-repeat="ingredient in shoppingList">
                     {{ingredient.name}}
                     <span class="pull-right">
-                        <button class="btn btn-xs btn-warning" ng-click="mainClkAction($index)">
+                        <button class="btn btn-xs btn-info" ng-click="mainClkAction($index)">
                             <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
                         </button>
                     </span>

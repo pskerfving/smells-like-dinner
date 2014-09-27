@@ -5,16 +5,19 @@ angular.module('sldApp')
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache; // containing cache.config & cache.days
-    var vsCache = [];
 
     var Schedule = $resource('/api/schedules/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
     this.loadSchedule = function() {
 
+      console.log('Load schedule');
+
       if (cache) {
+        console.log('HIT!!!!! in SCHEDULE cache, getting from server.');
         return $q.when(cache);
       } else {
+        console.log('Miss in SCHEDULE cache, getting from server.');
         return $q.all(
           [mealService.loadMeals(), this.loadScheduleFromDB()]
         ).then(function (value) {
@@ -57,22 +60,26 @@ angular.module('sldApp')
 
     // Calculate what days are to be shown (viewSchedule) in the listing based on the configuration.
     this.setupViewSchedule = function(nbrDays) {
-      // Fastest way to empty an array! :-O
+      var vs = [];
       if (cache) {
-        while(vsCache.length > 0) {
-          vsCache.pop();
+        if (nbrDays === undefined) {
+          console.log('setting nbrDays');
+          nbrDays = cache.config.nbrDays;
         }
-        if (nbrDays === undefined) { nbrDays = cache.config.nbrDays; }
+        console.log('nbrOfDays: ' + nbrDays);
         for (var i = 0; i < nbrDays; i++) {
           var day = (i + 1) % 7;
           if (cache.config.days.indexOf(day) > -1 ) {
             // The weekday is configured to be shown in the view.
-            vsCache.push(cache.days[i]);
-            vsCache[vsCache.length - 1].day = day;
+            vs.push(cache.days[i]);
+            // Problemet är att cache tar slut. Den har inte blivit förlängd av changeScheduleNbrDays.
+            console.log('day : ', day);
+            vs[vs.length - 1].day = day;
           }
         }
       }
-      return vsCache;
+      console.log('Length of vs: ' + vs.length);
+      return vs;
     };
 
     this.saveSchedule = function() {
@@ -81,16 +88,24 @@ angular.module('sldApp')
       // TODO: Handle failure. Show a message.
     };
 
-    this.changeScheduleNbrDays = function() {
+    this.changeScheduleNbrDays = function(nbrDays) {
       console.log('changing schedule config');
-      if (cache.days.length < cache.config.nbrDays) {
+      console.log('cache.days.length : ' + cache.days.length);
+      console.log('cache.config.nbrDays : ' + cache.config.nbrDays);
+      cache.config.nbrDays = nbrDays;
+      if (cache.days.length < nbrDays) {
         // Add the missing days.
         var scheduleLength = cache.days.length;
-        for (var i = 0; i < cache.config.nbrDays - scheduleLength; i++) {
+        console.log('extending the schedule to (days): ' + cache.config.nbrDays);
+        for (var i = 0; i < nbrDays - scheduleLength; i++) {
           cache.days.push({ mealid: 0 });
         }
       }
-      this.setupViewSchedule();
+      console.log('*** cache length: ' + cache.days.length);
+    };
+
+    function updateTodaysDate() {
+
     };
 
   });

@@ -47,18 +47,21 @@ angular.module('sldApp')
             state: $scope.scheduleConfig.days.indexOf(7) > -1
           }];
 
-      // TODO: These are called when loading the page.
-
       $scope.$watch('scheduleConfig.nbrDays', function(newValue, oldValue) {
+        console.log('************ watch called');
+        console.log(oldValue + ' -> ' + newValue);
+        console.log('scope ->' + $scope.scheduleConfig.nbrDays);
         if (newValue !== oldValue) {
-          scheduleService.changeScheduleNbrDays();
+          scheduleService.changeScheduleNbrDays(newValue);
+          $scope.viewSchedule = scheduleService.setupViewSchedule($scope.scheduleConfig.nbrDays);
           scheduleService.saveSchedule();
+          console.log('changing the number of days in schedule. ' + $scope.scheduleConfig.nbrDays);
         }
       });
 
       $scope.$watch('scheduleConfig.days', function(newValue, oldValue) {
         if (newValue !== oldValue) {
-          scheduleService.setupViewSchedule();
+          $scope.viewSchedule = scheduleService.setupViewSchedule($scope.scheduleConfig.nbrDays);
           scheduleService.saveSchedule();
         }
       });

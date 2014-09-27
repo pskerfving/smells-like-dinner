@@ -99,7 +99,8 @@ Schedule.find({}).remove(function () {
       }, {
         mealid: '540fe377bd02b01c311e5b8e'
       }, {
-        mealid: '540fe377bd02b01c311e5b8c'
+        mealid: '540fe377bd02b01c311e5b8c',
+        date: new Date();
       }, {
         mealid: 0
       }, {

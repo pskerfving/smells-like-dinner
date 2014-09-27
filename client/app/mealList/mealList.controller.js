@@ -6,6 +6,7 @@ angular.module('sldApp')
     mealService.loadMeals().then(function(value) {
       // Success!
       $scope.meals = value;
+      $scope.nbrCol = 3;
     });
 
     $scope.addMeal = function(newMealTitle) {
@@ -16,6 +17,13 @@ angular.module('sldApp')
     };
 
     $scope.deleteMeal = function(index) {
+      mealService.deleteMeal($scope.meals[index]);
+      $scope.meals.splice(index, 1);
+    };
+
+    $scope.deleteColMeal = function(ci, i) {
+      var length = Math.ceil($scope.meals.length / $scope.nbrCol);
+      var index = ci * length + i;
       mealService.deleteMeal($scope.meals[index]);
       $scope.meals.splice(index, 1);
     };
