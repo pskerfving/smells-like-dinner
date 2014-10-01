@@ -6,18 +6,17 @@ angular.module('sldApp')
 
     var cache; // containing cache.config & cache.days
 
+    var d = Date.now();
+
     var Schedule = $resource('/api/schedules/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
     this.loadSchedule = function() {
 
-      console.log('Load schedule');
+      console.log('Load schedule ', d, cache);
 
-      if (cache) {
-        console.log('HIT!!!!! in SCHEDULE cache, getting from server.');
-        return $q.when(cache);
-      } else {
-        console.log('Miss in SCHEDULE cache, getting from server.');
+      function load() {
+        console.log('loading. loading. loading.')
         return $q.all(
           [mealService.loadMeals(), this.loadScheduleFromDB()]
         ).then(function (value) {
@@ -25,21 +24,25 @@ angular.module('sldApp')
             var m = value[0]; // list of meals
             var s = value[1].days; // days in schedule
             for (var i = 0; i < s.length; i++) {
-              for (var j = 0; j < m.length; j++) {
-                if (m[j]._id === s[i].mealid) {
-                  s[i].meal = m[j];
-                  break;
+              if (s[i]) {
+                for (var j = 0; j < m.length; j++) {
+                  if (m[j]._id === s[i].mealid) {
+                    s[i].meal = m[j];
+                    break;
+                  }
                 }
               }
             }
-            cache = value[1];
-            return cache;
+            findToday();
+            return value[1];
           }, function (reason) {
             // FAILURE!
             console.log('Loading schedule failed! : ' + reason);
-            return $q.reject();
           });
-        }
+      }
+
+      cache = cache || load.call(this);
+      return cache;
     };
 
     this.loadScheduleFromDB = function() {
@@ -89,9 +92,6 @@ angular.module('sldApp')
     };
 
     this.changeScheduleNbrDays = function(nbrDays) {
-      console.log('changing schedule config');
-      console.log('cache.days.length : ' + cache.days.length);
-      console.log('cache.config.nbrDays : ' + cache.config.nbrDays);
       cache.config.nbrDays = nbrDays;
       if (cache.days.length < nbrDays) {
         // Add the missing days.
@@ -101,11 +101,40 @@ angular.module('sldApp')
           cache.days.push({ mealid: 0 });
         }
       }
-      console.log('*** cache length: ' + cache.days.length);
     };
 
-    function updateTodaysDate() {
-
-    };
+    function findToday() {
+      // Return todays meal.
+      var latest = cache.days[0];
+      var latestIndex;
+      if (!cache) { return; }
+      for (var i = 0; i < cache.days.length; i++) {
+        // Find the meal with the newest date tag.
+        cache.days[i].today = false; // Reset all as we go.
+        if (cache.days[i].date) {
+          if (!latest.date) {
+            latestIndex = i;
+            latest.date = cache.days[i].date;
+          } else {
+            if (cache.days[i].date > cache.days[latestIndex].date) {
+              latestIndex = i;
+              latest.date = cache.days[i].date;
+            }
+          }
+        }
+      }
+      // Use the latest timestamp to find todays meal.
+      if (latest) {
+        var diff = Math.floor((new Date() - new Date(latest.date))/(1000*3600*24));
+        latestIndex = (latestIndex + diff) % cache.config.nbrDays;
+      }
+      else {
+        // We did not find a latest. Set today to the first day in the schedule with the same weekday.
+        latestIndex = new Date().getDay() - 1;
+      }
+      cache.days[latestIndex].today = true;
+      cache.days[latestIndex].date = new Date();
+      // Set the date and store the schedule to the db.
+    }
 
   });
