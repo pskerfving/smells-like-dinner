@@ -3,8 +3,6 @@
 angular.module('sldApp')
   .controller('ShoppingListCtrl', function ($scope, $q, scheduleService, ingredientService, mealService, shoppingListService) {
 
-    console.log('Entering ShopplingList Controller');
-
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
     $scope.additionals = []; // The stuff that is stored in the shopping list in the DB.
     $scope.listMode = 'planning';

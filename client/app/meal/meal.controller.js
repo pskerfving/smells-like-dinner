@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('MealCtrl', function ($scope, $routeParams, mealService) {
+  .controller('MealCtrl', function ($scope, $routeParams, mealService, SelectedMealService) {
 
     mealService.loadMeals().then(function(value) {
       // Success!
@@ -9,16 +9,19 @@ angular.module('sldApp')
 
       for (var i = 0; i < $scope.meals.length; i++) {
         if ($scope.meals[i]._id === $routeParams.mealId) {
-          $scope.meal = $scope.meals[i];
+          SelectedMealService.setMeal($scope.meals[i]);
           break;
         }
       }
       if (!$scope.meal) {
         // Redirect to 404
         // Temporarily set to first meal
-        $scope.meal = $scope.meals[0];
+        SelectedMealService.setMeal($scope.meals[0]);
       }
+    });
 
+    $scope.$on('mealSet', function() {
+      $scope.meal = SelectedMealService.meal;
     });
 
     $scope.addIngredient = function(newIngredient) {
@@ -31,6 +34,7 @@ angular.module('sldApp')
 
     $scope.removeIngredient = function(index) {
       $scope.meal.ingredients.splice(index, 1);
+      mealService.updateMeal($scope.meal);
     };
 
     $scope.saveName = function() {
@@ -50,5 +54,16 @@ angular.module('sldApp')
       $scope.meal.sides.splice(index, 1);
       mealService.updateMeal($scope.meal);
     };
+
+  })
+  .factory('SelectedMealService', function($rootScope) {
+    var selectedMeal = {};
+
+    selectedMeal.setMeal = function (meal) {
+      this.meal = meal;
+      $rootScope.$broadcast('mealSet');
+    };
+
+    return selectedMeal;
 
   });

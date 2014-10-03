@@ -5,8 +5,14 @@ var mongoose = require('mongoose'),
 
 var ScheduleSchema = new Schema({
   name: String,
-  info: String,
-  active: Boolean
+  config: {
+    nbrDays: Number,
+    days: [ Number ]
+  },
+  days: [{
+    mealid: Schema.ObjectId,
+    date: Date
+  }]
 });
 
 module.exports = mongoose.model('Schedule', ScheduleSchema);

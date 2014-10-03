@@ -11,10 +11,8 @@ angular.module('sldApp')
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
-
     this.loadShoppingList = function() {
       if (sList && cache) {
-        console.log('HIT! ShoppingList cache');
         return $q.when([sList, cache]);
       } else {
         var deferred = $q.defer();

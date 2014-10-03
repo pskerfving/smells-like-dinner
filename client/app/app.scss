@@ -40,6 +40,11 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   background-color: transparent;
   text-align: left;
   font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-color: darkgray;
+}
+
+.list-group-item[class="today"] {
+  background-color: red;
 }
 
 .btn-info {

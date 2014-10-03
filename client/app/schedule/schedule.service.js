@@ -6,42 +6,33 @@ angular.module('sldApp')
 
     var cache; // containing cache.config & cache.days
 
-    var d = Date.now();
-
     var Schedule = $resource('/api/schedules/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
     this.loadSchedule = function() {
 
-      console.log('Load schedule ', d, cache);
-
-      function load() {
-        console.log('loading. loading. loading.')
-        return $q.all(
-          [mealService.loadMeals(), this.loadScheduleFromDB()]
-        ).then(function (value) {
-            // SUCCESS! Do the mapping between days and meals
-            var m = value[0]; // list of meals
-            var s = value[1].days; // days in schedule
-            for (var i = 0; i < s.length; i++) {
-              if (s[i]) {
-                for (var j = 0; j < m.length; j++) {
-                  if (m[j]._id === s[i].mealid) {
-                    s[i].meal = m[j];
-                    break;
-                  }
+      cache = cache || $q.all(
+        [mealService.loadMeals(), this.loadScheduleFromDB()]
+      ).then(function (value) {
+          // SUCCESS! Do the mapping between days and meals
+          var m = value[0]; // list of meals
+          var s = value[1].days; // days in schedule
+          for (var i = 0; i < s.length; i++) {
+            if (s[i]) {
+              for (var j = 0; j < m.length; j++) {
+                if (m[j]._id === s[i].mealid) {
+                  s[i].meal = m[j];
+                  break;
                 }
               }
             }
-            findToday();
-            return value[1];
-          }, function (reason) {
-            // FAILURE!
-            console.log('Loading schedule failed! : ' + reason);
-          });
-      }
-
-      cache = cache || load.call(this);
+          }
+          findToday();
+          return value[1];
+        }, function (reason) {
+          // FAILURE!
+          console.log('Loading schedule failed! : ' + reason);
+        });
       return cache;
     };
 
@@ -66,22 +57,18 @@ angular.module('sldApp')
       var vs = [];
       if (cache) {
         if (nbrDays === undefined) {
-          console.log('setting nbrDays');
           nbrDays = cache.config.nbrDays;
         }
-        console.log('nbrOfDays: ' + nbrDays);
         for (var i = 0; i < nbrDays; i++) {
           var day = (i + 1) % 7;
           if (cache.config.days.indexOf(day) > -1 ) {
             // The weekday is configured to be shown in the view.
             vs.push(cache.days[i]);
             // Problemet är att cache tar slut. Den har inte blivit förlängd av changeScheduleNbrDays.
-            console.log('day : ', day);
             vs[vs.length - 1].day = day;
           }
         }
       }
-      console.log('Length of vs: ' + vs.length);
       return vs;
     };
 

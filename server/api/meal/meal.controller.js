@@ -38,11 +38,14 @@ exports.update = function(req, res) {
   Meal.findById(req.params.id, function (err, meal) {
     if (err) { return handleError(res, err); }
     if(!meal) { return res.send(404); }
-    var updated = _.merge(meal, req.body);
-    console.log(updated);
+    var updated = _.merge(meal, req.body, function(a, b) {
+      return _.isArray(a) ? _.uniq(a.concat(b), function(c) {
+        return c.ingredientid.toString();
+      }) : undefined;
+    });
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.json(200, meal);
+      return res.json(200, updated);
     });
   });
 };

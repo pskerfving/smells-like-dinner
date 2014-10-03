@@ -3,13 +3,12 @@
 angular.module('sldApp')
   .directive('ingredientBox', function (ingredientService) {
     return {
-      templateUrl: 'app/ingredientBox/ingredientBox.html',
-      restrict: 'EA',
-      scope: {
+        templateUrl: 'app/ingredientBox/ingredientBox.html',
+        restrict: 'EA',
+        scope: {
         callback: '=adder'
       },
       controller : function ($scope) {
-
 
         // Load all ingredients and attach to scope.
         ingredientService.loadIngredients().then(function(value) {
@@ -29,10 +28,13 @@ angular.module('sldApp')
           // The user has entered a new item. Create a new ingredient and add to the list.
           console.log('Directive addItemBox() called! ' + $scope.newItemName);
           var newItem = { name: $scope.newItemName };
-          ingredientService.createIngredient(newItem);  // TODO: Handle async and errors.
-          $scope.callback(newItem);
+          ingredientService.createIngredient(newItem).then(function(result) {
+            // SUCESS!
+            newItem = result;
+            $scope.callback({ ingredientid: newItem._id, name: newItem.name });
+          });
           $scope.newItemName = '';
         };
       }
-    };
+    }
   });

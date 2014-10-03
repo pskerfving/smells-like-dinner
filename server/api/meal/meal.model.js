@@ -5,8 +5,8 @@ var mongoose = require('mongoose'),
 
 var MealSchema = new Schema({
   name: String,
-  ingredients: [ { name: String } ],
-  sides: [ { name: String } ]
+  ingredients: [ { name: String, ingredientid: Schema.ObjectId } ],
+  sides: [ { name: String, ingredientid: Schema.ObjectId } ]
 });
 
 module.exports = mongoose.model('Meal', MealSchema);

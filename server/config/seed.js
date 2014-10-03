@@ -5,6 +5,7 @@
 
 'use strict';
 
+var mongoose = require('mongoose');
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Meal = require('../api/meal/meal.model');
@@ -52,40 +53,59 @@ User.find({}).remove(function() {
   );
 });
 
+var ObjectId = mongoose.Types.ObjectId;
+
+var meal_id1 = new ObjectId();
+var meal_id2 = new ObjectId();
+var meal_id3 = new ObjectId();
+
 Meal.find({}).remove(function() {
   Meal.collection.insert([{
-    _id: '540fe377bd02b01c311e5b8c',
+    _id: meal_id1,
     name: 'Nitad gris',
-    ingredients: [ { name: 'Nötfärs' }, { name: 'Krossade tomater' }, { name: 'Gul lök' } ],
+    ingredients: [ { ingredientid: groundBeefId, name: "Nötfärs", amount: 3 } , { ingredientid: crushedTomatoesId, name: "Krossade tomater", amount: 2 } ],
     sides: []
   }, {
-    _id: '540fe377bd02b01c311e5b8d',
+    _id: meal_id2,
     name: 'Chili con carne',
     ingredients: [ { name: 'Limabönor' }, { name: 'Högrev' }, { name: 'Röd chili' } ],
     sides: [ { name: 'Bostongurka' }]
   }, {
-    _id: '540fe377bd02b01c311e5b8e',
+    _id: meal_id3,
     name: 'Fis på en pinne',
     ingredients: [ { name: 'Fiskpinnar' }, { name: 'Potatis' }, { name: 'Muskotnöt' } ],
     sides: [ { name: 'Morötter' }, { name: 'Remoulade'} ]
   }], function() { console.log('done inserting meals'); });
 });
 
+var groundBeefId = new ObjectId('542cdc4990ef693cb0083a24');
+var crushedTomatoesId = new ObjectId('542cdc4990ef693cb0083a25');
+
 Ingredient.find({}).remove(function() {
   Ingredient.create({
-    name: "Persilja"
+    _id: groundBeefId,
+    name: "Köttfärs"
   }, {
-    name: "Gräslök"
+    _id: crushedTomatoesId,
+    name: "Krossade Tomater"
   }, {
+    _id: new ObjectId('542cdc4990ef693cb0083a26'),
     name: "Högrev"
   }, {
+    _id: new ObjectId('542cdc4990ef693cb0083a27'),
     name: "Tomatketchup"
   }, {
+    _id: new ObjectId('542cdc4990ef693cb0083a28'),
     name: "Dijonsenap"
   }, {
+    _id: new ObjectId('542cdc4990ef693cb0083a29'),
     name: "Spaghetti"
   });
 });
+
+var rightNow = Date.now();
+var wednesday = new Date("2014-09-24T05:02:26.279Z");
+var thursday = new Date("2014-09-25T05:02:26.279Z");
 
 Schedule.find({}).remove(function () {
   Schedule.collection.insert([{
@@ -95,34 +115,35 @@ Schedule.find({}).remove(function () {
       days: [1, 2, 3, 4]
     },
     days: [{
-        mealid: '540fe377bd02b01c311e5b8d'
+        mealid: meal_id1
       }, {
-        mealid: '540fe377bd02b01c311e5b8e'
+        mealid: meal_id3
       }, {
-        mealid: '540fe377bd02b01c311e5b8c',
-        date: new Date();
+        mealid: meal_id1,
+        date: wednesday
       }, {
-        mealid: 0
+        mealid: meal_id2,
+        date: thursday
       }, {
-        mealid: 0
+        mealid: null
       }, {
-        mealid: '540fe377bd02b01c311e5b8c'
+        mealid: meal_id1
       }, {
-        mealid: '540fe377bd02b01c311e5b8e'
+        mealid: meal_id1
       }, {
-        mealid: '540fe377bd02b01c311e5b8d'
+        mealid: meal_id3
       }, {
-        mealid: 0
+        mealid: null
       }, {
-        mealid: '540fe377bd02b01c311e5b8e'
+        mealid: meal_id2
       }, {
-        mealid: '540fe377bd02b01c311e5b8c'
+        mealid: meal_id1
       }, {
-        mealid: 0
+        mealid: null
       }, {
-        mealid: '540fe377bd02b01c311e5b8d'
+        mealid: meal_id3
       }, {
-        mealid: 0
+        mealid: null
       }]
     }], function() { console.log('done inserting schedule'); } );
 });

@@ -48,9 +48,6 @@ angular.module('sldApp')
           }];
 
       $scope.$watch('scheduleConfig.nbrDays', function(newValue, oldValue) {
-        console.log('************ watch called');
-        console.log(oldValue + ' -> ' + newValue);
-        console.log('scope ->' + $scope.scheduleConfig.nbrDays);
         if (newValue !== oldValue) {
           scheduleService.changeScheduleNbrDays(newValue);
           $scope.viewSchedule = scheduleService.setupViewSchedule($scope.scheduleConfig.nbrDays);

@@ -11,25 +11,18 @@ angular.module('sldApp')
 
     this.loadMeals = function() {
 
-      if (cache) {
-        console.log('HIT!!!!! in MEALS cache, getting from server.');
-        return $q.when(cache);
-      } else {
-        console.log('miss in meals cache, getting from server.');
-        var deferred = $q.defer();
-        $q.all([Meal.query(), ingredientService.loadIngredients()]).then(function(data) {
-          // SUCCESS!
-          cache = data[0];
-          // TODO: Map the meals to its corresposnding ingredients.
-          deferred.resolve(cache);
-        }, function(errResponse) {
-          //FAILURE!
-          console.log('something went wrong fetching the data. fallback to local.');
-          // TODO. Something is wrong with the error handling further up the line.
-          deferred.reject(errResponse);
-        });
-        return deferred.promise;
-      }
+      cache = cache || $q.all(
+        [Meal.query(), ingredientService.loadIngredients()])
+        .then(function(data) {
+        // SUCCESS!
+        return data[0];
+        // TODO: Map the meals to its corresposnding ingredients.
+      }, function(errResponse) {
+        //FAILURE!
+        console.log('something went wrong fetching the data. fallback to local.');
+        // TODO. Something is wrong with the error handling further up the line.
+      });
+      return cache;
     };
 
     this.createMeal = function(meal) {
@@ -39,8 +32,10 @@ angular.module('sldApp')
     };
 
     this.updateMeal = function(meal) {
+      console.log('Meal to update: ', meal);
       Meal.update(meal, function() {
         console.log('Meal updated on server');
+        console.log('Meal to update: ', meal);
       }, function() {
         console.log('Failed to update meal on server');
       });

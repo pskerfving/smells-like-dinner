@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('UpcomingscheduleCtrl', function ($scope, scheduleService) {
+  .controller('UpcomingscheduleCtrl', function ($scope, scheduleService, SelectedMealService) {
 
     scheduleService.loadSchedule().then(function() {
       $scope.vs = scheduleService.setupViewSchedule();
@@ -18,7 +18,12 @@ angular.module('sldApp')
           u.push($scope.vs[i]);
         }
       }
-      return $scope.vs = u;
+      $scope.vs = u;
+      return $scope.vs;
     }
+
+    $scope.setMeal = function(m) {
+      SelectedMealService.setMeal(m);
+    };
 
   });
