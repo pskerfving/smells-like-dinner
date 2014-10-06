@@ -74,8 +74,13 @@ angular.module('sldApp')
 
     this.saveSchedule = function() {
       console.log('saving schedule');
-      cache.$save();
-      // TODO: Handle failure. Show a message.
+      Schedule.update(cache, function() {
+        // SUCCESS
+        console.log('Schedule saved successfully');
+      }, function(err) {
+        // FAILURE
+        console.log(err);
+      });
     };
 
     this.changeScheduleNbrDays = function(nbrDays) {
@@ -92,27 +97,25 @@ angular.module('sldApp')
 
     function findToday() {
       // Return todays meal.
-      var latest = cache.days[0];
-      var latestIndex;
+//      var latest = cache.days[0];
+      var latestIndex = -1;
       if (!cache) { return; }
       for (var i = 0; i < cache.days.length; i++) {
         // Find the meal with the newest date tag.
         cache.days[i].today = false; // Reset all as we go.
         if (cache.days[i].date) {
-          if (!latest.date) {
+          if (latestIndex == -1) {
             latestIndex = i;
-            latest.date = cache.days[i].date;
           } else {
             if (cache.days[i].date > cache.days[latestIndex].date) {
               latestIndex = i;
-              latest.date = cache.days[i].date;
             }
           }
         }
       }
       // Use the latest timestamp to find todays meal.
-      if (latest) {
-        var diff = Math.floor((new Date() - new Date(latest.date))/(1000*3600*24));
+      if (latestIndex > -1) {
+        var diff = Math.floor((new Date() - new Date(cache.days[latestIndex].date))/(1000*3600*24));
         latestIndex = (latestIndex + diff) % cache.config.nbrDays;
       }
       else {

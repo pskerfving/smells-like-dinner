@@ -34,7 +34,9 @@ exports.update = function(req, res) {
   Schedule.findById(req.params.id, function (err, schedule) {
     if (err) { return handleError(res, err); }
     if(!schedule) { return res.send(404); }
-    var updated = _.merge(schedule, req.body);
+    var updated = _.merge(schedule, req.body, function(a, b) {
+      return _.isArray(b) ? b : undefined;
+    });
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, schedule);
