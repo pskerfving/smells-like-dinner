@@ -66,8 +66,9 @@ angular.module('sldApp')
     });
 
     $scope.clearScheduleDay = function (index) {
-      $scope.viewSchedule[index].mealid = 0;
-        $scope.viewSchedule[index].meal = undefined;
+      $scope.viewSchedule[index].mealid = null;
+      $scope.viewSchedule[index].meal = undefined;
+      scheduleService.saveSchedule();
     };
 
     $scope.open = function (size) {

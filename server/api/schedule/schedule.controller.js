@@ -32,11 +32,16 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   Schedule.findById(req.params.id, function (err, schedule) {
-    if (err) { return handleError(res, err); }
+    if (err) {
+      console.log(err);
+      return handleError(res, err);
+    }
     if(!schedule) { return res.send(404); }
     var updated = _.merge(schedule, req.body, function(a, b) {
       return _.isArray(b) ? b : undefined;
     });
+    // Strip trailing mealid = null before saving to db.
+    while (updated.days[updated.days.length - 1].mealid === null) { updated.days.pop(); }
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, schedule);

@@ -61,6 +61,7 @@ angular.module('sldApp')
         }
         for (var i = 0; i < nbrDays; i++) {
           var day = (i + 1) % 7;
+          if (i > (cache.days.length - 1)) { cache.days.push({ mealid: null, meal: undefined }); }
           if (cache.config.days.indexOf(day) > -1 ) {
             // The weekday is configured to be shown in the view.
             vs.push(cache.days[i]);
@@ -90,9 +91,10 @@ angular.module('sldApp')
         var scheduleLength = cache.days.length;
         console.log('extending the schedule to (days): ' + cache.config.nbrDays);
         for (var i = 0; i < nbrDays - scheduleLength; i++) {
-          cache.days.push({ mealid: 0 });
+          cache.days.push({ mealid: null });
         }
       }
+      this.saveSchedule();
     };
 
     function findToday() {
