@@ -43,8 +43,21 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   border-color: darkgray;
 }
 
-.list-group-item[class="today"] {
-  background-color: red;
+.list-group-item {
+  background-color: transparent;
+  text-align: left;
+  font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-color: darkgray;
+}
+
+.list-group-item.today {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.list-group-item.unscheduled {
+  color: darkgray;
+  padding: 2px 15px;
+  font-size: 11px;
 }
 
 .btn-info {
@@ -71,4 +84,8 @@ input[type='text']
   outline: none !important;
   border:1px solid #219ab3;
   box-shadow: 0 0 10px #219ab3;
+}
+
+.modal-content {
+  background-color: black;
 }

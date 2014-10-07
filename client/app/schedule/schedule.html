@@ -27,9 +27,9 @@
             </div>
             <ul class="list-group schedule-list top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="day in viewSchedule"
-                    ng-drop="true" ng-drop-success="onDropComplete($index, $data,$event)"
-                    ng-class="day.today ? 'active':''">
+                    ng-repeat="day in schedule.days"
+                    ng-drop="true" ng-drop-success="onDropComplete($index, $data, $event)"
+                    ng-class="{'today': day.today, 'unscheduled': !day.scheduled}">
                     <div>
                         <span>{{days[(day.day - 1) % 7].abbr}} - </span>
                         <span ng-drag="true" ng-drag-data="day">{{day.meal.name}}</span>

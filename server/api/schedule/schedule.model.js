@@ -11,6 +11,7 @@ var ScheduleSchema = new Schema({
   },
   days: [{
     mealid: Schema.ObjectId,
+    scheduled: Boolean,
     date: Date
   }]
 });

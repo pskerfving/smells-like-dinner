@@ -27,6 +27,7 @@ angular.module('sldApp')
               }
             }
           }
+          setupSchedule();
           findToday();
           return value[1];
         }, function (reason) {
@@ -92,9 +93,22 @@ angular.module('sldApp')
         console.log('extending the schedule to (days): ' + cache.config.nbrDays);
         for (var i = 0; i < nbrDays - scheduleLength; i++) {
           cache.days.push({ mealid: null });
+          cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
         }
       }
       this.saveSchedule();
+    };
+
+    function setupSchedule() {
+      for (var i = 0; i < cache.days.length; i++) {
+        var day = i % 7 + 1;
+        cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
+        cache.days[i].day = day;
+      }
+    }
+
+    this.setupSchedule = function() {
+      setupSchedule();
     };
 
     function findToday() {
