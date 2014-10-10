@@ -68,6 +68,16 @@ angular.module('sldApp')
       scheduleService.saveSchedule();
     };
 
+    $scope.addDayToSchedule = function(index) {
+      $scope.schedule.days[index].scheduled = true;
+      scheduleService.saveSchedule();
+    };
+
+    $scope.removeDayFromSchedule = function(index) {
+      $scope.schedule.days[index].scheduled = false;
+      scheduleService.saveSchedule();
+    }
+
     $scope.open = function (size) {
 
       var modalInstance = $modal.open({

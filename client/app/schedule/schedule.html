@@ -33,9 +33,17 @@
                     <div>
                         <span>{{days[(day.day - 1) % 7].abbr}} - </span>
                         <span ng-drag="true" ng-drag-data="day">{{day.meal.name}}</span>
-                    <span class="pull-right">
+                    <span class="pull-right" ng-if="day.scheduled">
                         <button class="btn btn-xs btn-info" ng-click="clearScheduleDay($index)">
                             <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button class="btn btn-xs btn-info" ng-click="removeDayFromSchedule($index)">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </span>
+                    <span class="pull-right" ng-if="!day.scheduled">
+                        <button class="btn btn-xs btn-info" ng-click="addDayToSchedule($index)">
+                            <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </span>
                     </div>

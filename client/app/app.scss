@@ -43,22 +43,27 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   border-color: darkgray;
 }
 
-.list-group-item {
-  background-color: transparent;
-  text-align: left;
-  font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  border-color: darkgray;
-}
-
 .list-group-item.today {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
 .list-group-item.unscheduled {
   color: darkgray;
-  padding: 2px 15px;
+}
+
+/*
+.list-group-item.unscheduled:hover {
+  color: darkgray;
+  padding: 10px 15px;
   font-size: 11px;
 }
+*/
+
+.btn-xxs, .btn-group-xxs > .btn {
+  padding: 1px 5px;
+  font-size: 8px;
+  line-height: 1.5;
+  border-radius: 3px; }
 
 .btn-info {
   color: #219ab3;
