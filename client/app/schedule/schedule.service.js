@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('scheduleService', function ($resource, $q, mealService) {
+  .service('scheduleService', function ($resource, $q, mealService, $rootScope) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache; // containing cache.config & cache.days
@@ -76,6 +76,7 @@ angular.module('sldApp')
 
     this.saveSchedule = function() {
       console.log('saving schedule');
+      $rootScope.$broadcast('scheduleChanged');
       Schedule.update(cache, function() {
         // SUCCESS
         console.log('Schedule saved successfully');
