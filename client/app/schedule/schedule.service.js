@@ -4,6 +4,7 @@ angular.module('sldApp')
   .service('scheduleService', function ($resource, $q, mealService, $rootScope) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
+    var deferred;
     var cache; // containing cache.config & cache.days
 
     var Schedule = $resource('/api/schedules/:id', { id: '@_id'},
@@ -11,9 +12,13 @@ angular.module('sldApp')
 
     this.loadSchedule = function() {
 
-      cache = cache || $q.all(
-        [mealService.loadMeals(), this.loadScheduleFromDB()]
-      ).then(function (value) {
+      if (deferred) {
+        return deferred.promise;
+      } else {
+        deferred = $q.defer();
+      }
+      $q.all([mealService.loadMeals(), this.loadScheduleFromDB()])
+        .then(function (value) {
           // SUCCESS! Do the mapping between days and meals
           var m = value[0]; // list of meals
           var s = value[1].days; // days in schedule
@@ -29,12 +34,13 @@ angular.module('sldApp')
           }
           setupSchedule(false);
           findToday();
-          return value[1];
+          deferred.resolve(value[1]);
         }, function (reason) {
           // FAILURE!
           console.log('Loading schedule failed! : ' + reason);
+          deferred.reject(reason);
         });
-      return cache;
+      return deferred.promise;
     };
 
     this.loadScheduleFromDB = function() {
@@ -43,12 +49,10 @@ angular.module('sldApp')
         // SUCCESS!
         cache = data[0];
         deferred.resolve(data[0]);
-        return cache;
       }, function(reason) {
         // FAILURE!
         console.log('Failed to load Schedule from DB : ' + reason);
         deferred.reject();
-        return reason;
       });
       return deferred.promise;
     };
@@ -77,6 +81,7 @@ angular.module('sldApp')
     this.saveSchedule = function() {
       console.log('saving schedule');
       $rootScope.$broadcast('scheduleChanged');
+//      deferred = undefined;
       Schedule.update(cache, function() {
         // SUCCESS
         console.log('Schedule saved successfully');
