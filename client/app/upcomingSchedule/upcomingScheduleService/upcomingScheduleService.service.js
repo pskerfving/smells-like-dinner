@@ -8,9 +8,12 @@ angular.module('sldApp')
     var upcoming = [];
 
     $rootScope.$on('scheduleChanged', function() {
-      console.log('CHANGE ON CALLED');
       emptyUpcoming();
-      upcomingFromSchedule(scheduleService.loadSchedule().days);
+      scheduleService.loadSchedule().then(function(value) {
+        upcomingFromSchedule(value.days);
+      }, function(err) {
+        console.log(err);
+      });
     });
 
     function emptyUpcoming() {
