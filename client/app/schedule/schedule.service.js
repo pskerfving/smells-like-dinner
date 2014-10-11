@@ -27,7 +27,7 @@ angular.module('sldApp')
               }
             }
           }
-          setupSchedule();
+          setupSchedule(false);
           findToday();
           return value[1];
         }, function (reason) {
@@ -99,16 +99,19 @@ angular.module('sldApp')
       this.saveSchedule();
     };
 
-    function setupSchedule() {
+    function setupSchedule(reset) {
       for (var i = 0; i < cache.days.length; i++) {
         var day = i % 7 + 1;
-        cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
+        // Reset = true when called from the config dialog. Overrides the schedule stored in the db.
+        if (reset) {
+          cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
+        }
         cache.days[i].day = day;
       }
     }
 
     this.setupSchedule = function() {
-      setupSchedule();
+      setupSchedule(true);
     };
 
     function findToday() {
