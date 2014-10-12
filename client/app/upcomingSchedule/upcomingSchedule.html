@@ -1,7 +1,7 @@
 <div ng-controller="UpcomingscheduleCtrl">
     <p>Välj en middag. Fyll i med vad du behöver till höger.</p>
     <ul class="list-group schedule-list top-buffer">
-        <li class="list-group-item clearfix" ng-repeat="day in upcoming" ng-class="{'empty': day.empty}">
+        <li class="list-group-item clearfix" ng-repeat="day in upcoming | uniqMeals" ng-class="{'empty': day.meal.empty}">
             <span>{{day.meal.name}}</span>
             <span class="pull-right">
                 <button class="btn btn-xs btn-info" ng-click="setMeal(day.meal)">

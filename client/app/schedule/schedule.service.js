@@ -14,9 +14,8 @@ angular.module('sldApp')
 
       if (deferred) {
         return deferred.promise;
-      } else {
-        deferred = $q.defer();
       }
+      deferred = $q.defer();
       $q.all([mealService.loadMeals(), this.loadScheduleFromDB()])
         .then(function (value) {
           // SUCCESS! Do the mapping between days and meals

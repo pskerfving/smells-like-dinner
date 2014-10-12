@@ -24,6 +24,12 @@ angular.module('sldApp')
       $scope.meal = SelectedMealService.meal;
     });
 
+    $scope.$watch('meal.ingredients.length', function(newVal, oldVal) {
+      if (newVal != oldVal) {
+        $scope.meal.empty = ($scope.meal.ingredients.length == 0);
+      }
+    });
+
     $scope.addIngredient = function(newIngredient) {
       if (!$scope.meal.ingredients) {
         $scope.meal.ingredients = [];

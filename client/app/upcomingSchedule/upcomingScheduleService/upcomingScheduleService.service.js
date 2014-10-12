@@ -34,8 +34,8 @@ angular.module('sldApp')
         }
         if (foundToday && upcoming.length < 10 && schedule[i2].scheduled && schedule[i2].meal) {
           var m = schedule[i2];
-          if (m.meal && m.meal.ingredients.length == 0) {
-            m.empty = true;
+          if (m.meal) {
+            m.meal.empty = (m.meal.ingredients.length == 0);
           }
           upcoming.push(m);
         }
