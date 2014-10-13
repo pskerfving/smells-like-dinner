@@ -34,6 +34,7 @@ exports.create = function(req, res) {
 
 // Updates an existing meal in the DB.
 exports.update = function(req, res) {
+  console.log('updating meal : ', req.body);
   if(req.body._id) { delete req.body._id; }
   Meal.findById(req.params.id, function (err, meal) {
     if (err) { return handleError(res, err); }

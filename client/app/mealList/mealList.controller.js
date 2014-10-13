@@ -10,7 +10,13 @@ angular.module('sldApp')
     });
 
     $scope.addMeal = function(newMealTitle) {
-      var newMeal = { name: newMealTitle };
+      // TODO: This is not the right place fot this.
+      var newMeal = {
+        name: newMealTitle,
+        ingredients: [],
+        sides: [],
+        empty: true
+      };
       mealService.createMeal(newMeal);
       $scope.meals.push(newMeal);
       $scope.newMealTitle = ''; // Removes the name from the input field.

@@ -6,7 +6,8 @@ var mongoose = require('mongoose'),
 var MealSchema = new Schema({
   name: String,
   ingredients: [ { name: String, ingredientid: Schema.ObjectId } ],
-  sides: [ { name: String, ingredientid: Schema.ObjectId } ]
+  sides: [ { name: String, ingredientid: Schema.ObjectId } ],
+  empty: Boolean
 });
 
 module.exports = mongoose.model('Meal', MealSchema);

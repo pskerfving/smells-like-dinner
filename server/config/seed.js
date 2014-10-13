@@ -115,35 +115,49 @@ Schedule.find({}).remove(function () {
       days: [1, 2, 3, 4]
     },
     days: [{
-        mealid: meal_id1
+        mealid: meal_id1,
+        scheduled: true
       }, {
-        mealid: meal_id3
+        mealid: meal_id3,
+        scheduled: true
       }, {
         mealid: meal_id1,
-        date: wednesday
+        date: wednesday,
+        scheduled: true
       }, {
         mealid: meal_id2,
-        date: thursday
+        date: thursday,
+        scheduled: true
       }, {
-        mealid: null
+        mealid: null,
+        scheduled: false
       }, {
-        mealid: meal_id1
+        mealid: meal_id1,
+        scheduled: false
       }, {
-        mealid: meal_id1
+        mealid: meal_id1,
+        scheduled: false
       }, {
-        mealid: meal_id3
+        mealid: meal_id3,
+        scheduled: true
       }, {
-        mealid: null
+        mealid: null,
+        scheduled: true
       }, {
-        mealid: meal_id2
+        mealid: meal_id2,
+        scheduled: true
       }, {
-        mealid: meal_id1
+        mealid: meal_id1,
+        scheduled: true
       }, {
-        mealid: null
+        mealid: null,
+        scheduled: true
       }, {
-        mealid: meal_id3
+        mealid: meal_id3,
+        scheduled: true
       }, {
-        mealid: null
+        mealid: null,
+        scheduled: false
       }]
     }], function() { console.log('done inserting schedule'); } );
 });
