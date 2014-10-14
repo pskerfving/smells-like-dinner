@@ -29,6 +29,7 @@ angular.module('sldApp')
           ingredientService.createIngredient(newItem).then(function(result) {
             // SUCESS!
             newItem = result;
+            newItem.ingredientid = result._id;
             $scope.ingredients.push(newItem);
             $scope.callback(newItem);
           });

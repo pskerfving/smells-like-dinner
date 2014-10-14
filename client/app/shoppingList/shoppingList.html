@@ -18,8 +18,9 @@
                 <li class="list-group-item clearfix"
                     ng-click="active = !active"
                     ng-class="active ? 'active' : ''"
-                    ng-repeat="ingredient in shoppingList">
-                    {{ingredient.name}}
+                    ng-repeat="item in shoppingList">
+                    {{item.ingredient.name}}
+                    <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">
                         <button class="btn btn-xs btn-info" ng-click="mainClkAction($index)">
                             <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>

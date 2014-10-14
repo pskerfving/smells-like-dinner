@@ -12,9 +12,10 @@ angular.module('sldApp')
     ]).then(function(value) {
       // Success!
       $scope.ingredients = value[0];
-      $scope.shoppingList = value[1][0];
-      $scope.timeframe = value[1][1].config.nbrDays;
-      $scope.listMode = value[1][1].config.listMode;
+      $scope.shoppingList = value[1];
+//      $scope.timeframe = value[1][1].config.nbrDays;
+//      $scope.listMode = value[1][1].config.listMode;
+//      shoppingListService.loadIt(3);   // For testing the implementation.
     });
 
     $scope.toggleListMode = function() {

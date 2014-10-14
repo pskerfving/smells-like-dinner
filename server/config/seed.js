@@ -58,28 +58,52 @@ var ObjectId = mongoose.Types.ObjectId;
 var meal_id1 = new ObjectId();
 var meal_id2 = new ObjectId();
 var meal_id3 = new ObjectId();
+var meal_id4 = new ObjectId();
 
 Meal.find({}).remove(function() {
   Meal.collection.insert([{
     _id: meal_id1,
     name: 'Nitad gris',
-    ingredients: [ { ingredientid: groundBeefId, name: "Nötfärs", amount: 3 } , { ingredientid: crushedTomatoesId, name: "Krossade tomater", amount: 2 } ],
+    ingredients: [
+      { _id: groundBeefId, ingredientid: groundBeefId, name: "Nötfärs", amount: 3 },
+      { _id: crushedTomatoesId, ingredientid: crushedTomatoesId, name: "Krossade tomater", amount: 2 } ],
     sides: []
   }, {
     _id: meal_id2,
     name: 'Chili con carne',
-    ingredients: [ { name: 'Limabönor' }, { name: 'Högrev' }, { name: 'Röd chili' } ],
+    ingredients: [
+      { _id: limaBeansId, ingredientid: limaBeansId, name: 'Limabönor' },
+      { _id: beefId, ingredientId: beefId, name: 'Högrev' },
+      { _id: redChiliId, ingredientid: redChiliId, name: 'Röd chili' },
+      { _id: nutmegId, ingredientid: nutmegId, name: 'Muskotnöt' } ],
     sides: [ { name: 'Bostongurka' }]
   }, {
     _id: meal_id3,
     name: 'Fis på en pinne',
-    ingredients: [ { name: 'Fiskpinnar' }, { name: 'Potatis' }, { name: 'Muskotnöt' } ],
+    ingredients: [
+      { _id: fishFingersId, ingredientid: fishFingersId, name: 'Fiskpinnar' },
+      { _id: potatoesId, ingredientid: potatoesId, name: 'Potatis' },
+      { _id: nutmegId, ingredientid: nutmegId, name: 'Muskotnöt' } ],
     sides: [ { name: 'Morötter' }, { name: 'Remoulade'} ]
+  }, {
+    _id: meal_id4,
+    name: 'Klistergröt',
+    ingredients: [],
+    sides: []
   }], function() { console.log('done inserting meals'); });
 });
 
 var groundBeefId = new ObjectId('542cdc4990ef693cb0083a24');
 var crushedTomatoesId = new ObjectId('542cdc4990ef693cb0083a25');
+var beefId = new ObjectId('542cdc4990ef693cb0083a26');
+var ketchupId = new ObjectId('542cdc4990ef693cb0083a27');
+var mustardId = new ObjectId('542cdc4990ef693cb0083a28');
+var spaghettiId = new ObjectId('542cdc4990ef693cb0083a29');
+var limaBeansId = new ObjectId('542cdc4990ef693cb0083a30');
+var redChiliId = new ObjectId('542cdc4990ef693cb0083a31');
+var fishFingersId = new ObjectId('542cdc4990ef693cb0083a32');
+var potatoesId = new ObjectId('542cdc4990ef693cb0083a33');
+var nutmegId = new ObjectId('542cdc4990ef693cb0083a34');
 
 Ingredient.find({}).remove(function() {
   Ingredient.create({
@@ -89,17 +113,32 @@ Ingredient.find({}).remove(function() {
     _id: crushedTomatoesId,
     name: "Krossade Tomater"
   }, {
-    _id: new ObjectId('542cdc4990ef693cb0083a26'),
+    _id: beefId,
     name: "Högrev"
   }, {
-    _id: new ObjectId('542cdc4990ef693cb0083a27'),
+    _id: ketchupId,
     name: "Tomatketchup"
   }, {
-    _id: new ObjectId('542cdc4990ef693cb0083a28'),
+    _id: mustardId,
     name: "Dijonsenap"
   }, {
-    _id: new ObjectId('542cdc4990ef693cb0083a29'),
+    _id: spaghettiId,
     name: "Spaghetti"
+  }, {
+    _id: limaBeansId,
+    name: "Lima bönor"
+  }, {
+    _id: redChiliId,
+    name: "Röd Chili"
+  }, {
+    _id: fishFingersId,
+    name: "Röd Chili"
+  }, {
+    _id: potatoesId,
+    name: "Röd Chili"
+  }, {
+    _id: nutmegId,
+    name: "Muskotnöt"
   });
 });
 
