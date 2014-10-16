@@ -204,21 +204,26 @@ Schedule.find({}).remove(function () {
 ShoppingList.find({}).remove(function() {
   ShoppingList.collection.insert([{
     config: {
-      nbrDays: 2,
+      nbrDays: 3,
       listMode: 'planning'
     },
+    removed: [{
+        ingredientid: beefId
+      }, {
+        ingredientid: fishFingersId
+    }],
     extras: [{
-      name: 'Persilja'
-    }, {
-      name: 'Gräslök'
-    }, {
-      name: 'Högrev'
-    }, {
-      name: 'Tomatketchup'
-    }, {
-      name: 'Dijonsenap'
-    }, {
-      name: 'Spaghetti'
+        name: 'Persilja'
+      }, {
+        name: 'Gräslök'
+      }, {
+        name: 'Högrev'
+      }, {
+        name: 'Tomatketchup'
+      }, {
+        name: 'Dijonsenap'
+      }, {
+        name: 'Spaghetti'
     }]
   }], function() { console.log('done inserting shoppinglist'); });
 });

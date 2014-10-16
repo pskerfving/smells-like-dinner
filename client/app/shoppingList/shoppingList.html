@@ -16,9 +16,8 @@
         <div class="col-md-12">
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-click="active = !active"
-                    ng-class="active ? 'active' : ''"
-                    ng-repeat="item in shoppingList">
+                    ng-repeat="item in shoppingList"
+                    ng-class="{'removed': item.removed}">
                     {{item.ingredient.name}}
                     <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">

@@ -4,12 +4,10 @@ angular.module('sldApp')
   .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;
-    var upcoming;
-    var sList = [];
+    var cache;      // The shoppinglist specific data. Removed items, extras, config.
+    var upcoming;   // Upcoming meals
+    var sList = []; // The assembled shoppinglist, including extras
     var deferred;
-
-    var viewSchedule;
 
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
@@ -36,6 +34,7 @@ angular.module('sldApp')
     };
 
     this.loadShoppingListFromDB = function() {
+      // This is not all correct, but should work since only called once.
       if (cache) {
         return $q.when(cache);
       } else {
@@ -62,16 +61,6 @@ angular.module('sldApp')
       });
     });
 
-/*
-    this.loadIt = function() {
-      var that = this;
-      upcomingScheduleService.calculateUpcoming().then(function(value) {
-        upcoming = value;
-        that.collectShoppingList(5);
-      });
-    };
-*/
-
     function collectShoppingList(nbrDays) {
       // 0. Empty list.
       // 1. Find today in schedule
@@ -94,7 +83,8 @@ angular.module('sldApp')
                 newItem = {
                   ingredient: upcoming[i].meal.ingredients[j],
                   meals: [ upcoming[i].meal ],
-                  meal: null
+                  meal: null,
+                  removed: isRemoved(upcoming[i].meal.ingredients[j]._id)
                 };
                 items[upcoming[i].meal.ingredients[j]._id] = newItem;
                 sList.push(newItem);
@@ -120,49 +110,38 @@ angular.module('sldApp')
       return sList;
     }
 
-    this.updateShoppingList = function(nbrDays) {
-      cache.config.nbrDays = nbrDays;
-      viewSchedule = scheduleService.setupViewSchedule(cache.config.nbrDays);
-      sList = assembleShoppingList();
-      return sList;
-    };
+    function isRemoved(id) {
+      for (var i = 0; i < cache.removed.length; i++) {
+        if (cache.removed[i].ingredientid == id) {
+          return true;
+        }
+      }
+      return false;
+    }
 
-    var assembleShoppingList = function() {
-      var list = [];
-      if (cache && viewSchedule) {
-        var dupList = []; // Resulting shoppinglist (including any duplicates.)
-        for (var i = 0; i < viewSchedule.length; i++) {
-          var m = viewSchedule[i].meal;
-          if (m) {
-            for (var j = 0; j < m.ingredients.length; j++) {
-              dupList.push(m.ingredients[j]);
-            }
+    this.updateRemoved = function(item) {
+      if (item.removed) {
+        // Add to list
+        cache.removed.push({ ingredientid: item.ingredient._id });
+      } else {
+        for (var i = 0; i < cache.removed.length; i++) {
+          if (cache.removed[i].ingredientid == item.ingredient._id) {
+            cache.removed.splice(i, 1);
           }
         }
-        // Add the extras
-        dupList = dupList.concat(cache.extras);
-        // Remove duplicates.
-        // TODO: Does this work????
-        list = dupList.filter( function(item, pos) {
-          return dupList.indexOf(item) === pos;
-        });
       }
-      return list;
+      // TODO: Store to server
+      this.updateShoppingList();
     };
 
-/*
-    $scope.addItemName = function(newName) {
-      var newItem = { name: newName };
-      $scope.ingredients.push(newItem);
-      $scope.addItem(newItem);
-      $scope.newIngredient = "";
-      // TODO: Check that the ingredient is unique
-      mealService.createIngredient(newItem);
+    this.updateShoppingList = function() {
+      ShoppingList.update(cache, function() {
+        // SUCCESS
+        console.log('ShoppingList saved successfully');
+      }, function(err) {
+        // FAILURE
+        console.log(err);
+      });
     };
-
-    $scope.addItem = function (newItem) {
-      $scope.shoppingList.push(newItem);
-    };
-*/
 
   });

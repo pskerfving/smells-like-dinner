@@ -24,7 +24,8 @@ angular.module('sldApp')
 
     $scope.mainClkAction = function(index) {
       if ($scope.listMode === 'planning') {
-        $scope.shoppingList.splice(index, 1);
+        $scope.shoppingList[index].removed = !$scope.shoppingList[index].removed;
+        shoppingListService.updateRemoved($scope.shoppingList[index]);
       } else {
         $scope.shoppingList[index].picked = true;
       }

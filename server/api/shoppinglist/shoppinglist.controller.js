@@ -34,7 +34,13 @@ exports.update = function(req, res) {
   Shoppinglist.findById(req.params.id, function (err, shoppinglist) {
     if (err) { return handleError(res, err); }
     if(!shoppinglist) { return res.send(404); }
-    var updated = _.merge(shoppinglist, req.body);
+    var updated = _.merge(shoppinglist, req.body, function(a, b) {
+      return _.isArray(a) ? _.uniq(a.concat(b), function(c) {
+        if (c.ingredientid) return c.ingredientid.toString();
+        else return c.name;
+      }) : undefined;
+    });
+    console.log(updated);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, shoppinglist);

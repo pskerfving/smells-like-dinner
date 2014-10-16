@@ -51,10 +51,16 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   color: darkgray;
 }
 
+.list-group-item.removed {
+  text-decoration: line-through;
+}
+
 span.meal {
   color: darkgray;
   font-size: 9px;
+  padding: 0px 5px;
 }
+
 
 /*
 .list-group-item.unscheduled:hover {
