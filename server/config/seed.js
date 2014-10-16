@@ -104,6 +104,8 @@ var redChiliId = new ObjectId('542cdc4990ef693cb0083a31');
 var fishFingersId = new ObjectId('542cdc4990ef693cb0083a32');
 var potatoesId = new ObjectId('542cdc4990ef693cb0083a33');
 var nutmegId = new ObjectId('542cdc4990ef693cb0083a34');
+var parsleyId = new ObjectId('542cdc4990ef693cb0083a35');
+var grassUnionId = new ObjectId('542cdc4990ef693cb0083a36');
 
 Ingredient.find({}).remove(function() {
   Ingredient.create({
@@ -139,6 +141,12 @@ Ingredient.find({}).remove(function() {
   }, {
     _id: nutmegId,
     name: "Muskotnöt"
+  }, {
+    _id: parsleyId,
+    name: "Persilja"
+  }, {
+    _id: grassUnionId,
+    name: "Gräslök"
   });
 });
 
@@ -213,17 +221,17 @@ ShoppingList.find({}).remove(function() {
         ingredientid: fishFingersId
     }],
     extras: [{
-        name: 'Persilja'
+        ingredientid: parsleyId
       }, {
-        name: 'Gräslök'
+        ingredientid: grassUnionId
       }, {
-        name: 'Högrev'
+        ingredientid: beefId
       }, {
-        name: 'Tomatketchup'
+        ingredientid: ketchupId
       }, {
-        name: 'Dijonsenap'
+        ingredientid: mustardId
       }, {
-        name: 'Spaghetti'
+        ingredientid: spaghettiId
     }]
   }], function() { console.log('done inserting shoppinglist'); });
 });

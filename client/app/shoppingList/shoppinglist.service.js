@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;      // The shoppinglist specific data. Removed items, extras, config.
@@ -18,10 +18,11 @@ angular.module('sldApp')
       } else {
         deferred = $q.defer();
         $q.all([
-          upcomingScheduleService.calculateUpcoming(), this.loadShoppingListFromDB()
+          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients(), this.loadShoppingListFromDB()
         ]).then(function(value) {
           // SUCCESS
           upcoming = value[0];
+          mapIngredients(value[1]);
           sList = collectShoppingList(cache.config.nbrDays);
           deferred.resolve(sList);
         }, function(reason) {
@@ -41,7 +42,7 @@ angular.module('sldApp')
         var deferred = $q.defer();
         ShoppingList.query(function(data) {
           // SUCCESS!
-          cache = data[0];
+          cache = data[0];  // TODO: This should not necessarily be the first, based on user.
           deferred.resolve(cache);
         }, function(reason) {
           // FAILURE!
@@ -51,6 +52,17 @@ angular.module('sldApp')
         return deferred.promise;
       }
     };
+
+    function mapIngredients(iList) {
+      for (var i = 0; i < cache.extras.length; i++) {
+        for (var j = 0; j < iList.length; j++) {
+          if (cache.extras[i].ingredientid == iList[j]._id) {
+            cache.extras[i].ingredient = iList[j];
+            break;
+          }
+        }
+      }
+    }
 
     $rootScope.$on('scheduleChanged', function() {
       emptyUpcoming();
@@ -89,23 +101,32 @@ angular.module('sldApp')
                 items[upcoming[i].meal.ingredients[j]._id] = newItem;
                 sList.push(newItem);
               } else {
-                // Already exists, add the meal.
+                // Already exists, add to the meal list.
                 item.meals.push(upcoming[i].meal);
               }
             }
           } else {
             // No igredients add meal.
-            newItem = {
+            sList.push({
               meal: upcoming[i].meal,
               ingredient: null,
               meals: []
-            };
-            sList.push(newItem);
+            });
           }
           nbrDays--;
         } else {
           break;
         }
+      }
+      // Add the extras to sList
+      for (i = 0; i < cache.extras.length; i++) {
+        // Does not exist, add.
+        sList.push({
+          ingredient: cache.extras[i].ingredient,
+          meals: [],
+          meal: null,
+          removed: false
+        });
       }
       return sList;
     }
