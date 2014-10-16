@@ -61,7 +61,8 @@ span.meal {
   padding: 0px 5px;
 }
 
-li.meal {
+li.meal, li.picked {
+  color: darkgray;
   background-color: rgba(255, 255, 255, 0.3);
 }
 

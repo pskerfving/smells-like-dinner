@@ -65,13 +65,18 @@ angular.module('sldApp')
     }
 
     $rootScope.$on('scheduleChanged', function() {
-      emptyUpcoming();
-      scheduleService.loadSchedule().then(function(value) {
-        upcomingFromSchedule(value.days);
-      }, function(err) {
-        console.log(err);
+      console.log('SHOPPING LIST: schedule updated');
+      upcomingScheduleService.calculateUpcoming().then(function() {
+        //SUCCESS
+        sList = collectShoppingList(cache.config.nbrDays);
+      }, function() {
+        // FAILURE.
       });
     });
+
+    function emptyShoppingList() {
+      while (sList.length > 0) sList.pop();
+    }
 
     function collectShoppingList(nbrDays) {
       // 0. Empty list.
@@ -83,6 +88,7 @@ angular.module('sldApp')
       // 4. If a meal has no ingredients. A meal will be referenced.
       var newItem;
       var items = {};
+      emptyShoppingList();
       for (var i = 0; i < upcoming.length; i++) {
         if (nbrDays > 0) {
           if (upcoming[i].meal.ingredients.length > 0) {
