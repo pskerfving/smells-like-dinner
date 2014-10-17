@@ -74,6 +74,32 @@ angular.module('sldApp')
       });
     });
 
+    $rootScope.$on('mealUpdated', function(evt, meal) {
+      console.log('SHOPPING LIST: meal updated');
+      if (mealInShoppingList(meal)) {
+        upcomingScheduleService.calculateUpcoming().then(function() {
+          //SUCCESS
+          sList = collectShoppingList(cache.config.nbrDays);
+        }, function() {
+          // FAILURE.
+        });
+      }
+    });
+
+    function mealInShoppingList(meal) {
+      var nbrDays = cache.config.nbrDays;
+      for (var i = 0; i < upcoming.length; i++) {
+        if (nbrDays == 0) {
+          break;
+        }
+        if (upcoming[i].meal._id === meal._id) {
+          return true;
+        }
+        nbrDays--;
+      }
+      return false;
+    }
+
     function emptyShoppingList() {
       while (sList.length > 0) sList.pop();
     }

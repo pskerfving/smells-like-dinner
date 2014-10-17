@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('mealService', function ($q, $resource, ingredientService) {
+  .service('mealService', function ($q, $resource, $rootScope, ingredientService) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;
@@ -39,6 +39,7 @@ angular.module('sldApp')
       }, function() {
         console.log('Failed to update meal on server');
       });
+      $rootScope.$broadcast('mealUpdated', meal);
     };
 
     this.deleteMeal = function(meal) {
