@@ -219,7 +219,10 @@ ShoppingList.find({}).remove(function() {
         ingredientid: beefId
       }, {
         ingredientid: fishFingersId
-    }],
+      }],
+    picked: [{
+        ingredientid: potatoesId
+      }],
     extras: [{
         ingredientid: parsleyId
       }, {

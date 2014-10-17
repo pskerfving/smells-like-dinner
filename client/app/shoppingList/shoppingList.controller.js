@@ -28,10 +28,11 @@ angular.module('sldApp')
         shoppingListService.updateRemoved($scope.shoppingList[index]);
       } else {
         $scope.shoppingList[index].picked = !$scope.shoppingList[index].picked;
+        shoppingListService.updatePicked($scope.shoppingList[index]);
       }
     };
 
-    $scope.addItemName = function(newName) {
+/*    $scope.addItemName = function(newName) {
       console.log('addItemName');
       var newItem = { name: newName };
       $scope.ingredients.push(newItem);
@@ -39,13 +40,13 @@ angular.module('sldApp')
       $scope.newIngredient = '';
       // TODO: Check that the ingredient is unique
       mealService.createIngredient(newItem);
-    };
+    };*/
 
 //    $scope.addItem = function (newItem) {
 //      $scope.shoppingList.push(newItem);
 //    };
 
-    $scope.addItem = function(newItem) {
+/*    $scope.addItem = function(newItem) {
       console.log('shoppingList.addItem entered.');
       if (!$scope.additionals) {
         $scope.additionals = [];
@@ -53,7 +54,7 @@ angular.module('sldApp')
       $scope.additionals.push(newItem); // Detta sparas inte till servicen.
       $scope.shoppingList = shoppingListService.updateShoppingList($scope.timeframe);
       // TODO: Save to database.
-    };
+    };*/
 
     $scope.onSelect = function($item/*, $model, $label */) {
       $scope.addItem($item);

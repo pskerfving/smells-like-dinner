@@ -102,7 +102,8 @@ angular.module('sldApp')
                   ingredient: upcoming[i].meal.ingredients[j],
                   meals: [ upcoming[i].meal ],
                   meal: null,
-                  removed: isRemoved(upcoming[i].meal.ingredients[j]._id)
+                  removed: isRemoved(upcoming[i].meal.ingredients[j]._id),
+                  picked: isPicked(upcoming[i].meal.ingredients[j]._id)
                 };
                 items[upcoming[i].meal.ingredients[j]._id] = newItem;
                 sList.push(newItem);
@@ -146,6 +147,15 @@ angular.module('sldApp')
       return false;
     }
 
+    function isPicked(id) {
+      for (var i = 0; i < cache.picked.length; i++) {
+        if (cache.picked[i].ingredientid == id) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     this.updateRemoved = function(item) {
       if (item.removed) {
         // Add to list
@@ -157,7 +167,20 @@ angular.module('sldApp')
           }
         }
       }
-      // TODO: Store to server
+      this.updateShoppingList();
+    };
+
+    this.updatePicked = function(item) {
+      if (item.picked) {
+        // Add to list
+        cache.picked.push({ ingredientid: item.ingredient._id });
+      } else {
+        for (var i = 0; i < cache.picked.length; i++) {
+          if (cache.picked[i].ingredientid == item.ingredient._id) {
+            cache.picked.splice(i, 1);
+          }
+        }
+      }
       this.updateShoppingList();
     };
 
