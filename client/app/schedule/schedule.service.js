@@ -56,27 +56,6 @@ angular.module('sldApp')
       return deferred.promise;
     };
 
-    // Calculate what days are to be shown (viewSchedule) in the listing based on the configuration.
-    this.setupViewSchedule = function(nbrDays) {
-      var vs = [];
-      if (cache) {
-        if (nbrDays === undefined) {
-          nbrDays = cache.config.nbrDays;
-        }
-        for (var i = 0; i < nbrDays; i++) {
-          var day = (i + 1) % 7;
-          if (i > (cache.days.length - 1)) { cache.days.push({ mealid: null, meal: undefined }); }
-          if (cache.config.days.indexOf(day) > -1 ) {
-            // The weekday is configured to be shown in the view.
-            vs.push(cache.days[i]);
-            // Problemet är att cache tar slut. Den har inte blivit förlängd av changeScheduleNbrDays.
-            vs[vs.length - 1].day = day;
-          }
-        }
-      }
-      return vs;
-    };
-
     this.saveSchedule = function() {
       console.log('saving schedule');
       $rootScope.$broadcast('scheduleChanged');
@@ -92,21 +71,24 @@ angular.module('sldApp')
 
     this.changeScheduleNbrDays = function(nbrDays) {
       cache.config.nbrDays = nbrDays;
-      if (cache.days.length < nbrDays) {
-        // Add the missing days.
-        var scheduleLength = cache.days.length;
-        console.log('extending the schedule to (days): ' + cache.config.nbrDays);
-        for (var i = 0; i < nbrDays - scheduleLength; i++) {
-          cache.days.push({ mealid: null });
-          cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
-        }
+      if (nbrDays < cache.days.length) {
+        cache.days.splice(nbrDays, cache.days.length - nbrDays);
       }
+      setupSchedule();
       this.saveSchedule();
     };
 
     function setupSchedule(reset) {
-      for (var i = 0; i < cache.days.length; i++) {
+      reset = reset || false;
+      for (var i = 0; i < cache.config.nbrDays; i++) {
         var day = i % 7 + 1;
+        if (i >= cache.days.length) {
+          cache.days.push({
+            mealid: null,
+            meal: undefined,
+            scheduled: (cache.config.days.indexOf(day) > -1)
+          });
+        }
         // Reset = true when called from the config dialog. Overrides the schedule stored in the db.
         if (reset) {
           cache.days[i].scheduled = (cache.config.days.indexOf(day) > -1);
