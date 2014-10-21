@@ -4,7 +4,7 @@ angular.module('sldApp')
   .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;      // The shoppinglist specific data. Removed items, extras, config.
+    var cache;      // The shoppinglist data from DB. Removed items, extras, config.
     var upcoming;   // Upcoming meals
     var sList = []; // The assembled shoppinglist, including extras
     var deferred;
@@ -112,6 +112,7 @@ angular.module('sldApp')
       //    Each item in the list is an object with:
       //      listname (ingredient or meal), type (ingredient of meal), reference to the ingredient and an array of meals for which it is needed.
       // 4. If a meal has no ingredients. A meal will be referenced.
+      nbrDays = nbrDays || cache.config.nbrDays;
       var newItem;
       var items = {};
       emptyShoppingList();
@@ -163,6 +164,20 @@ angular.module('sldApp')
       }
       return sList;
     }
+
+    this.addExtra = function(arg) {
+      // Find the
+      var newItem = {
+        ingredient: arg,
+        meals:[],
+        meal: null,
+        removed: false,
+        picked: false
+      };
+      cache.extras.push(newItem);
+      sList = collectShoppingList(cache.config.nbrDays);
+      this.updateShoppingList();
+    };
 
     function isRemoved(id) {
       for (var i = 0; i < cache.removed.length; i++) {
@@ -219,5 +234,11 @@ angular.module('sldApp')
         console.log(err);
       });
     };
+
+    this.setNbrDays = function(nbrDays) {
+      cache.config.nbrDays = nbrDays;
+      sList = collectShoppingList();
+      this.updateShoppingList();
+    }
 
   });

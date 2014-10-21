@@ -4,8 +4,9 @@ angular.module('sldApp')
   .controller('ShoppingListCtrl', function ($scope, $q, scheduleService, ingredientService, mealService, shoppingListService) {
 
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
-    $scope.additionals = []; // The stuff that is stored in the shopping list in the DB.
+//    $scope.additionals = []; // The stuff that is stored in the shopping list in the DB.
     $scope.listMode = 'planning';
+    $scope.timeframe = 2;
 
     $q.all([
       ingredientService.loadIngredients(), shoppingListService.loadShoppingList()
@@ -46,15 +47,10 @@ angular.module('sldApp')
 //      $scope.shoppingList.push(newItem);
 //    };
 
-/*    $scope.addItem = function(newItem) {
+    $scope.addExtra = function(newItem) {
       console.log('shoppingList.addItem entered.');
-      if (!$scope.additionals) {
-        $scope.additionals = [];
-      }
-      $scope.additionals.push(newItem); // Detta sparas inte till servicen.
-      $scope.shoppingList = shoppingListService.updateShoppingList($scope.timeframe);
-      // TODO: Save to database.
-    };*/
+      shoppingListService.addExtra(newItem);
+    };
 
     $scope.onSelect = function($item/*, $model, $label */) {
       $scope.addItem($item);
@@ -62,6 +58,6 @@ angular.module('sldApp')
 
     $scope.setTimeframe = function(nbrDays) {
       $scope.timeframe = nbrDays;
-      $scope.shoppingList = shoppingListService.updateShoppingList(nbrDays);
+      shoppingListService.setNbrDays(nbrDays);
     };
   });
