@@ -110,7 +110,7 @@ angular.module('sldApp')
         // Find the meal with the newest date tag.
         cache.days[i].today = false; // Reset all as we go.
         if (cache.days[i].date) {
-          if (latestIndex == -1) {
+          if (latestIndex === -1) {
             latestIndex = i;
           } else {
             if (cache.days[i].date > cache.days[latestIndex].date) {

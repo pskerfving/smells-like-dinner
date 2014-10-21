@@ -119,7 +119,7 @@ angular.module('sldApp')
       });
     };
 
-  }).controller('ModalInstanceCtrl', function($scope, $modalInstance, items, scheduleService) {
+  }).controller('ModalInstanceCtrl', function($scope, $modalInstance, items) {
 
     $scope.days = items;
 

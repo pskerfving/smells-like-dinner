@@ -19,7 +19,7 @@ angular.module('sldApp')
         // TODO: Map the meals to its corresposnding ingredients.
       }, function(errResponse) {
         //FAILURE!
-        console.log('something went wrong fetching the data. fallback to local.');
+        console.log('something went wrong fetching the data. fallback to local.', errResponse);
         // TODO. Something is wrong with the error handling further up the line.
       });
       return cache;

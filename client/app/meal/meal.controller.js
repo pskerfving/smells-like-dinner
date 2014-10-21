@@ -25,8 +25,8 @@ angular.module('sldApp')
     });
 
     $scope.$watch('meal.ingredients.length', function(newVal, oldVal) {
-      if (newVal != oldVal) {
-        $scope.meal.empty = ($scope.meal.ingredients.length == 0);
+      if (newVal !== oldVal) {
+        $scope.meal.empty = ($scope.meal.ingredients.length === 0);
       }
     });
 

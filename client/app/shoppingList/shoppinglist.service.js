@@ -56,7 +56,7 @@ angular.module('sldApp')
     function mapIngredients(iList) {
       for (var i = 0; i < cache.extras.length; i++) {
         for (var j = 0; j < iList.length; j++) {
-          if (cache.extras[i].ingredientid == iList[j]._id) {
+          if (cache.extras[i].ingredientid === iList[j]._id) {
             cache.extras[i].ingredient = iList[j];
             break;
           }
@@ -93,7 +93,7 @@ angular.module('sldApp')
     function mealInShoppingList(meal) {
       var nbrDays = cache.config.nbrDays;
       for (var i = 0; i < upcoming.length; i++) {
-        if (nbrDays == 0) {
+        if (nbrDays === 0) {
           break;
         }
         if (upcoming[i].meal._id === meal._id) {
@@ -105,7 +105,9 @@ angular.module('sldApp')
     }
 
     function emptyShoppingList() {
-      while (sList.length > 0) sList.pop();
+      while (sList.length > 0) {
+        sList.pop();
+      }
     }
 
     function collectShoppingList(nbrDays) {
@@ -185,7 +187,7 @@ angular.module('sldApp')
 
     function isRemoved(id) {
       for (var i = 0; i < cache.removed.length; i++) {
-        if (cache.removed[i].ingredientid == id) {
+        if (cache.removed[i].ingredientid === id) {
           return true;
         }
       }
@@ -194,7 +196,7 @@ angular.module('sldApp')
 
     function isPicked(id) {
       for (var i = 0; i < cache.picked.length; i++) {
-        if (cache.picked[i].ingredientid == id) {
+        if (cache.picked[i].ingredientid === id) {
           return true;
         }
       }
@@ -207,7 +209,7 @@ angular.module('sldApp')
         cache.removed.push({ ingredientid: item.ingredient._id });
       } else {
         for (var i = 0; i < cache.removed.length; i++) {
-          if (cache.removed[i].ingredientid == item.ingredient._id) {
+          if (cache.removed[i].ingredientid === item.ingredient._id) {
             cache.removed.splice(i, 1);
           }
         }
@@ -221,7 +223,7 @@ angular.module('sldApp')
         cache.picked.push({ ingredientid: item.ingredient._id });
       } else {
         for (var i = 0; i < cache.picked.length; i++) {
-          if (cache.picked[i].ingredientid == item.ingredient._id) {
+          if (cache.picked[i].ingredientid === item.ingredient._id) {
             cache.picked.splice(i, 1);
           }
         }
@@ -243,6 +245,6 @@ angular.module('sldApp')
       cache.config.nbrDays = nbrDays;
       sList = collectShoppingList();
       this.updateShoppingList();
-    }
+    };
 
   });

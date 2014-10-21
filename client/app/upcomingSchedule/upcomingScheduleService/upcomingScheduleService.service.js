@@ -35,12 +35,12 @@ angular.module('sldApp')
         if (foundToday && upcoming.length < 10 && schedule[i2].scheduled && schedule[i2].meal) {
           var m = schedule[i2];
           if (m.meal) {
-            m.meal.empty = (m.meal.ingredients.length == 0);
+            m.meal.empty = (m.meal.ingredients.length === 0);
           }
           upcoming.push(m);
         }
       }
-      if (!foundToday) return schedule;
+      if (!foundToday) { return schedule; }
       return upcoming;
     }
 

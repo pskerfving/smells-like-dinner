@@ -60,6 +60,21 @@ var meal_id2 = new ObjectId();
 var meal_id3 = new ObjectId();
 var meal_id4 = new ObjectId();
 
+var groundBeefId = new ObjectId('542cdc4990ef693cb0083a24');
+var crushedTomatoesId = new ObjectId('542cdc4990ef693cb0083a25');
+var beefId = new ObjectId('542cdc4990ef693cb0083a26');
+var ketchupId = new ObjectId('542cdc4990ef693cb0083a27');
+var mustardId = new ObjectId('542cdc4990ef693cb0083a28');
+var spaghettiId = new ObjectId('542cdc4990ef693cb0083a29');
+var limaBeansId = new ObjectId('542cdc4990ef693cb0083a30');
+var redChiliId = new ObjectId('542cdc4990ef693cb0083a31');
+var fishFingersId = new ObjectId('542cdc4990ef693cb0083a32');
+var potatoesId = new ObjectId('542cdc4990ef693cb0083a33');
+var nutmegId = new ObjectId('542cdc4990ef693cb0083a34');
+var parsleyId = new ObjectId('542cdc4990ef693cb0083a35');
+var grassUnionId = new ObjectId('542cdc4990ef693cb0083a36');
+
+
 Meal.find({}).remove(function() {
   Meal.collection.insert([{
     _id: meal_id1,
@@ -92,20 +107,6 @@ Meal.find({}).remove(function() {
     sides: []
   }], function() { console.log('done inserting meals'); });
 });
-
-var groundBeefId = new ObjectId('542cdc4990ef693cb0083a24');
-var crushedTomatoesId = new ObjectId('542cdc4990ef693cb0083a25');
-var beefId = new ObjectId('542cdc4990ef693cb0083a26');
-var ketchupId = new ObjectId('542cdc4990ef693cb0083a27');
-var mustardId = new ObjectId('542cdc4990ef693cb0083a28');
-var spaghettiId = new ObjectId('542cdc4990ef693cb0083a29');
-var limaBeansId = new ObjectId('542cdc4990ef693cb0083a30');
-var redChiliId = new ObjectId('542cdc4990ef693cb0083a31');
-var fishFingersId = new ObjectId('542cdc4990ef693cb0083a32');
-var potatoesId = new ObjectId('542cdc4990ef693cb0083a33');
-var nutmegId = new ObjectId('542cdc4990ef693cb0083a34');
-var parsleyId = new ObjectId('542cdc4990ef693cb0083a35');
-var grassUnionId = new ObjectId('542cdc4990ef693cb0083a36');
 
 Ingredient.find({}).remove(function() {
   Ingredient.create({

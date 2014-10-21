@@ -36,5 +36,5 @@ angular.module('sldApp')
           $scope.newItemName = '';
         };
       }
-    }
+    };
   });
