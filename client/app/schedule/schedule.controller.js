@@ -76,27 +76,6 @@ angular.module('sldApp')
     $scope.removeDayFromSchedule = function(index) {
       $scope.schedule.days[index].scheduled = false;
       scheduleService.saveSchedule();
-    }
-
-    $scope.open = function (size) {
-
-      var modalInstance = $modal.open({
-        templateUrl: 'dayConfigTemplate.html',
-        controller: 'ModalInstanceCtrl',
-        size: size,
-        resolve: {
-          items: function () {
-            return $scope.days;
-          }
-        }
-      });
-
-      modalInstance.result.then(function (result) {
-        $scope.scheduleConfig.days = result;
-        $log.info($scope.scheduleConfig.days.toString());
-      }, function () {
-        $log.info('Modal dismissed at: ' + new Date());
-      });
     };
 
     $scope.onDropComplete = function(index, data/*, evt*/){
@@ -117,6 +96,29 @@ angular.module('sldApp')
       scheduleService.saveSchedule();
     };
 
+    $scope.open = function (size) {
+
+      var modalInstance = $modal.open({
+        templateUrl: 'dayConfigTemplate.html',
+        controller: 'ModalInstanceCtrl',
+        size: size,
+        resolve: {
+          items: function () {
+            return $scope.days;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (result) {
+        $scope.scheduleConfig.days = result;
+        $log.info($scope.scheduleConfig.days.toString());
+        scheduleService.setupSchedule();
+        scheduleService.saveSchedule();
+      }, function () {
+        $log.info('Modal dismissed at: ' + new Date());
+      });
+    };
+
   }).controller('ModalInstanceCtrl', function($scope, $modalInstance, items, scheduleService) {
 
     $scope.days = items;
@@ -133,7 +135,6 @@ angular.module('sldApp')
           result.push(i);
         }
       }
-      scheduleService.setupSchedule();
       $modalInstance.close(result);
     };
 
