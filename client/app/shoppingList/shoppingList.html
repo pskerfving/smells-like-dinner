@@ -2,9 +2,9 @@
 
     <div class="btn-toolbar">
         <div class="btn-group" data-toggles="buttons" ng-show="listMode == 'planning'">
-            <label class="btn btn-default" ng-click="setTimeframe(1)" ng-class="timeframe == 1 ? 'active' : ''">Idag</label>
-            <label class="btn btn-default" ng-click="setTimeframe(2)" ng-class="timeframe == 2 ? 'active' : ''">2 dagar</label>
-            <label class="btn btn-default" ng-click="setTimeframe(7)" ng-class="timeframe == 7 ? 'active' : ''">En vecka</label>
+            <label class="btn btn-default" ng-click="setTimeframe(1)" ng-class="config.nbrDays == 1 ? 'active' : ''">Idag</label>
+            <label class="btn btn-default" ng-click="setTimeframe(2)" ng-class="config.nbrDays == 2 ? 'active' : ''">2 dagar</label>
+            <label class="btn btn-default" ng-click="setTimeframe(7)" ng-class="config.nbrDays == 7 ? 'active' : ''">En vecka</label>
             <label class="btn btn-default" ng-click="setTimeframe(7)">...</label>
         </div>
         <div class="btn-group pull-right" data-toggles="buttons">

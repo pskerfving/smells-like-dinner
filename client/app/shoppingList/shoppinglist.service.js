@@ -64,6 +64,10 @@ angular.module('sldApp')
       }
     }
 
+    this.getConfig = function() {
+      return cache.config;
+    };
+
     $rootScope.$on('scheduleChanged', function() {
       console.log('SHOPPING LIST: schedule updated');
       upcomingScheduleService.calculateUpcoming().then(function() {
