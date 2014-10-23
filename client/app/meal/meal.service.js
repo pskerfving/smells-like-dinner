@@ -43,9 +43,11 @@ angular.module('sldApp')
     };
 
     this.deleteMeal = function(meal) {
-      var url = '/api/meals/' + meal._id;
-      var Meal = $resource(url);
-      Meal.delete(meal._id);
+      Meal.delete({ id: meal._id }, function() {
+        console.log('successfully deleted meal');
+      }, function (err) {
+        console.log('failed to delete meal: ', err);
+      });
     };
 
   });
