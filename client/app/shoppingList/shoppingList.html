@@ -13,7 +13,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div ng-class="listMode == 'planning' ? 'col-md-6' : 'col-md-12'">
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
                     ng-repeat="item in shoppingList"
@@ -29,6 +29,28 @@
                 </li>
             </ul>
             <div ingredient-box adder="addExtra"></div>
+        </div>
+        <div class="col-md-6" ng-hide="listMode != 'planning'" ng-controller="CategoryListCtrl">
+            <h2>Kategorier</h2>
+            <ul class="list-group top-buffer">
+                <li class="list-group-item clearfix"
+                    ng-repeat="cat in categories">
+                    {{cat.name}}
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-info" ng-click="removeCategory($index)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </span>
+                </li>
+            </ul>
+            <form name="newCategory">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-minlength="4" ng-model="newCategoryName" placeholder="Namn på ny ketegori">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" ng-disabled="newCategory.$invalid" ng-click="addCategory(newCategoryName)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                    </span>
+                </div><!-- /input-group -->
+            </form>
         </div>
     </div>
 

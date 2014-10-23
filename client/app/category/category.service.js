@@ -25,4 +25,23 @@ angular.module('sldApp')
       return deferred.promise;
     };
 
+    this.save = function(cat) {
+      console.log('saving new category: ', cat.name);
+      Category.save(cat, function(response) {
+        cat._id = response._id;
+      });
+    };
+
+    this.remove = function(cat) {
+      console.log('deleting category: ', cat.name);
+      Category.delete({id: cat._id}, function(response) {
+        // SUCESS
+        console.log('success!');
+
+      }, function() {
+        // FAILURE
+        console.log('failure!');
+
+      });
+    }
   });
