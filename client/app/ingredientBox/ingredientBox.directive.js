@@ -25,9 +25,12 @@ angular.module('sldApp')
         $scope.addItemBox = function() {
           // The user has entered a new item. Create a new ingredient and add to the list.
           console.log('Directive addItemBox() called! ' + $scope.newItemName);
-          var newItem = { name: $scope.newItemName };
+          var newItem = {
+            name: $scope.newItemName,
+            category_id: null
+          };
           ingredientService.createIngredient(newItem).then(function(result) {
-            // SUCESS!
+            // SUCCESS!
             newItem = result;
             newItem.ingredientid = result._id;
             $scope.ingredients.push(newItem);

@@ -39,7 +39,7 @@ exports.update = function(req, res) {
     if (err) { return handleError(res, err); }
     if(!meal) { return res.send(404); }
     var updated = _.merge(meal, req.body, function(a, b) {
-      return _.isArray(a) ? _.uniq(a.concat(b), function(c) {
+      return (_.isArray(a) && a.length > 0 && a[0].ingredientid) ? _.uniq(a.concat(b), function(c) {
         return c.ingredientid.toString();
       }) : undefined;
     });
