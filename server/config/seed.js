@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Meal = require('../api/meal/meal.model');
+var Category = require('../api/category/category.model');
 var Ingredient = require('../api/ingredient/ingredient.model');
 var Schedule = require('../api/schedule/schedule.model');
 var ShoppingList = require('../api/shoppinglist/shoppinglist.model');
@@ -108,46 +109,81 @@ Meal.find({}).remove(function() {
   }], function() { console.log('done inserting meals'); });
 });
 
+var vegetablesId = new ObjectId('542cdc4990ef693cb0083a37');
+var meatId = new ObjectId('542cdc4990ef693cb0083a38');
+var spicesId = new ObjectId('542cdc4990ef693cb0083a39');
+var froozenId = new ObjectId('542cdc4990ef693cb0083a40');
+
+Category.find({}).remove(function() {
+  Category.create({
+    _id: vegetablesId,
+    name: "Grönsaker"
+  }, {
+    _id: meatId,
+    name: "Kött"
+  }, {
+    _id: spicesId,
+      name: "Kryddor"
+  }, {
+    _id: froozenId,
+    name: "Frysvaror"
+  });
+});
+
+
 Ingredient.find({}).remove(function() {
   Ingredient.create({
     _id: groundBeefId,
-    name: "Köttfärs"
+    name: "Köttfärs",
+    category_id: meatId
   }, {
     _id: crushedTomatoesId,
-    name: "Krossade Tomater"
+    name: "Krossade Tomater",
+    category_id: null
   }, {
     _id: beefId,
-    name: "Högrev"
+    name: "Högrev",
+    category_id: meatId
   }, {
     _id: ketchupId,
-    name: "Tomatketchup"
+    name: "Tomatketchup",
+    category_id: null
   }, {
     _id: mustardId,
-    name: "Dijonsenap"
+    name: "Dijonsenap",
+    category_id: null
   }, {
     _id: spaghettiId,
-    name: "Spaghetti"
+    name: "Spaghetti",
+    category_id: null
   }, {
     _id: limaBeansId,
-    name: "Lima bönor"
+    name: "Lima bönor",
+    category_id: null
   }, {
     _id: redChiliId,
-    name: "Röd Chili"
+    name: "Röd Chili",
+    category_id: vegetablesId
   }, {
     _id: fishFingersId,
-    name: "Röd Chili"
+    name: "Fiskpinnar",
+    category_id: froozenId
   }, {
     _id: potatoesId,
-    name: "Röd Chili"
+    name: "Potatis",
+    category_id: vegetablesId
   }, {
     _id: nutmegId,
-    name: "Muskotnöt"
+    name: "Muskotnöt",
+    category_id: spicesId
   }, {
     _id: parsleyId,
-    name: "Persilja"
+    name: "Persilja",
+    category_id: vegetablesId
   }, {
     _id: grassUnionId,
-    name: "Gräslök"
+    name: "Gräslök",
+    category_id: vegetablesId
   });
 });
 
