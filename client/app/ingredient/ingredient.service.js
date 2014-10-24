@@ -6,7 +6,7 @@ angular.module('sldApp')
 
     var cache;
     var categories;
-    var Ingredient = $resource('/api/ingredients/:id', { id: '@_id' } );
+    var Ingredient = $resource('/api/ingredients/:id', { id: '@_id' }, { update: { method:'PUT' } });
     var deferred;
 
     this.loadIngredients = function() {
@@ -44,8 +44,18 @@ angular.module('sldApp')
       return deferred.promise;
     };
 
-    this.updateIngredient = function() {
-
+    this.updateIngredient = function(ingredient) {
+      var deferred = $q.defer();
+      Ingredient.update(ingredient, function(response) {
+        // SUCCESS
+        ingredient._id = response._id;
+        deferred.resolve(ingredient);
+        console.log('saved ingredient to DB successfully.');
+      }, function(errResponse) {
+        //FAILURE
+        console.log('saving ingredient to DB: ', errResponse);
+      });
+      return deferred.promise;
     };
 
   });

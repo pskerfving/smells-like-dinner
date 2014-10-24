@@ -42,4 +42,14 @@ angular.module('sldApp')
       $scope.config.nbrDays = nbrDays;
       shoppingListService.setNbrDays(nbrDays);
     };
+
+    $scope.onDropComplete = function(index, data) {
+      // Drop is only applicable for ingredients, not entire meals. This should never happen.
+      if (!$scope.shoppingList[index].meal) {
+        var ingredient = $scope.shoppingList[index].ingredient;
+        ingredient.category_id = data._id;
+        ingredient.category = data;
+        ingredientService.updateIngredient(ingredient);
+      }
+    }
   });

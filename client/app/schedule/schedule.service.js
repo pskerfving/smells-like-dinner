@@ -103,7 +103,6 @@ angular.module('sldApp')
 
     function findToday() {
       // Return todays meal.
-//      var latest = cache.days[0];
       var latestIndex = -1;
       if (!cache) { return; }
       for (var i = 0; i < cache.days.length; i++) {
@@ -121,7 +120,9 @@ angular.module('sldApp')
       }
       // Use the latest timestamp to find todays meal.
       if (latestIndex > -1) {
-        var diff = Math.floor((new Date() - new Date(cache.days[latestIndex].date))/(1000*3600*24));
+        // TODO: This will not work if the user has not been logged on for more than a week. Maybe not so interested then?
+        var diff = (new Date().getDay() - new Date(cache.days[latestIndex].date).getDay());
+//        var diff = Math.round((new Date() - new Date(cache.days[latestIndex].date))/(1000*3600*24));
         latestIndex = (latestIndex + diff) % cache.config.nbrDays;
       }
       else {

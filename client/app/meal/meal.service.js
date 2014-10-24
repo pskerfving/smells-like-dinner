@@ -32,12 +32,10 @@ angular.module('sldApp')
     };
 
     this.updateMeal = function(meal) {
-      console.log('Meal to update: ', meal);
       Meal.update(meal, function() {
-        console.log('Meal updated on server');
-        console.log('Meal to update: ', meal);
+        // SUCCESS
       }, function() {
-        console.log('Failed to update meal on server');
+        //FAILURE
       });
       $rootScope.$broadcast('mealUpdated', meal);
     };

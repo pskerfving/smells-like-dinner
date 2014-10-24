@@ -18,7 +18,8 @@
                 <li class="list-group-item clearfix"
                     ng-repeat="item in shoppingList"
                     ng-class="{'removed': item.removed, 'meal': item.meal, 'picked': listMode != 'planning' && item.picked}"
-                    ng-hide="(listMode != 'planning') && item.removed">
+                    ng-hide="(listMode != 'planning') && item.removed"
+                    ng-drop="!item.meal" ng-drop-success="onDropComplete($index, $data, $event)">
                     {{item.ingredient ? item.ingredient.name : item.meal.name}}
                     <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">
@@ -35,7 +36,7 @@
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
                     ng-repeat="cat in categories">
-                    {{cat.name}}
+                    <span ng-drag="true" ng-drag-data="cat">{{cat.name}}</span>
                         <span class="pull-right">
                             <button class="btn btn-xs btn-info" ng-click="removeCategory($index)">
                                 <span class="glyphicon glyphicon-remove"></span>
