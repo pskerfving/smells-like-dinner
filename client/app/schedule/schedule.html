@@ -24,6 +24,10 @@
                     </div>
                 </script>
                 <label class="btn btn-default" ng-click="open('sm')">...</label>
+                <div class="btn-group pull-right" data-toggles="buttons">
+                    <label class="btn btn-default" ng-class="{ 'active': setTodayMode}" ng-click="setTodayMode = !setTodayMode">Sätt idag</label>
+                </div>
+
             </div>
             <ul class="list-group schedule-list top-buffer">
                 <li class="list-group-item clearfix"
@@ -33,7 +37,12 @@
                     <div>
                         <span>{{days[(day.day - 1) % 7].abbr}} - </span>
                         <span ng-drag="true" ng-drag-data="day">{{day.meal.name}}</span>
-                    <span class="pull-right" ng-if="day.scheduled">
+                    <span class="pull-right" ng-if="setTodayMode" ng-click="setToday($index)">
+                        <button class="btn btn-xs btn-info" ng-if="setTodayMode" ng-click="setToday($index)">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </span>
+                    <span class="pull-right" ng-if="!setTodayMode && day.scheduled">
                         <button class="btn btn-xs btn-info" ng-click="clearScheduleDay($index)">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
@@ -41,7 +50,7 @@
                             <span class="glyphicon glyphicon-minus"></span>
                         </button>
                     </span>
-                    <span class="pull-right" ng-if="!day.scheduled">
+                    <span class="pull-right" ng-if="!setTodayMode && !day.scheduled">
                         <button class="btn btn-xs btn-info" ng-click="addDayToSchedule($index)">
                             <span class="glyphicon glyphicon-plus"></span>
                         </button>
@@ -66,9 +75,6 @@
                         ng-repeat="meal in filtered = (meals | filter:filterStr | limitTo:10)">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
                         <span class="pull-right">
-                            <button class="btn btn-xs btn-info" ng-click="editMeal($index)">
-                                <span class="glyphicon glyphicon-edit"></span>
-                            </button>
                             <button class="btn btn-xs btn-info" ng-click="deleteMeal($index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>

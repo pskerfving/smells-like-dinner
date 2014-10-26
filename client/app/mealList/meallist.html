@@ -16,9 +16,6 @@
                     <li class="list-group-item clearfix" ng-repeat="meal in col">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
                         <span class="pull-right">
-                            <button class="btn btn-xs btn-info" ng-click="editMeal($index)">
-                                <span class="glyphicon glyphicon-edit"></span>
-                            </button>
                             <button class="btn btn-xs btn-info" ng-click="deleteColMeal($parent.$index, $index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
