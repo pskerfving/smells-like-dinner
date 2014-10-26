@@ -20,5 +20,5 @@ angular.module('sldApp')
       var remCat = $scope.categories[index];
       $scope.categories.splice(index, 1);
       categoryService.remove(remCat);
-    }
+    };
   });

@@ -51,5 +51,5 @@ angular.module('sldApp')
         ingredient.category = data;
         ingredientService.updateIngredient(ingredient);
       }
-    }
+    };
   });

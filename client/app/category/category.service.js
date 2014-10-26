@@ -36,12 +36,12 @@ angular.module('sldApp')
       console.log('deleting category: ', cat.name);
       Category.delete({id: cat._id}, function(response) {
         // SUCESS
-        console.log('success!');
+        console.log('success!', response);
 
-      }, function() {
+      }, function(err) {
         // FAILURE
-        console.log('failure!');
+        console.log('failure!', err);
 
       });
-    }
+    };
   });
