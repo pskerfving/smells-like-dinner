@@ -19,6 +19,7 @@ angular.module('sldApp')
       $q.all([mealService.loadMeals(), this.loadScheduleFromDB()])
         .then(function (value) {
           // SUCCESS! Do the mapping between days and meals
+          console.log('schedule loaded : ', value[1].days.length);
           var m = value[0]; // list of meals
           var s = value[1].days; // days in schedule
           for (var i = 0; i < s.length; i++) {
@@ -123,6 +124,7 @@ angular.module('sldApp')
         // TODO: This will not work if the user has not been logged on for more than a week. Maybe not so interested then?
         var diff = (new Date().getDay() - new Date(cache.days[latestIndex].date).getDay());
 //        var diff = Math.round((new Date() - new Date(cache.days[latestIndex].date))/(1000*3600*24));
+        if (diff < 0) { diff += 7; }
         latestIndex = (latestIndex + diff) % cache.config.nbrDays;
       }
       else {
