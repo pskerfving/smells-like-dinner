@@ -30,17 +30,26 @@ exports.create = function(req, res) {
 
 // Updates an existing shoppinglist in the DB.
 exports.update = function(req, res) {
+  console.log('request: ', req.body);
   if(req.body._id) { delete req.body._id; }
   Shoppinglist.findById(req.params.id, function (err, shoppinglist) {
     if (err) { return handleError(res, err); }
     if(!shoppinglist) { return res.send(404); }
     var updated = _.merge(shoppinglist, req.body, function(a, b) {
-      return _.isArray(a) ? _.uniq(a.concat(b), function(c) {
-        if (c.ingredientid) return c.ingredientid.toString();
-        else return c.name;
-      }) : undefined;
+      if (_.isArray(a)) {
+        if (a.length > b.length) {
+          // Something was removed, use what came from the client.
+          return b;
+        } else {
+          return _.uniq(a.concat(b), function(c) {
+            if (c.ingredientid) return c.ingredientid.toString();
+            else return c.name;
+          });
+        }
+      }
+      return undefined;
     });
-    console.log(updated);
+    console.log('updated: ', updated);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, shoppinglist);
