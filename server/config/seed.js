@@ -89,7 +89,7 @@ Meal.find({}).remove(function() {
     name: 'Chili con carne',
     ingredients: [
       { _id: limaBeansId, ingredientid: limaBeansId, name: 'Limabönor' },
-      { _id: beefId, ingredientId: beefId, name: 'Högrev' },
+      { _id: beefId, ingredientid: beefId, name: 'Högrev' },
       { _id: redChiliId, ingredientid: redChiliId, name: 'Röd chili' },
       { _id: nutmegId, ingredientid: nutmegId, name: 'Muskotnöt' } ],
     sides: [ { name: 'Bostongurka' }]
