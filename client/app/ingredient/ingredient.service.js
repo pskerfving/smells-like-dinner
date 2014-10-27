@@ -21,6 +21,7 @@ angular.module('sldApp')
           // SUCESS
           cache = value[0];
           categories = value[1];
+          mapToCategories(cache, categories);
           deferred.resolve(cache);
         }, function(err) {
           // FAILURE
@@ -33,6 +34,20 @@ angular.module('sldApp')
 
       return load();
     };
+
+    function mapToCategories(is, cs) {
+      for (var i = 0; i < is.length; i++) {
+        if (is[i]) {
+          for (var j = 0; j < cs.length; j++) {
+            if (is[i].category_id === cs[j]._id) {
+              is[i].category = cs[j];
+              break;
+            }
+          }
+        }
+      }
+
+    }
 
     this.createIngredient = function(ingredient) {
       var deferred = $q.defer();

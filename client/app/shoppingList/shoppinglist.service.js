@@ -132,7 +132,7 @@ angular.module('sldApp')
               if (!item) {
                 // Does not exist, add.
                 newItem = {
-                  ingredient: upcoming[i].meal.ingredients[j],
+                  ingredient: upcoming[i].meal.ingredients[j].ingredient,
                   meals: [ upcoming[i].meal ],
                   meal: null,
                   removed: isRemoved(upcoming[i].meal.ingredients[j]._id),

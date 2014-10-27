@@ -23,6 +23,9 @@
                     {{item.ingredient ? item.ingredient.name : item.meal.name}}
                     <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">
+                        <button class="btn btn-xs btn-info" ng-if="item.ingredient && item.ingredient.category">
+                            {{item.ingredient.category.name}}
+                        </button>
                         <button class="btn btn-xs btn-info" ng-click="mainClkAction($index)">
                             <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
                         </button>
