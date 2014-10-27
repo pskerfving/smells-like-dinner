@@ -81,25 +81,25 @@ Meal.find({}).remove(function() {
     _id: meal_id1,
     name: 'Nitad gris',
     ingredients: [
-      { _id: groundBeefId, ingredientid: groundBeefId, name: "Nötfärs", amount: 3 },
-      { _id: crushedTomatoesId, ingredientid: crushedTomatoesId, name: "Krossade tomater", amount: 2 } ],
+      { ingredientid: groundBeefId, amount: 3 },
+      { ingredientid: crushedTomatoesId, amount: 2 } ],
     sides: []
   }, {
     _id: meal_id2,
     name: 'Chili con carne',
     ingredients: [
-      { _id: limaBeansId, ingredientid: limaBeansId, name: 'Limabönor' },
-      { _id: beefId, ingredientid: beefId, name: 'Högrev' },
-      { _id: redChiliId, ingredientid: redChiliId, name: 'Röd chili' },
-      { _id: nutmegId, ingredientid: nutmegId, name: 'Muskotnöt' } ],
+      { ingredientid: limaBeansId },
+      { ingredientid: beefId },
+      { ingredientid: redChiliId },
+      { ingredientid: nutmegId } ],
     sides: [ { name: 'Bostongurka' }]
   }, {
     _id: meal_id3,
     name: 'Fis på en pinne',
     ingredients: [
-      { _id: fishFingersId, ingredientid: fishFingersId, name: 'Fiskpinnar' },
-      { _id: potatoesId, ingredientid: potatoesId, name: 'Potatis' },
-      { _id: nutmegId, ingredientid: nutmegId, name: 'Muskotnöt' } ],
+      { ingredientid: fishFingersId },
+      { ingredientid: potatoesId },
+      { ingredientid: nutmegId } ],
     sides: [ { name: 'Morötter' }, { name: 'Remoulade'} ]
   }, {
     _id: meal_id4,

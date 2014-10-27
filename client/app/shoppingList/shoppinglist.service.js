@@ -128,17 +128,17 @@ angular.module('sldApp')
             // Loop over ingredients
             for (var j = 0; j < upcoming[i].meal.ingredients.length; j++) {
               // Does ingredient already exist?
-              var item = items[upcoming[i].meal.ingredients[j]._id];
+              var item = items[upcoming[i].meal.ingredients[j].ingredientid];
               if (!item) {
                 // Does not exist, add.
                 newItem = {
                   ingredient: upcoming[i].meal.ingredients[j].ingredient,
                   meals: [ upcoming[i].meal ],
                   meal: null,
-                  removed: isRemoved(upcoming[i].meal.ingredients[j]._id),
-                  picked: isPicked(upcoming[i].meal.ingredients[j]._id)
+                  removed: isRemoved(upcoming[i].meal.ingredients[j].ingredientid),
+                  picked: isPicked(upcoming[i].meal.ingredients[j].ingredientid)
                 };
-                items[upcoming[i].meal.ingredients[j]._id] = newItem;
+                items[upcoming[i].meal.ingredients[j].ingredientid] = newItem;
                 sList.push(newItem);
               } else {
                 // Already exists, add to the meal list.

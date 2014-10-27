@@ -7,7 +7,7 @@
                 ng-repeat="ingredient in meal.ingredients"
                 ng-drop="true" ng-drop-success="onDropComplete($index, $data,$event)">
                 <div>
-                    <span ng-drag="true" ng-drag-data="day">{{ingredient.name}}</span>
+                    <span ng-drag="true" ng-drag-data="day">{{ingredient.ingredient.name}}</span>
             <span class="pull-right">
                 <button class="btn btn-xs btn-info" ng-click="removeIngredient($index)">
                     <span class="glyphicon glyphicon-remove"></span>
