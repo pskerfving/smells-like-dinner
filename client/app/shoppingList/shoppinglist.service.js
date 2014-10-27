@@ -165,7 +165,8 @@ angular.module('sldApp')
           ingredient: cache.extras[i].ingredient,
           meals: [],
           meal: null,
-          removed: false
+          removed: false,
+          picked: isPicked(cache.extras[i].ingredient._id)
         });
       }
       return sList;
