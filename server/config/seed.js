@@ -82,8 +82,7 @@ Meal.find({}).remove(function() {
     name: 'Nitad gris',
     ingredients: [
       { ingredientid: groundBeefId, amount: 3 },
-      { ingredientid: crushedTomatoesId, amount: 2 } ],
-    sides: []
+      { ingredientid: crushedTomatoesId, amount: 2 } ]
   }, {
     _id: meal_id2,
     name: 'Chili con carne',
@@ -91,21 +90,18 @@ Meal.find({}).remove(function() {
       { ingredientid: limaBeansId },
       { ingredientid: beefId },
       { ingredientid: redChiliId },
-      { ingredientid: nutmegId } ],
-    sides: [ { name: 'Bostongurka' }]
+      { ingredientid: nutmegId } ]
   }, {
     _id: meal_id3,
     name: 'Fis på en pinne',
     ingredients: [
       { ingredientid: fishFingersId },
       { ingredientid: potatoesId },
-      { ingredientid: nutmegId } ],
-    sides: [ { name: 'Morötter' }, { name: 'Remoulade'} ]
+      { ingredientid: nutmegId } ]
   }, {
     _id: meal_id4,
     name: 'Klistergröt',
-    ingredients: [],
-    sides: []
+    ingredients: []
   }], function() { console.log('done inserting meals'); });
 });
 

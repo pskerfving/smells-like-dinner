@@ -47,20 +47,6 @@ angular.module('sldApp')
       $scope.editMeal = false;
       mealService.updateMeal($scope.meal);
     };
-
-    $scope.addSide = function(newSide) {
-      if (!$scope.meal.sides) {
-        $scope.meal.sides = [];
-      }
-      $scope.meal.sides.push(newSide);
-      mealService.updateMeal($scope.meal);
-    };
-
-    $scope.removeSide = function(index) {
-      $scope.meal.sides.splice(index, 1);
-      mealService.updateMeal($scope.meal);
-    };
-
   })
   .factory('SelectedMealService', function($rootScope) {
     var selectedMeal = {};

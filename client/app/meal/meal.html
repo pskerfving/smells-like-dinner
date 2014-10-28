@@ -17,21 +17,5 @@
             </li>
         </ul>
         <div ingredient-box adder="addIngredient"></div>
-
-        <h4>Tillbehör</h4>
-        <ul class="list-group">
-            <li class="list-group-item clearfix"
-                ng-repeat="side in meal.sides">
-                <div>
-                    <span>{{side.name}}</span>
-            <span class="pull-right">
-                <button class="btn btn-xs btn-info" ng-click="removeSide($index)">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </button>
-            </span>
-                </div>
-            </li>
-        </ul>
-        <div ingredient-box adder="addSide"></div>
     </div>
 </div>

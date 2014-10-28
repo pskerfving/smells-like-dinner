@@ -36,7 +36,6 @@ angular.module('sldApp')
     function mapToIngredients(ms, is) {
       for (var i = 0; i < ms.length; i++) {
         var mis = ms[i].ingredients;
-//        var mes = ms[i].extras;
         for (var j = 0; j < mis.length; j++) {
           for (var k = 0; k < is.length; k++) {
             if (mis[j].ingredientid === is[k]._id) {
