@@ -16,7 +16,7 @@
         <div ng-class="listMode == 'planning' ? 'col-md-6' : 'col-md-12'">
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="item in shoppingList | orderBy:'ingredient.category.name'"
+                    ng-repeat="item in shoppingList | orderBy:'ingredient.category.rank'"
                     ng-class="{'removed': item.removed, 'meal': item.meal, 'picked': listMode != 'planning' && item.picked}"
                     ng-hide="(listMode != 'planning') && item.removed"
                     ng-drop="!item.meal" ng-drop-success="onDropComplete(item, $data, $event)">
@@ -38,7 +38,8 @@
             <h2>Kategorier</h2>
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="cat in categories">
+                    ng-repeat="cat in categories | orderBy:'rank'"
+                    ng-drop="true" ng-drop-success="onDropOnCategory(cat, $data)">
                     <span ng-drag="true" ng-drag-data="cat">{{cat.name}}</span>
                         <span class="pull-right">
                             <button class="btn btn-xs btn-info" ng-click="removeCategory($index)">

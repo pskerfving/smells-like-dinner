@@ -5,7 +5,7 @@ angular.module('sldApp')
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;
-    var Category = $resource('/api/categories/:id', { id: '@_id' } );
+    var Category = $resource('/api/categories/:id', { id: '@_id' }, { update: { method:'PUT' } });
     var deferred;
 
     this.load = function() {
@@ -26,10 +26,24 @@ angular.module('sldApp')
     };
 
     this.save = function(cat) {
-      console.log('saving new category: ', cat.name);
+      console.log('saving category: ', cat.name);
       Category.save(cat, function(response) {
         cat._id = response._id;
       });
+    };
+
+    this.update = function(cat) {
+      var deferred = $q.defer();
+      Category.update(cat, function(response) {
+        // SUCCESS
+        cat._id = response._id;
+        deferred.resolve(cat);
+        console.log('saved category to DB successfully.');
+      }, function(errResponse) {
+        //FAILURE
+        console.log('failure saving category to DB: ', errResponse);
+      });
+      return deferred.promise;
     };
 
     this.remove = function(cat) {

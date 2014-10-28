@@ -109,20 +109,34 @@ var vegetablesId = new ObjectId('542cdc4990ef693cb0083a37');
 var meatId = new ObjectId('542cdc4990ef693cb0083a38');
 var spicesId = new ObjectId('542cdc4990ef693cb0083a39');
 var froozenId = new ObjectId('542cdc4990ef693cb0083a40');
+var dryId = new ObjectId('542cdc4990ef693cb0083a41');
+var waterId = new ObjectId('542cdc4990ef693cb0083a42');
 
 Category.find({}).remove(function() {
   Category.create({
     _id: vegetablesId,
-    name: "Grönsaker"
+    name: "Grönsaker",
+    rank: 1
   }, {
     _id: meatId,
-    name: "Kött"
+    name: "Kött",
+    rank: 2
   }, {
     _id: spicesId,
-      name: "Kryddor"
+      name: "Kryddor",
+    rank: 3
   }, {
     _id: froozenId,
-    name: "Frysvaror"
+    name: "Frysvaror",
+    rank: 4
+  }, {
+    _id: dryId,
+    name: "Torrvaror",
+    rank: 5
+  }, {
+    _id: waterId,
+    name: "Vatten och dricka",
+    rank: 6
   });
 });
 
