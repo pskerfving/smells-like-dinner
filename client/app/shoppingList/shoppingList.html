@@ -16,17 +16,17 @@
         <div ng-class="listMode == 'planning' ? 'col-md-6' : 'col-md-12'">
             <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="item in shoppingList"
+                    ng-repeat="item in shoppingList | orderBy:'ingredient.category.name'"
                     ng-class="{'removed': item.removed, 'meal': item.meal, 'picked': listMode != 'planning' && item.picked}"
                     ng-hide="(listMode != 'planning') && item.removed"
-                    ng-drop="!item.meal" ng-drop-success="onDropComplete($index, $data, $event)">
+                    ng-drop="!item.meal" ng-drop-success="onDropComplete(item, $data, $event)">
                     {{item.ingredient ? item.ingredient.name : item.meal.name}}
                     <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">
                         <button class="btn btn-xs btn-info" ng-if="item.ingredient && item.ingredient.category">
                             {{item.ingredient.category.name}}
                         </button>
-                        <button class="btn btn-xs btn-info" ng-click="mainClkAction($index)">
+                        <button class="btn btn-xs btn-info" ng-click="mainClkAction(item)">
                             <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
                         </button>
                     </span>

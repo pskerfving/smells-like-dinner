@@ -19,13 +19,13 @@ angular.module('sldApp')
       $scope.listMode = ($scope.listMode === 'planning' ? 'picking' : 'planning');
     };
 
-    $scope.mainClkAction = function(index) {
+    $scope.mainClkAction = function(item) {
       if ($scope.listMode === 'planning') {
-        $scope.shoppingList[index].removed = !$scope.shoppingList[index].removed;
-        shoppingListService.updateRemoved($scope.shoppingList[index]);
+        item.removed = !item.removed;
+        shoppingListService.updateRemoved(item);
       } else {
-        $scope.shoppingList[index].picked = !$scope.shoppingList[index].picked;
-        shoppingListService.updatePicked($scope.shoppingList[index]);
+        item.picked = !item.picked;
+        shoppingListService.updatePicked(item);
       }
     };
 
@@ -43,10 +43,10 @@ angular.module('sldApp')
       shoppingListService.setNbrDays(nbrDays);
     };
 
-    $scope.onDropComplete = function(index, data) {
+    $scope.onDropComplete = function(item, data) {
       // Drop is only applicable for ingredients, not entire meals. This should never happen.
-      if (!$scope.shoppingList[index].meal) {
-        var ingredient = $scope.shoppingList[index].ingredient;
+      if (!item.meal) {
+        var ingredient = item.ingredient;
         ingredient.category_id = data._id;
         ingredient.category = data;
         ingredientService.updateIngredient(ingredient);
