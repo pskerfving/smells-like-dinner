@@ -43,6 +43,10 @@ angular.module('sldApp')
       shoppingListService.setNbrDays(nbrDays);
     };
 
+    $scope.clearShoppingList = function() {
+      shoppingListService.clearShoppingList();
+    };
+
     $scope.onDropComplete = function(item, data) {
       // Drop is only applicable for ingredients, not entire meals. This should never happen.
       if (!item.meal) {

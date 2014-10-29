@@ -175,7 +175,8 @@ angular.module('sldApp')
     this.addExtra = function(arg) {
       // Find the
       var newItem = {
-        ingredient: arg,
+        ingredient: arg.ingredient,
+        ingredientid: arg.ingredient._id,
         meals:[],
         meal: null,
         removed: false,
@@ -230,6 +231,14 @@ angular.module('sldApp')
         }
       }
       this.updateShoppingList();
+    };
+
+    this.clearShoppingList = function() {
+      cache.removed = [];
+      cache.picked = [];
+      cache.extras = [];
+      this.updateShoppingList();
+      return collectShoppingList();
     };
 
     this.updateShoppingList = function() {

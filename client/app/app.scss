@@ -27,7 +27,7 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
 // endinjector
 
 [ng-drop].drag-enter{
-  background: darkgray;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .list-group-item {
