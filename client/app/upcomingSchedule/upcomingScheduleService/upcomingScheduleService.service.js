@@ -24,12 +24,14 @@ angular.module('sldApp')
 
     function upcomingFromSchedule(schedule) {
       var foundToday = false;
+      var todayIndex;
       var sl = schedule.length;
       var lim = sl;
       for (var i = 0; i < lim; i++) {
         var i2 = i % sl;
         if (!foundToday && schedule[i2].today) {
           foundToday = true;
+          todayIndex = i;
           lim = i + sl; // Move the end of the for loop forward to wrap around the end of the schedule.
         }
         if (foundToday && upcoming.length < 10 && schedule[i2].scheduled && schedule[i2].meal) {
@@ -37,6 +39,7 @@ angular.module('sldApp')
           if (m.meal) {
             m.meal.empty = (m.meal.ingredients.length === 0);
           }
+          m.daysUntil = i - todayIndex;  // How many days into the future is this meal?
           upcoming.push(m);
         }
       }

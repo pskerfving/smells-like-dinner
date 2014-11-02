@@ -123,7 +123,7 @@ angular.module('sldApp')
       var items = {};
       emptyShoppingList();
       for (var i = 0; i < upcoming.length; i++) {
-        if (nbrDays > 0) {
+        if (upcoming[i].daysUntil <  nbrDays) {
           if (upcoming[i].meal.ingredients.length > 0) {
             // Loop over ingredients
             for (var j = 0; j < upcoming[i].meal.ingredients.length; j++) {
@@ -153,7 +153,6 @@ angular.module('sldApp')
               meals: []
             });
           }
-          nbrDays--;
         } else {
           break;
         }
