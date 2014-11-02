@@ -42,7 +42,7 @@
                     ng-drop="true" ng-drop-success="onDropOnCategory(cat, $data)">
                     <span ng-drag="true" ng-drag-data="cat">{{cat.name}}</span>
                         <span class="pull-right">
-                            <button class="btn btn-xs btn-info" ng-click="removeCategory($index)">
+                            <button class="btn btn-xs btn-info" ng-click="removeCategory(cat)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </span>

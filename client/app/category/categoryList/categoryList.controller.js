@@ -20,10 +20,9 @@ angular.module('sldApp')
       categoryService.save(newCat);
     };
 
-    $scope.removeCategory = function(index) {
-      var remCat = $scope.categories[index];
-      $scope.categories.splice(index, 1);
-      categoryService.remove(remCat);
+    $scope.removeCategory = function(cat) {
+      $scope.categories.splice($scope.categories.indexOf(cat), 1);
+      categoryService.remove(cat);
     };
 
     $scope.onDropOnCategory = function(catTarget, catDropped) {
