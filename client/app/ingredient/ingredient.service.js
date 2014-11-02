@@ -10,29 +10,23 @@ angular.module('sldApp')
     var deferred;
 
     this.loadIngredients = function() {
-
-      function load() {
-
-        if (deferred) { return deferred.promise; }
-        deferred = $q.defer();
-        $q.all(
-          [ Ingredient.query(), categoryService.load() ]
-        ).then(function(value) {
-          // SUCESS
-          cache = value[0];
-          categories = value[1];
-          mapToCategories(cache, categories);
-          deferred.resolve(cache);
-        }, function(err) {
-          // FAILURE
-          console.log('something went wrong fetching ingredients. ', err);
-          // TODO. Something is wrong with the error handling further up the line.
-          deferred.reject();
-        });
-        return deferred.promise;
-      }
-
-      return load();
+      if (deferred) { return deferred.promise; }
+      deferred = $q.defer();
+      $q.all(
+        [ Ingredient.query(), categoryService.load() ]
+      ).then(function(value) {
+        // SUCESS
+        cache = value[0];
+        categories = value[1];
+        mapToCategories(cache, categories);
+        deferred.resolve(cache);
+      }, function(err) {
+        // FAILURE
+        console.log('something went wrong fetching ingredients. ', err);
+        // TODO. Something is wrong with the error handling further up the line.
+        deferred.reject();
+      });
+      return deferred.promise;
     };
 
     function mapToCategories(is, cs) {
