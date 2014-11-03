@@ -11,6 +11,7 @@
     </div>
     <div class="row top-buffer">
         <div class="row">
+            <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
             <div class="col-md-4" ng-repeat="col in meals | columnize:nbrCol | orderBy:name">
                 <ul class="list-group">
                     <li class="list-group-item clearfix" ng-repeat="meal in col">

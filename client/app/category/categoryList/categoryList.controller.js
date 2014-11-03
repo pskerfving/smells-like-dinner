@@ -2,8 +2,12 @@
 
 angular.module('sldApp')
   .controller('CategoryListCtrl', function ($scope, categoryService) {
+
+    $scope.loading = true;
+
     categoryService.load().then(function (value) {
       // SUCCESS
+      $scope.loading = false;
       $scope.categories = value;
     }, function () {
       // FAILURE

@@ -3,9 +3,11 @@
 angular.module('sldApp')
   .controller('ScheduleCtrl', function ($scope, $modal, $log, $q, scheduleService) {
 
+    $scope.loading = true;
+
     scheduleService.loadSchedule().then(function(value) {
         // Success!
-
+        $scope.loading = false;
         $scope.schedule = value;
         $scope.scheduleConfig = value.config;
         $scope.days = [

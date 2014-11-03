@@ -189,6 +189,7 @@ angular.module('sldApp')
     function isRemoved(id) {
       for (var i = 0; i < cache.removed.length; i++) {
         if (cache.removed[i].ingredientid === id) {
+          console.log('removal detected');
           return true;
         }
       }

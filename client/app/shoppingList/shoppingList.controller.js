@@ -3,6 +3,7 @@
 angular.module('sldApp')
   .controller('ShoppingListCtrl', function ($scope, $q, scheduleService, ingredientService, mealService, shoppingListService) {
 
+    $scope.loading = true;
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
     $scope.listMode = 'planning';
 
@@ -10,6 +11,7 @@ angular.module('sldApp')
       ingredientService.loadIngredients(), shoppingListService.loadShoppingList()
     ]).then(function(value) {
       // Success!
+      $scope.loading = false;
       $scope.ingredients = value[0];
       $scope.shoppingList = value[1];
       $scope.config = shoppingListService.getConfig();

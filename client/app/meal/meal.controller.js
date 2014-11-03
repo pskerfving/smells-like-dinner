@@ -3,9 +3,12 @@
 angular.module('sldApp')
   .controller('MealCtrl', function ($scope, $routeParams, mealService, SelectedMealService) {
 
+    $scope.loading = true;
+
     mealService.loadMeals().then(function(value) {
       // Success!
       $scope.meals = value;
+      $scope.loading = false;
 
       for (var i = 0; i < $scope.meals.length; i++) {
         if ($scope.meals[i]._id === $routeParams.mealId) {

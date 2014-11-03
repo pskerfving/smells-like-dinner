@@ -3,10 +3,13 @@
 angular.module('sldApp')
   .controller('MealListCtrl', function ($scope, $location, mealService) {
 
+    $scope.loading = true;
+
     mealService.loadMeals().then(function(value) {
       // Success!
       $scope.meals = value;
       $scope.nbrCol = 3;
+      $scope.loading = false;
     });
 
     $scope.addMeal = function(newMealTitle) {
