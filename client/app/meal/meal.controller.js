@@ -41,7 +41,8 @@ angular.module('sldApp')
       mealService.updateMeal($scope.meal);
     };
 
-    $scope.removeIngredient = function(index) {
+    $scope.removeIngredient = function(ingredient) {
+      var index = $scope.meal.ingredients.indexOf(ingredient);
       $scope.meal.ingredients.splice(index, 1);
       mealService.updateMeal($scope.meal);
     };

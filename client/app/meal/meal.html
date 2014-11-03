@@ -6,11 +6,11 @@
         <ul class="list-group">
             <li class="list-group-item clearfix"
                 ng-repeat="ingredient in meal.ingredients"
-                ng-drop="true" ng-drop-success="onDropComplete($index, $data, $event)">
+                ng-drop="true" ng-drop-success="onDropComplete(ingredient, $data, $event)">
                 <div>
                     <span ng-drag="true" ng-drag-data="day">{{ingredient.ingredient.name}}</span>
             <span class="pull-right">
-                <button class="btn btn-xs btn-info" ng-click="removeIngredient($index)">
+                <button class="btn btn-xs btn-info" ng-click="removeIngredient(ingredient)">
                     <span class="glyphicon glyphicon-remove"></span>
                 </button>
             </span>
