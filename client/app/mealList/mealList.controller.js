@@ -25,8 +25,9 @@ angular.module('sldApp')
       $scope.newMealTitle = ''; // Removes the name from the input field.
     };
 
-    $scope.deleteMeal = function(index) {
-      mealService.deleteMeal($scope.meals[index]);
+    $scope.deleteMeal = function(meal) {
+      var index = $scope.meals.indexOf(meal);
+      mealService.deleteMeal(meal);
       $scope.meals.splice(index, 1);
     };
 

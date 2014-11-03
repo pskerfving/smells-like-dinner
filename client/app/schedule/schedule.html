@@ -77,7 +77,7 @@
                         ng-repeat="meal in filtered = (meals | filter:filterStr | limitTo:10)">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
                         <span class="pull-right">
-                            <button class="btn btn-xs btn-info" ng-click="deleteMeal($index)">
+                            <button class="btn btn-xs btn-info" ng-click="deleteMeal(meal)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                         </span>
