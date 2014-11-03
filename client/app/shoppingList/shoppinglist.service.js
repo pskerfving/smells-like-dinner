@@ -165,7 +165,8 @@ angular.module('sldApp')
           meals: [],
           meal: null,
           removed: false,
-          picked: isPicked(cache.extras[i].ingredient._id)
+          picked: isPicked(cache.extras[i].ingredient._id),
+          extra: true
         });
       }
       return sList;
@@ -189,7 +190,6 @@ angular.module('sldApp')
     function isRemoved(id) {
       for (var i = 0; i < cache.removed.length; i++) {
         if (cache.removed[i].ingredientid === id) {
-          console.log('removal detected');
           return true;
         }
       }
@@ -206,6 +206,13 @@ angular.module('sldApp')
     }
 
     this.updateRemoved = function(item) {
+      if (item.extra) {
+        for (var index = 0; index < cache.extras.length; index++) {
+          if (cache.extras[index].ingredientid === item.ingredient._id) { break; }
+        }
+        cache.extras.splice(index, 1);
+        sList.splice(sList.indexOf(item), 1);
+      }
       if (item.removed) {
         // Add to list
         cache.removed.push({ ingredientid: item.ingredient._id });
