@@ -249,13 +249,17 @@ angular.module('sldApp')
     };
 
     this.updateShoppingList = function() {
+      var deferred = $q.defer();
       ShoppingList.update(cache, function() {
         // SUCCESS
+        deferred.resolve(cache);
         console.log('ShoppingList saved successfully');
       }, function(err) {
         // FAILURE
+        deferred.reject(err);
         console.log(err);
       });
+      return deferred.promise;
     };
 
     this.setNbrDays = function(nbrDays) {

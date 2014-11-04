@@ -58,16 +58,19 @@ angular.module('sldApp')
     };
 
     this.saveSchedule = function() {
+      var deferred = $q.defer();
       console.log('saving schedule');
-      $rootScope.$broadcast('scheduleChanged');
-//      deferred = undefined;
       Schedule.update(cache, function() {
         // SUCCESS
+        $rootScope.$broadcast('scheduleChanged'); // Should this fire even if the save was not successfull?
+        deferred.resolve();
         console.log('Schedule saved successfully');
       }, function(err) {
         // FAILURE
+        deferred.reject();
         console.log(err);
       });
+      return deferred.promise;
     };
 
     this.changeScheduleNbrDays = function(nbrDays) {

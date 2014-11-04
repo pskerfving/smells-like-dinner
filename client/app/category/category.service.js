@@ -41,21 +41,24 @@ angular.module('sldApp')
         console.log('saved category to DB successfully.');
       }, function(errResponse) {
         //FAILURE
+        deferred.reject(errResponse);
         console.log('failure saving category to DB: ', errResponse);
       });
       return deferred.promise;
     };
 
     this.remove = function(cat) {
-      console.log('deleting category: ', cat.name);
+      var deferred = $q.defer();
       Category.delete({id: cat._id}, function(response) {
         // SUCESS
+        deferred.resolve();
         console.log('success!', response);
-
       }, function(err) {
         // FAILURE
+        deferred.reject(err);
         console.log('failure!', err);
 
       });
+      return deferred.promise;
     };
   });

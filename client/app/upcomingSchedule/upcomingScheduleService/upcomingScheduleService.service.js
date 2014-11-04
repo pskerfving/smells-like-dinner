@@ -49,7 +49,10 @@ angular.module('sldApp')
 
     this.calculateUpcoming = function() {
 
-      deferred = deferred || $q.defer();
+      if (deferred) {
+        return deferred.promise;
+      }
+      deferred = $q.defer();
       scheduleService.loadSchedule().then(function(value) {
         // SUCCESS
         upcomingFromSchedule(value.days);

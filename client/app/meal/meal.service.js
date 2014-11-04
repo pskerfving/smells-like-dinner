@@ -48,26 +48,39 @@ angular.module('sldApp')
     }
 
     this.createMeal = function(meal) {
+      var deferred = $q.defer();
       Meal.save(meal, function(response) {
         meal._id = response._id;
+        deferred.resolve(meal);
+      }, function(err) {
+        deferred.reject(err);
       });
+      return deferred.promise;
     };
 
     this.updateMeal = function(meal) {
+      var deferred = $q.defer();
       Meal.update(meal, function() {
         // SUCCESS
-      }, function() {
+        $rootScope.$broadcast('mealUpdated', meal);
+        deferred.resolve(meal);
+      }, function(err) {
         //FAILURE
+        deferred.reject(err);
       });
-      $rootScope.$broadcast('mealUpdated', meal);
+      return deferred.promise;
     };
 
     this.deleteMeal = function(meal) {
+      var deferred = $q.defer();
       Meal.delete({ id: meal._id }, function() {
         console.log('successfully deleted meal');
+        deferred.resolve();
       }, function (err) {
         console.log('failed to delete meal: ', err);
+        deferred.reject(err);
       });
+      return deferred.promise;
     };
 
   });

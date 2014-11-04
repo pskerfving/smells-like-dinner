@@ -40,9 +40,18 @@ exports.update = function(req, res) {
     if (err) { return handleError(res, err); }
     if(!meal) { return res.send(404); }
     var updated = _.merge(meal, req.body, function(a, b) {
-      return (_.isArray(a) && a.length > 0 && a[0].ingredientid) ? _.uniq(a.concat(b), function(c) {
-        return c.ingredientid.toString();
-      }) : undefined;
+      if (_.isArray(a)) {
+        if (a.length > b.length) {
+          // Something was removed, use what came from the client.
+          return b;
+        } else {
+          return _.uniq(a.concat(b), function(c) {
+            if (c.ingredientid) return c.ingredientid.toString();
+            else return c.name;
+          });
+        }
+      }
+      return undefined;
     });
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
