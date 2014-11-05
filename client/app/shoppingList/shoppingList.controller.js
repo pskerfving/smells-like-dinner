@@ -61,7 +61,7 @@ angular.module('sldApp')
 
     $scope.categoryOrderFn = function(item) {
       // Needed to get the uncatgorized items at the top of the shoppinglist.
-      if (item.ingredient.category) {
+      if (item.ingredient && item.ingredient.category) {
         return item.ingredient.category.rank;
       }
       return 0;
