@@ -7,8 +7,13 @@ var Meal = require('./meal.model');
 exports.index = function(req, res) {
 
   console.log('Express getting the meals');
+  console.log('user_id : ', req.query);
+  var user_id = null;
+  if (req.query.user_id) {
+    user_id = req.query.user_id;
+  }
 
-  Meal.find(function (err, meals) {
+  Meal.find({ 'user_id': user_id }, function (err, meals) {
     if(err) { return handleError(res, err); }
     return res.json(200, meals);
   });

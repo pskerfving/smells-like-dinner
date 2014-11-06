@@ -6,7 +6,6 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var Thing = require('../api/thing/thing.model');
 var User = require('../api/user/user.model');
 var Meal = require('../api/meal/meal.model');
 var Category = require('../api/category/category.model');
@@ -14,34 +13,24 @@ var Ingredient = require('../api/ingredient/ingredient.model');
 var Schedule = require('../api/schedule/schedule.model');
 var ShoppingList = require('../api/shoppinglist/shoppinglist.model');
 
-Thing.find({}).remove(function() {
-  Thing.create({
-    name : 'Development Tools',
-    info : 'Integration with popular tools such as Bower, Grunt, Karma, Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, Stylus, Sass, CoffeeScript, and Less.'
-  }, {
-    name : 'Server and Client integration',
-    info : 'Built with a powerful and fun stack: MongoDB, Express, AngularJS, and Node.'
-  }, {
-    name : 'Smart Build System',
-    info : 'Build system ignores `spec` files, allowing you to keep tests alongside code. Automatic injection of scripts and styles into your index.html'
-  },  {
-    name : 'Modular Structure',
-    info : 'Best practice client and server structures allow for more code reusability and maximum scalability'
-  },  {
-    name : 'Optimized Build',
-    info : 'Build process packs up your templates as a single JavaScript payload, minifies your scripts/css/images, and rewrites asset names for caching.'
-  },{
-    name : 'Deployment Ready',
-    info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
-  });
-});
+var ObjectId = mongoose.Types.ObjectId;
+
+var testUser1_id = new ObjectId();
+var testUser2_id = new ObjectId();
 
 User.find({}).remove(function() {
   User.create({
+    _id: testUser1_id,
     provider: 'local',
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'test'
+    name: 'Test User 1',
+    email: 'test1@test.com',
+    password: 'test1'
+  }, {
+    _id: testUser2_id,
+    provider: 'local',
+    name: 'Test User 2',
+    email: 'test2@test.com',
+    password: 'test2'
   }, {
     provider: 'local',
     role: 'admin',
@@ -53,8 +42,6 @@ User.find({}).remove(function() {
     }
   );
 });
-
-var ObjectId = mongoose.Types.ObjectId;
 
 var meal_id1 = new ObjectId();
 var meal_id2 = new ObjectId();
@@ -79,6 +66,7 @@ var grassUnionId = new ObjectId('542cdc4990ef693cb0083a36');
 Meal.find({}).remove(function() {
   Meal.collection.insert([{
     _id: meal_id1,
+    user_id: testUser1_id,
     name: 'Nitad gris',
     ingredients: [
       { ingredientid: groundBeefId, amount: 3 },
@@ -86,6 +74,7 @@ Meal.find({}).remove(function() {
   }, {
     _id: meal_id2,
     name: 'Chili con carne',
+    user_id: testUser1_id,
     ingredients: [
       { ingredientid: limaBeansId },
       { ingredientid: beefId },
@@ -94,6 +83,7 @@ Meal.find({}).remove(function() {
   }, {
     _id: meal_id3,
     name: 'Fis på en pinne',
+    user_id: testUser2_id,
     ingredients: [
       { ingredientid: fishFingersId },
       { ingredientid: potatoesId },
@@ -101,6 +91,7 @@ Meal.find({}).remove(function() {
   }, {
     _id: meal_id4,
     name: 'Klistergröt',
+    user_id: null,
     ingredients: []
   }], function() { console.log('done inserting meals'); });
 });
@@ -203,7 +194,39 @@ var thursday = new Date("2014-09-25T05:02:26.279Z");
 
 Schedule.find({}).remove(function () {
   Schedule.collection.insert([{
+      name: "Exempel schema",
+      user_id: null,
+      config: {
+        nbrDays: 7,
+        days: [1, 2, 3, 4, 5]
+      },
+      days: [{
+        mealid: meal_id1,
+        scheduled: true
+      }, {
+        mealid: meal_id3,
+        scheduled: true
+      }, {
+        mealid: meal_id1,
+        date: wednesday,
+        scheduled: true
+      }, {
+        mealid: meal_id2,
+        date: thursday,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: false
+      }, {
+        mealid: meal_id1,
+        scheduled: false
+      }, {
+        mealid: meal_id1,
+        scheduled: false
+      }]
+    }, {
     name: "Mitt schema",
+    user_id: testUser1_id,
     config: {
       nbrDays: 14,
       days: [1, 2, 3, 4]

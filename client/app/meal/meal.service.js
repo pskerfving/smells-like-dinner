@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('mealService', function ($q, $resource, $rootScope, ingredientService) {
+  .service('mealService', function ($q, $resource, $rootScope, ingredientService, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;
@@ -12,12 +12,18 @@ angular.module('sldApp')
       { update: { method:'PUT' } });
 
     this.loadMeals = function() {
+
+      var user_id = null;
+
       if (deferred) {
         return deferred.promise;
       }
       deferred = $q.defer();
+      if (Auth.isLoggedIn()) {
+        user_id = Auth.getCurrentUser()._id;
+      }
       $q.all(
-        [ Meal.query(), ingredientService.loadIngredients() ])
+        [ Meal.query({ user_id: user_id }), ingredientService.loadIngredients() ])
           .then(function(data) {
         // SUCCESS!
         cache = data[0];

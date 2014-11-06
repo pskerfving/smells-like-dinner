@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
 
 var ScheduleSchema = new Schema({
   name: String,
+  user_id: Schema.ObjectId,
   config: {
     nbrDays: Number,
     days: [ Number ]
