@@ -38,9 +38,4 @@ angular.module('sldApp')
       $scope.meals.splice(index, 1);
     };
 
-    $scope.editMeal = function(index) {
-      var path = '/meal/' + $scope.meals[index]._id;
-      $location.path(path);
-    };
-
   });

@@ -27,6 +27,7 @@ angular.module('sldApp')
         success(function(data) {
           $cookieStore.put('token', data.token);
           currentUser = User.get();
+          console.log('Auth.login. Current user : ', currentUser);
           deferred.resolve(data);
           return cb();
         }).
@@ -47,6 +48,7 @@ angular.module('sldApp')
       logout: function() {
         $cookieStore.remove('token');
         currentUser = {};
+        $rootScope.$broadcast('userLoggedInOut');
       },
 
       /**
