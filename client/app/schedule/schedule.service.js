@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('scheduleService', function ($resource, $q, mealService, $rootScope) {
+  .service('scheduleService', function ($resource, $q, mealService, $rootScope, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var deferred;
@@ -11,51 +11,65 @@ angular.module('sldApp')
       { update: { method:'PUT' } });
 
     this.loadSchedule = function() {
+      return loadSchedulePrivate()
+    };
+
+    function loadSchedulePrivate() {
 
       if (deferred) {
         return deferred.promise;
       }
       deferred = $q.defer();
-      $q.all([mealService.loadMeals(), this.loadScheduleFromDB()])
-        .then(function (value) {
-          // SUCCESS! Do the mapping between days and meals
-          console.log('schedule loaded : ', value[1].days.length);
-          var m = value[0]; // list of meals
-          var s = value[1].days; // days in schedule
-          for (var i = 0; i < s.length; i++) {
-            if (s[i]) {
-              for (var j = 0; j < m.length; j++) {
-                if (m[j]._id === s[i].mealid) {
-                  s[i].meal = m[j];
-                  break;
-                }
+      $q.all([ mealService.loadMeals(), loadScheduleFromDB() ]).then(function (value) {
+        // SUCCESS! Do the mapping between days and meals
+        console.log('schedule loaded : ', cache.days.length);
+        var m = value[0]; // list of meals
+        var s = cache.days; // days in schedule
+        for (var i = 0; i < s.length; i++) {
+          if (s[i]) {
+            for (var j = 0; j < m.length; j++) {
+              if (m[j]._id === s[i].mealid) {
+                s[i].meal = m[j];
+                break;
               }
             }
           }
-          setupSchedule(false);
-          findToday();
-          deferred.resolve(value[1]);
-        }, function (reason) {
-          // FAILURE!
-          console.log('Loading schedule failed! : ' + reason);
-          deferred.reject(reason);
-        });
+        }
+        setupSchedule(false);
+        findToday();
+        deferred.resolve(cache);
+      }, function (reason) {
+        // FAILURE!
+        console.log('Loading schedule failed! : ' + reason);
+        deferred.reject(reason);
+      });
       return deferred.promise;
-    };
+    }
 
-    this.loadScheduleFromDB = function() {
+    function loadScheduleFromDB() {
       var deferred = $q.defer();
-      Schedule.query(function (data) {
+      var user_id = null;
+      if (Auth.isLoggedIn()) {
+        user_id = Auth.getCurrentUser()._id;
+      }
+      console.log('meal service load. user_id : ', user_id);
+      Schedule.query({ user_id: user_id }, function (data) {
         // SUCCESS!
-        cache = data[0];
-        deferred.resolve(data[0]);
+        if (!cache) {
+          cache = data[0];
+        } else {
+          // This is not the first load. Probably user logged in/out.
+          // Need to do a copy so that the views don't loose this hooks on the data.
+          deepCopySchedule(cache, data[0]);
+        }
+        deferred.resolve(cache);
       }, function(reason) {
         // FAILURE!
         console.log('Failed to load Schedule from DB : ' + reason);
         deferred.reject();
       });
       return deferred.promise;
-    };
+    }
 
     this.saveSchedule = function() {
       var deferred = $q.defer();
@@ -72,6 +86,40 @@ angular.module('sldApp')
       });
       return deferred.promise;
     };
+
+    function emptyArray(a) {
+      while (a.length > 0) {
+        a.pop();
+      }
+    }
+
+    function copyArray(dest, src) {
+      for (var i = 0; i < src.length; i++) {
+        dest.push(src[i]);
+      }
+    }
+
+    function deepCopySchedule(dest, src) {
+      dest.name = src.name;
+      dest.user_id = src.user_id;
+      if (!dest.config) {
+        // This should never happen.
+        dest.config = {};
+        dest.config.days = [];
+      }
+      dest.config.nbrDays = src.config.nbrDays;
+      emptyArray(dest.config.days);
+      copyArray(dest.config.days, src.config.days);
+      if (!dest.days) { dest.days = []; }
+      emptyArray(dest.days);
+      copyArray(dest.days, src.days);
+    }
+
+    $rootScope.$on('userLoggedInOut', function() {
+      deferred = undefined;
+      console.log('broadcast caught in schedule service. the user logged in or out');
+      loadSchedulePrivate();
+    });
 
     this.changeScheduleNbrDays = function(nbrDays) {
       cache.config.nbrDays = nbrDays;
