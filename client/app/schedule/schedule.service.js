@@ -100,6 +100,7 @@ angular.module('sldApp')
     }
 
     function deepCopySchedule(dest, src) {
+      dest._id = src._id;
       dest.name = src.name;
       dest.user_id = src.user_id;
       if (!dest.config) {
