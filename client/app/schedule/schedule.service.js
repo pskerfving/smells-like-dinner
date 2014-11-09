@@ -61,6 +61,7 @@ angular.module('sldApp')
           // This is not the first load. Probably user logged in/out.
           // Need to do a copy so that the views don't loose this hooks on the data.
           deepCopySchedule(cache, data[0]);
+          $rootScope.$broadcast('scheduleChanged');
         }
         deferred.resolve(cache);
       }, function(reason) {
