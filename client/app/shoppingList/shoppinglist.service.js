@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;      // The shoppinglist data from DB. Removed items, extras, config.
@@ -12,18 +12,30 @@ angular.module('sldApp')
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
+    $rootScope.$on('userLoggedInOut', function() {
+      deferred = undefined; // Burn the cache.
+      loadShoppingListPrivate();
+    });
+
     this.loadShoppingList = function() {
+      return loadShoppingListPrivate();
+    };
+
+    function loadShoppingListPrivate() {
       if (deferred) {
         return deferred.promise;
       } else {
         deferred = $q.defer();
         $q.all([
-          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients(), this.loadShoppingListFromDB()
+          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients(), loadShoppingListFromDB()
         ]).then(function(value) {
           // SUCCESS
+          console.log('SHOPPING LIST ALL LOADED', cache);
           upcoming = value[0];
           mapIngredients(value[1]);
+          emptyArray(sList);
           sList = collectShoppingList(cache.config.nbrDays);
+//          copyArray(sList, tmp);
           deferred.resolve(sList);
         }, function(reason) {
           // FAILURE
@@ -32,26 +44,63 @@ angular.module('sldApp')
         });
         return deferred.promise;
       }
-    };
+    }
 
-    this.loadShoppingListFromDB = function() {
+    function loadShoppingListFromDB() {
       // This is not all correct, but should work since only called once.
-      if (cache) {
-        return $q.when(cache);
-      } else {
-        var deferred = $q.defer();
-        ShoppingList.query(function(data) {
+      var deferred = $q.defer();
+      var user_id = null;
+      if (Auth.isLoggedIn()) {
+        user_id = Auth.getCurrentUser()._id;
+      }
+      ShoppingList.query({ user_id: user_id }, function(data) {
           // SUCCESS!
-          cache = data[0];  // TODO: This should not necessarily be the first, based on user.
+          console.log('received the shoppinglist: ', data);
+          if (!cache) {
+            cache = data[0];  // TODO: This should not necessarily be the first, based on user.
+          } else {
+            // Copy the data into the cache. So that the views don't loose track of the content change.
+            deepCopyShoppingList(cache, data[0]);
+          }
           deferred.resolve(cache);
         }, function(reason) {
           // FAILURE!
           console.log('Failed to load ShoppingList from DB : ' + reason);
           deferred.reject(reason);
-        });
-        return deferred.promise;
+      });
+      return deferred.promise;
+    }
+    function emptyArray(a) {
+      while (a.length > 0) {
+        a.pop();
       }
-    };
+    }
+
+    function copyArray(dest, src) {
+      for (var i = 0; i < src.length; i++) {
+        dest.push(src[i]);
+      }
+    }
+
+    function deepCopyShoppingList(dest, src) {
+      dest._id = src._id;
+      dest.user_id = src.user_id;
+      if (!dest.config) {
+        // This should never happen.
+        dest.config = {};
+      }
+      dest.config.nbrDays = src.config.nbrDays;
+      dest.config.listMode = src.config.listMode;
+      if (!dest.removed) { dest.removed = []; }
+      emptyArray(dest.removed);
+      copyArray(dest.removed, src.removed);
+      if (!dest.picked) { dest.picked = []; }
+      emptyArray(dest.picked);
+      copyArray(dest.picked, src.picked);
+      if (!dest.extras) { dest.extras = []; }
+      emptyArray(dest.extras);
+      copyArray(dest.extras, src.extras);
+    }
 
     function mapIngredients(iList) {
       for (var i = 0; i < cache.extras.length; i++) {
@@ -169,6 +218,7 @@ angular.module('sldApp')
           extra: true
         });
       }
+      console.log('sList : ', sList);
       return sList;
     }
 

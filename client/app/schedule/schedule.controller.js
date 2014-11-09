@@ -51,7 +51,6 @@ angular.module('sldApp')
       $scope.$watch('scheduleConfig.nbrDays', function(newValue, oldValue) {
         if (newValue !== oldValue) {
           scheduleService.changeScheduleNbrDays(newValue);
-          scheduleService.saveSchedule();
           console.log('changing the number of days in schedule. ' + $scope.scheduleConfig.nbrDays);
         }
       });

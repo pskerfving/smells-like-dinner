@@ -13,7 +13,6 @@ exports.index = function(req, res) {
   }
   Schedule.find({ 'user_id': user_id }, function (err, schedules) {
     if(err) { return handleError(res, err); }
-    console.log(schedules);
     return res.json(200, schedules);
   });
 };

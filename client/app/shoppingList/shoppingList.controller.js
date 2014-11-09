@@ -1,19 +1,16 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('ShoppingListCtrl', function ($scope, $q, scheduleService, ingredientService, mealService, shoppingListService) {
+  .controller('ShoppingListCtrl', function ($scope, scheduleService, ingredientService, mealService, shoppingListService) {
 
     $scope.loading = true;
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
     $scope.listMode = 'planning';
 
-    $q.all([
-      ingredientService.loadIngredients(), shoppingListService.loadShoppingList()
-    ]).then(function(value) {
+    shoppingListService.loadShoppingList().then(function(value) {
       // Success!
       $scope.loading = false;
-      $scope.ingredients = value[0];
-      $scope.shoppingList = value[1];
+      $scope.shoppingList = value;
       $scope.config = shoppingListService.getConfig();
     });
 

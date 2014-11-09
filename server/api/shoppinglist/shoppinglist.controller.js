@@ -5,8 +5,14 @@ var Shoppinglist = require('./shoppinglist.model');
 
 // Get list of shoppinglists
 exports.index = function(req, res) {
-  Shoppinglist.find(function (err, shoppinglists) {
+  var user_id = null;
+  if (req.query.user_id) {
+    user_id = req.query.user_id;
+  }
+  Shoppinglist.find({ 'user_id': user_id }, function (err, shoppinglists) {
     if(err) { return handleError(res, err); }
+    console.log('returning shoppinglist. user:', user_id);
+    console.log('returning shoppinglist. data:', shoppinglists);
     return res.json(200, shoppinglists);
   });
 };
