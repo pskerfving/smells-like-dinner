@@ -281,30 +281,40 @@ Schedule.find({}).remove(function () {
 
 ShoppingList.find({}).remove(function() {
   ShoppingList.collection.insert([{
+    user_id: null,
     config: {
-      nbrDays: 3,
+      nbrDays: 2,
+      listMode: 'planning'
+    },
+    removed: [],
+    picked: [],
+    extras: []
+  }, {
+    user_id: testUser1_id,
+    config: {
+      nbrDays: 7,
       listMode: 'planning'
     },
     removed: [{
-        ingredientid: beefId
-      }, {
-        ingredientid: fishFingersId
-      }],
+      ingredientid: beefId
+    }, {
+      ingredientid: fishFingersId
+    }],
     picked: [{
-        ingredientid: potatoesId
-      }],
+      ingredientid: potatoesId
+    }],
     extras: [{
-        ingredientid: parsleyId
-      }, {
-        ingredientid: grassUnionId
-      }, {
-        ingredientid: beefId
-      }, {
-        ingredientid: ketchupId
-      }, {
-        ingredientid: mustardId
-      }, {
-        ingredientid: spaghettiId
+      ingredientid: parsleyId
+    }, {
+      ingredientid: grassUnionId
+    }, {
+      ingredientid: beefId
+    }, {
+      ingredientid: ketchupId
+    }, {
+      ingredientid: mustardId
+    }, {
+      ingredientid: spaghettiId
     }]
-  }], function() { console.log('done inserting shoppinglist'); });
+  }], function() { console.log('done inserting shoppinglists'); });
 });
