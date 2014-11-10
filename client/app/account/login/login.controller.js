@@ -4,6 +4,7 @@ angular.module('sldApp')
   .controller('LoginCtrl', function ($scope, Auth, $location, $window, $rootScope) {
     $scope.user = {};
     $scope.errors = {};
+    $scope.signup = false;
 
     $scope.login = function(form) {
       $scope.submitted = true;
@@ -31,4 +32,8 @@ angular.module('sldApp')
     $scope.loginOauth = function(provider) {
       $window.location.href = '/auth/' + provider;
     };
+
+    $scope.setSignup = function(state) {
+      $scope.signup = state;
+    }
   });
