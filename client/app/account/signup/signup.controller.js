@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('SignupCtrl', function ($scope, Auth, $location, $window) {
+  .controller('SignupCtrl', function ($scope, Auth, $location, $window, $rootScope) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -15,8 +15,11 @@ angular.module('sldApp')
           password: $scope.user.password
         })
         .then( function() {
-          // Account created, redirect to home
-          $location.path('/');
+          console.log('signup successful');
+          Auth.getCurrentUser().$promise.then(function() {
+            $rootScope.$broadcast('userLoggedInOut');
+          });
+
         })
         .catch( function(err) {
           err = err.data;
