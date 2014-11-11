@@ -55,19 +55,33 @@ angular.module('sldApp')
       console.log('meal service load. user_id : ', user_id);
       Schedule.query({ user_id: user_id }, function (data) {
         // SUCCESS!
-        if (!cache) {
-          cache = data[0];
+        if (data.length === 0) {
+          console.log('no schedule entries returned, creating new template...');
+          // Create a new
+          var schedule = getTemplate(user_id);
+          Schedule.save(schedule, function(response) {
+            // If we get here cache must have some content.
+            schedule._id = response._id;
+            deepCopySchedule(cache, schedule);
+            $rootScope.$broadcast('scheduleChanged');
+            deferred.resolve(cache);
+          }, function(err) {
+            console.log('failed to save new schedule for user.');
+            deferred.reject(err);
+          });
         } else {
-          // This is not the first load. Probably user logged in/out.
-          // Need to do a copy so that the views don't loose this hooks on the data.
-          deepCopySchedule(cache, data[0]);
+          if (!cache) {
+            cache = data[0];
+          } else {
+            deepCopySchedule(cache, schedule);
+          }
           $rootScope.$broadcast('scheduleChanged');
+          deferred.resolve(cache);
         }
-        deferred.resolve(cache);
       }, function(reason) {
         // FAILURE!
         console.log('Failed to load Schedule from DB : ' + reason);
-        deferred.reject();
+        deferred.reject(reason);
       });
       return deferred.promise;
     }
@@ -187,6 +201,39 @@ angular.module('sldApp')
       cache.days[latestIndex].today = true;
       cache.days[latestIndex].date = new Date();
       // Set the date and store the schedule to the db.
+    }
+
+    function getTemplate(user) {
+      return {
+        name: "Middageschema",
+        user_id: user,
+        config: {
+          nbrDays: 7,
+          days: [1, 2, 3, 4, 5]
+        },
+        days: [{
+          mealid: null,
+          scheduled: true
+        }, {
+          mealid: null,
+          scheduled: true
+        }, {
+          mealid: null,
+          scheduled: true
+        }, {
+          mealid: null,
+          scheduled: true
+        }, {
+          mealid: null,
+          scheduled: true
+        }, {
+          mealid: null,
+          scheduled: false
+        }, {
+          mealid: null,
+          scheduled: false
+        }]
+      };
     }
 
   });
