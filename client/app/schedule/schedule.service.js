@@ -73,7 +73,7 @@ angular.module('sldApp')
           if (!cache) {
             cache = data[0];
           } else {
-            deepCopySchedule(cache, schedule);
+            deepCopySchedule(cache, data[0]);
           }
           $rootScope.$broadcast('scheduleChanged');
           deferred.resolve(cache);
