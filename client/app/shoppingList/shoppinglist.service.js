@@ -56,13 +56,27 @@ angular.module('sldApp')
       ShoppingList.query({ user_id: user_id }, function(data) {
           // SUCCESS!
           console.log('received the shoppinglist: ', data);
-          if (!cache) {
-            cache = data[0];  // TODO: This should not necessarily be the first, based on user.
+          if (data.length === 0) {
+            // The user has no shoppinglist. One needs to be created and stored in DB.
+            var tmp = getTemplate(user_id);
+            ShoppingList.save(tmp, function(response) {
+              // If we get here cache must have some content.
+              tmp._id = response._id;
+              deepCopyShoppingList(cache, tmp);
+              deferred.resolve(cache);
+            }, function(err) {
+              console.log('failed to save new schedule for user.');
+              deferred.reject(err);
+            });
           } else {
-            // Copy the data into the cache. So that the views don't loose track of the content change.
-            deepCopyShoppingList(cache, data[0]);
+            if (!cache) {
+              cache = data[0];  // TODO: This should not necessarily be the first, probably the newest.
+            } else {
+              // Copy the data into the cache. So that the views don't loose track of the content change.
+              deepCopyShoppingList(cache, data[0]);
+            }
+            deferred.resolve(cache);
           }
-          deferred.resolve(cache);
         }, function(reason) {
           // FAILURE!
           console.log('Failed to load ShoppingList from DB : ' + reason);
@@ -317,5 +331,18 @@ angular.module('sldApp')
       sList = collectShoppingList();
       this.updateShoppingList();
     };
+
+    function getTemplate(user) {
+      return {
+        user_id: user,
+        config: {
+          nbrDays: 2,
+          listMode: 'planning'
+        },
+        removed: [],
+        picked: [],
+        extras: []
+      };
+    }
 
   });
