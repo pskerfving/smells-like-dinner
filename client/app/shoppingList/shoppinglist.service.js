@@ -133,12 +133,17 @@ angular.module('sldApp')
 
     $rootScope.$on('scheduleChanged', function() {
       console.log('SHOPPING LIST: schedule updated');
-      upcomingScheduleService.calculateUpcoming().then(function() {
-        //SUCCESS
-        sList = collectShoppingList(cache.config.nbrDays);
-      }, function() {
-        // FAILURE.
-      });
+      // This could be called before the shoppinglist has been called at all.
+      if (cache) {
+        upcomingScheduleService.calculateUpcoming().then(function() {
+          //SUCCESS
+          sList = collectShoppingList(cache.config.nbrDays);
+        }, function() {
+          // FAILURE.
+        });
+      } else {
+        loadShoppingListPrivate();
+      }
     });
 
     $rootScope.$on('mealUpdated', function(evt, meal) {
