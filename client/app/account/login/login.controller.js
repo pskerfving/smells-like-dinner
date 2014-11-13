@@ -18,6 +18,7 @@ angular.module('sldApp')
           Auth.getCurrentUser().$promise.then(function() {
             $rootScope.$broadcast('userLoggedInOut');
           });
+          $scope.user.password = '';
         })
         .then( function() {
           // Logged in, redirect to home
