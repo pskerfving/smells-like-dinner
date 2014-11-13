@@ -18,13 +18,16 @@ var ObjectId = mongoose.Types.ObjectId;
 var testUser1_id = new ObjectId();
 var testUser2_id = new ObjectId();
 
+var testUser1_schedule_id = new ObjectId();
+
 User.find({}).remove(function() {
   User.create({
     _id: testUser1_id,
     provider: 'local',
     name: 'Test User 1',
     email: 'test1@test.com',
-    password: 'test1'
+    password: 'test1',
+    schedule: testUser1_schedule_id
   }, {
     _id: testUser2_id,
     provider: 'local',
@@ -225,6 +228,7 @@ Schedule.find({}).remove(function () {
         scheduled: false
       }]
     }, {
+    _id: testUser1_schedule_id,
     name: "Mitt schema",
     user_id: testUser1_id,
     config: {
