@@ -19,6 +19,7 @@ var testUser1_id = new ObjectId();
 var testUser2_id = new ObjectId();
 
 var testUser1_schedule_id = new ObjectId();
+var testUser1_shoppinglist_id = new ObjectId();
 
 User.find({}).remove(function() {
   User.create({
@@ -27,7 +28,8 @@ User.find({}).remove(function() {
     name: 'Test User 1',
     email: 'test1@test.com',
     password: 'test1',
-    schedule: testUser1_schedule_id
+    schedule: testUser1_schedule_id,
+    shoppinglist: testUser1_shoppinglist_id
   }, {
     _id: testUser2_id,
     provider: 'local',
@@ -294,6 +296,7 @@ ShoppingList.find({}).remove(function() {
     picked: [],
     extras: []
   }, {
+    _id: testUser1_shoppinglist_id,
     user_id: testUser1_id,
     config: {
       nbrDays: 7,

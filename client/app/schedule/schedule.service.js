@@ -49,7 +49,7 @@ angular.module('sldApp')
     function loadScheduleFromDB() {
       var deferred = $q.defer();
       var user;
-      var id = 'anonumous';
+      var id = 'anonymous';
       if (Auth.isLoggedIn()) {
         user = Auth.getCurrentUser();
         id = user.schedule;
@@ -73,7 +73,7 @@ angular.module('sldApp')
         // FAILURE!
         console.log('Failed to load Schedule from DB : ' + reason);
         console.log('no schedule entries returned, creating new template...');
-        // Create a new
+        deferred.reject(reason);
       });
       return deferred.promise;
 

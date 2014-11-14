@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, Auth) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, Auth, User) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;      // The shoppinglist data from DB. Removed items, extras, config.
@@ -49,41 +49,53 @@ angular.module('sldApp')
     function loadShoppingListFromDB() {
       // This is not all correct, but should work since only called once.
       var deferred = $q.defer();
-      var user_id = null;
+      var user;
+      var id = 'anonymous';
       if (Auth.isLoggedIn()) {
-        user_id = Auth.getCurrentUser()._id;
+        user = Auth.getCurrentUser();
+        id = user.shoppinglist;
+        if (!id) {
+          // The user has no shoppinglist. create one!
+          createNewUserShoppingList(user._id);
+          return deferred.promise;
+        }
       }
-      ShoppingList.query({ user_id: user_id }, function(data) {
-          // SUCCESS!
-          console.log('received the shoppinglist: ', data);
-          if (data.length === 0) {
-            // The user has no shoppinglist. One needs to be created and stored in DB.
-            var tmp = getTemplate(user_id);
-            ShoppingList.save(tmp, function(response) {
-              // If we get here cache must have some content.
-              tmp._id = response._id;
-              deepCopyShoppingList(cache, tmp);
-              deferred.resolve(cache);
-            }, function(err) {
-              console.log('failed to save new schedule for user.');
-              deferred.reject(err);
-            });
-          } else {
-            if (!cache) {
-              cache = data[0];  // TODO: This should not necessarily be the first, probably the newest.
-            } else {
-              // Copy the data into the cache. So that the views don't loose track of the content change.
-              deepCopyShoppingList(cache, data[0]);
-            }
-            deferred.resolve(cache);
-          }
-        }, function(reason) {
-          // FAILURE!
-          console.log('Failed to load ShoppingList from DB : ' + reason);
-          deferred.reject(reason);
+      ShoppingList.get({ id: id }, function(data) {
+        // SUCCESS!
+        console.log('received the shoppinglist: ', data);
+        if (!cache) {
+          cache = data;
+        } else {
+          deepCopyShoppingList(cache, data);
+        }
+        deferred.resolve(cache);
+      }, function(reason) {
+        console.log('Failed to load ShoppingList from DB : ' + reason);
+        deferred.reject(reason);
       });
       return deferred.promise;
+
+      function createNewUserShoppingList(user_id) {
+        var shoppinglist = getTemplate(user_id);
+        ShoppingList.save(shoppinglist, function(response) {
+          // If we get here cache must have some content.
+          shoppinglist._id = response._id;
+          user.shoppinglist = response._id;
+          User.update(user, function() {
+            // Success updating user with the new shoppinglist id
+            deepCopyShoppingList(cache, shoppinglist);
+            deferred.resolve(cache);
+          }, function() {
+            // Failed to update the user.
+            console.log('update user with the new shopping list id FAILED!');
+          });  // If this fails, it needs to be resolved on the next load.
+        }, function(err) {
+          console.log('failed to save new shopping list for user.');
+          deferred.reject(err);
+        });
+      }
     }
+
     function emptyArray(a) {
       while (a.length > 0) {
         a.pop();
@@ -97,7 +109,7 @@ angular.module('sldApp')
     }
 
     function deepCopyShoppingList(dest, src) {
-      dest._id = src._id;
+        dest._id = src._id;
       dest.user_id = src.user_id;
       if (!dest.config) {
         // This should never happen.

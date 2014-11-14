@@ -27,7 +27,7 @@ exports.show = function(req, res) {
 };
 
 // Get a single schedule
-exports.showAnonumous = function(req, res) {
+exports.showAnonymous = function(req, res) {
   Schedule.findOne({ user_id: null }, function (err, schedule) {
     if(err) { return handleError(res, err); }
     if(!schedule) { return res.send(404); }

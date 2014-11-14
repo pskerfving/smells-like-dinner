@@ -26,6 +26,16 @@ exports.show = function(req, res) {
   });
 };
 
+// Get the shopping list that belongs to users who are not logged in.
+exports.showAnonymous = function(req, res) {
+  console.log('SHOPPIGNLIST ANONYMOUS');
+  Shoppinglist.findOne({ user_id: null }, function (err, shoppinglist) {
+    if(err) { return handleError(res, err); }
+    if(!shoppinglist) { return res.send(404); }
+    return res.json(shoppinglist);
+  });
+};
+
 // Creates a new shoppinglist in the DB.
 exports.create = function(req, res) {
   Shoppinglist.create(req.body, function(err, shoppinglist) {
