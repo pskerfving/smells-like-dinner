@@ -26,6 +26,15 @@ exports.show = function(req, res) {
   });
 };
 
+// Get a single schedule
+exports.showAnonumous = function(req, res) {
+  Schedule.findOne({ user_id: null }, function (err, schedule) {
+    if(err) { return handleError(res, err); }
+    if(!schedule) { return res.send(404); }
+    return res.json(schedule);
+  });
+};
+
 // Creates a new schedule in the DB.
 exports.create = function(req, res) {
   Schedule.create(req.body, function(err, schedule) {

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('scheduleService', function ($resource, $q, mealService, $rootScope, Auth) {
+  .service('scheduleService', function ($resource, $q, mealService, $rootScope, Auth, User) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var deferred;
@@ -48,43 +48,58 @@ angular.module('sldApp')
 
     function loadScheduleFromDB() {
       var deferred = $q.defer();
-      var user_id = null;
+      var user;
+      var id = 'anonumous';
       if (Auth.isLoggedIn()) {
-        user_id = Auth.getCurrentUser()._id;
-      }
-      console.log('meal service load. user_id : ', user_id);
-      Schedule.query({ user_id: user_id }, function (data) {
-        // SUCCESS!
-        if (data.length === 0) {
-          console.log('no schedule entries returned, creating new template...');
-          // Create a new
-          var schedule = getTemplate(user_id);
-          Schedule.save(schedule, function(response) {
-            // If we get here cache must have some content.
-            schedule._id = response._id;
-            deepCopySchedule(cache, schedule);
-            $rootScope.$broadcast('scheduleChanged');
-            deferred.resolve(cache);
-          }, function(err) {
-            console.log('failed to save new schedule for user.');
-            deferred.reject(err);
-          });
-        } else {
-          if (!cache) {
-            cache = data[0];
-          } else {
-            deepCopySchedule(cache, data[0]);
-          }
-          $rootScope.$broadcast('scheduleChanged');
-          deferred.resolve(cache);
+        user = Auth.getCurrentUser();
+        id = user.schedule;
+        if (!id) {
+          // Create a new shcedule for the user.
+          createNewUserSchedule(user._id);
+          return deferred.promise;
         }
+      }
+      console.log('schedule service load. id : ', id);
+      Schedule.get({ id: id }, function (data) {
+        // SUCCESS!
+        if (!cache) {
+          cache = data;
+        } else {
+          deepCopySchedule(cache, data);
+        }
+        $rootScope.$broadcast('scheduleChanged');
+        deferred.resolve(cache);
       }, function(reason) {
         // FAILURE!
         console.log('Failed to load Schedule from DB : ' + reason);
-        deferred.reject(reason);
+        console.log('no schedule entries returned, creating new template...');
+        // Create a new
       });
       return deferred.promise;
+
+      function createNewUserSchedule(user_id) {
+        var schedule = getTemplate(user_id);
+        Schedule.save(schedule, function(response) {
+          // If we get here cache must have some content.
+          schedule._id = response._id;
+          user.schedule = response._id;
+          User.update(user, function() {
+            // Success updating user with the new schedule id
+            deepCopySchedule(cache, schedule);
+            $rootScope.$broadcast('scheduleChanged');
+            deferred.resolve(cache);
+          }, function() {
+            // Failed to update the user.
+            console.log('update user with the new schedule id FAILED!');
+          });  // If this fails, it needs to be resolved on the next load.
+        }, function(err) {
+          console.log('failed to save new schedule for user.');
+          deferred.reject(err);
+        });
+      }
+
     }
+
 
     this.saveSchedule = function() {
       var deferred = $q.defer();
