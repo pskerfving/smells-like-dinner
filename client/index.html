@@ -99,6 +99,10 @@
         <div ng-include="'app/account/login/login.html'"></div>
     </section>
 
+    <section id="invites" ng-controller="AcceptInviteCtrl" ng-show="invites.length > 0">
+        <div ng-include="'app/invite/acceptInvite.html'"></div>
+    </section>
+
     <!-- Meal Section -->
     <section id="meals" class="container content-section">
         <div class="row">
@@ -211,6 +215,10 @@
         </div>
     </section>
 
+    <section id="invite" ng-show="isLoggedIn()">
+        <div ng-include="'app/invite/invite.html'"></div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="container text-center">
@@ -270,6 +278,9 @@
           <script src="app/category/categoryList/categoryList.controller.js"></script>
           <script src="app/ingredient/ingredient.service.js"></script>
           <script src="app/ingredientBox/ingredientBox.directive.js"></script>
+          <script src="app/invite/acceptInvite.controller.js"></script>
+          <script src="app/invite/invite.controller.js"></script>
+          <script src="app/invite/invite.service.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
           <script src="app/meal/meal.controller.js"></script>

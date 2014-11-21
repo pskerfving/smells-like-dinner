@@ -7,6 +7,7 @@
 
 var mongoose = require('mongoose');
 var User = require('../api/user/user.model');
+var Invite = require('../api/invite/invite.model');
 var Meal = require('../api/meal/meal.model');
 var Category = require('../api/category/category.model');
 var Ingredient = require('../api/ingredient/ingredient.model');
@@ -17,6 +18,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 var testUser1_id = new ObjectId();
 var testUser2_id = new ObjectId();
+var testUser3_id = new ObjectId();
 
 var testUser1_schedule_id = new ObjectId();
 var testUser1_shoppinglist_id = new ObjectId();
@@ -37,6 +39,13 @@ User.find({}).remove(function() {
     email: 'test2@test.com',
     password: 'test2'
   }, {
+    _id: testUser3_id,
+    provider: 'local',
+    name: 'Kompis',
+    email: 'test3@test.com',
+    password: 'test3',
+    friends: [ testUser1_id ]
+  },{
     provider: 'local',
     role: 'admin',
     name: 'Admin',
@@ -46,6 +55,17 @@ User.find({}).remove(function() {
       console.log('finished populating users');
     }
   );
+});
+
+Invite.find({}).remove(function() {
+  Invite.create({
+      inviter_name: 'Test User 1',
+      invitee_email: 'test2@test.com',
+      schedule: testUser1_schedule_id,
+      expired: false
+    }, function() {
+    console.log('finished adding invites');
+  })
 });
 
 var meal_id1 = new ObjectId();

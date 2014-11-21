@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>Du har blivit inbjuden!</h3>
+            <ul class="list-group">
+                <li class="list-group-item clearfix" ng-repeat="invite in invites">
+                    <span>{{invite.inviter_name}}</span>
+            <span class="pull-right">
+                <button class="btn btn-xs btn-info" ng-click="acceptInvite(invite)">
+                    <span>Acceptera</span>
+                </button>
+                <button class="btn btn-xs btn-info" ng-click="rejectInvite(invite)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </span>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
