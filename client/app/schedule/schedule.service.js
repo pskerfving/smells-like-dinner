@@ -52,7 +52,7 @@ angular.module('sldApp')
       var id = 'anonymous';
       if (Auth.isLoggedIn()) {
         user = Auth.getCurrentUser();
-        id = user.schedule;
+        id = user.schedule_id;
         if (!id) {
           // Create a new shcedule for the user.
           createNewUserSchedule(user._id);
@@ -67,6 +67,9 @@ angular.module('sldApp')
         } else {
           deepCopySchedule(cache, data);
         }
+        if (user) {
+          user.schedule = cache;
+        }
         $rootScope.$broadcast('scheduleChanged');
         deferred.resolve(cache);
       }, function(reason) {
@@ -78,11 +81,14 @@ angular.module('sldApp')
       return deferred.promise;
 
       function createNewUserSchedule(user_id) {
+        console.log('User has no schedule. Creating new one.');
         var schedule = getTemplate(user_id);
         Schedule.save(schedule, function(response) {
           // If we get here cache must have some content.
           schedule._id = response._id;
-          user.schedule = response._id;
+          user.schedule_id = response._id;
+          user.own_schedule_id = response._id;
+          user.schedule = schedule;
           User.update(user, function() {
             // Success updating user with the new schedule id
             deepCopySchedule(cache, schedule);
@@ -97,9 +103,7 @@ angular.module('sldApp')
           deferred.reject(err);
         });
       }
-
     }
-
 
     this.saveSchedule = function() {
       var deferred = $q.defer();
@@ -133,6 +137,7 @@ angular.module('sldApp')
       dest._id = src._id;
       dest.name = src.name;
       dest.user_id = src.user_id;
+      dest.shoppinglist_id = src.shoppinglist_id;
       if (!dest.config) {
         // This should never happen.
         dest.config = {};
@@ -153,12 +158,20 @@ angular.module('sldApp')
     });
 
     this.changeScheduleNbrDays = function(nbrDays) {
-      cache.config.nbrDays = nbrDays;
-      if (nbrDays < cache.days.length) {
-        cache.days.splice(nbrDays, cache.days.length - nbrDays);
+      // The call to this function may be triggered by loading a new schedule.
+      // In that case no need to do anything.
+      if (cache.config.nbrDays !== nbrDays) {
+        cache.config.nbrDays = nbrDays;
+        if (nbrDays < cache.days.length) {
+          cache.days.splice(nbrDays, cache.days.length - nbrDays);
+        }
+        setupSchedule();
+        this.saveSchedule();
       }
-      setupSchedule();
-      this.saveSchedule();
+    };
+
+    this.setShoppingListId = function(id) {
+      cache.shoppinglist_id = id;
     };
 
     function setupSchedule(reset) {
@@ -211,7 +224,9 @@ angular.module('sldApp')
       }
       else {
         // We did not find a latest. Set today to the first day in the schedule with the same weekday.
-        latestIndex = new Date().getDay() - 1;
+        var day = new Date().getDay();
+        if (day === 0) { day = 7; }
+        latestIndex = day - 1;
       }
       cache.days[latestIndex].today = true;
       cache.days[latestIndex].date = new Date();

@@ -55,8 +55,11 @@ exports.update = function(req, res) {
     var updated = _.merge(schedule, req.body, function(a, b) {
       return _.isArray(b) ? b : undefined;
     });
+    console.log(updated);
     // Strip trailing mealid = null before saving to db.
-    while (updated.days[updated.days.length - 1].mealid === null) { updated.days.pop(); }
+    while (updated.days.length > 0 && updated.days[updated.days.length - 1].mealid === null) {
+      updated.days.pop();
+    }
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, schedule);

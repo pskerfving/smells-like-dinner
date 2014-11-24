@@ -16,6 +16,10 @@ angular.module('sldApp')
       });
     });
 
+    $rootScope.$on('userLoggedInOut', function() {
+      deferred = undefined;
+    });
+
     function emptyUpcoming() {
       while (upcoming.length > 0) {
         upcoming.pop();
@@ -63,5 +67,6 @@ angular.module('sldApp')
       });
       return deferred.promise;
     };
+
 
   });

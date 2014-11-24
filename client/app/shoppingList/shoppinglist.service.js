@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, Auth, User) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;      // The shoppinglist data from DB. Removed items, extras, config.
@@ -11,11 +11,6 @@ angular.module('sldApp')
 
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
-
-    $rootScope.$on('userLoggedInOut', function() {
-      deferred = undefined; // Burn the cache.
-      loadShoppingListPrivate();
-    });
 
     this.loadShoppingList = function() {
       return loadShoppingListPrivate();
@@ -27,16 +22,22 @@ angular.module('sldApp')
       } else {
         deferred = $q.defer();
         $q.all([
-          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients(), loadShoppingListFromDB()
+          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients()
         ]).then(function(value) {
-          // SUCCESS
-          console.log('SHOPPING LIST ALL LOADED', cache);
-          upcoming = value[0];
-          mapIngredients(value[1]);
-          emptyArray(sList);
-          sList = collectShoppingList(cache.config.nbrDays);
+          loadShoppingListFromDB().then(function() {
+            // SUCCESS
+            upcoming = value[0];
+            mapIngredients(value[1]);
+            console.log('SHOPPING LIST ALL LOADED', cache);
+            emptyArray(sList);
+            sList = collectShoppingList(cache.config.nbrDays);
 //          copyArray(sList, tmp);
-          deferred.resolve(sList);
+            deferred.resolve(sList);
+          }, function() {
+            // FAILURE
+            console.log('Loading ShoppingList failed : ' + reason);
+            deferred.reject(reason);
+          });
         }, function(reason) {
           // FAILURE
           console.log('Loading ShoppingList failed : ' + reason);
@@ -53,14 +54,14 @@ angular.module('sldApp')
       var id = 'anonymous';
       if (Auth.isLoggedIn()) {
         user = Auth.getCurrentUser();
-        id = user.shoppinglist;
+        id = user.schedule.shoppinglist_id;
         if (!id) {
           // The user has no shoppinglist. create one!
           createNewUserShoppingList(user._id);
           return deferred.promise;
         }
       }
-      ShoppingList.get({ id: id }, function(data) {
+      ShoppingList.get({ id: id }, function (data) {
         // SUCCESS!
         console.log('received the shoppinglist: ', data);
         if (!cache) {
@@ -69,7 +70,7 @@ angular.module('sldApp')
           deepCopyShoppingList(cache, data);
         }
         deferred.resolve(cache);
-      }, function(reason) {
+      }, function (reason) {
         console.log('Failed to load ShoppingList from DB : ' + reason);
         deferred.reject(reason);
       });
@@ -77,19 +78,20 @@ angular.module('sldApp')
 
       function createNewUserShoppingList(user_id) {
         var shoppinglist = getTemplate(user_id);
-        ShoppingList.save(shoppinglist, function(response) {
+        ShoppingList.save(shoppinglist, function (response) {
           // If we get here cache must have some content.
           shoppinglist._id = response._id;
-          user.shoppinglist = response._id;
-          User.update(user, function() {
-            // Success updating user with the new shoppinglist id
+          user.schedule.shoppinglist_id = response._id;
+          scheduleService.setShoppingListId(response._id);
+          scheduleService.saveSchedule().then(function () {
+            // Success updating schedule with the new shoppinglist id
             deepCopyShoppingList(cache, shoppinglist);
             deferred.resolve(cache);
-          }, function() {
+          }, function () {
             // Failed to update the user.
             console.log('update user with the new shopping list id FAILED!');
           });  // If this fails, it needs to be resolved on the next load.
-        }, function(err) {
+        }, function (err) {
           console.log('failed to save new shopping list for user.');
           deferred.reject(err);
         });
@@ -146,16 +148,25 @@ angular.module('sldApp')
     $rootScope.$on('scheduleChanged', function() {
       console.log('SHOPPING LIST: schedule updated');
       // This could be called before the shoppinglist has been called at all.
-      if (cache) {
-        upcomingScheduleService.calculateUpcoming().then(function() {
-          //SUCCESS
-          sList = collectShoppingList(cache.config.nbrDays);
+      if (deferred) {
+        deferred.promise.then(function() {
+          upcomingScheduleService.calculateUpcoming().then(function() {
+            //SUCCESS
+            sList = collectShoppingList(cache.config.nbrDays);
+          }, function() {
+            // FAILURE. Could not calculate upcoming.
+          });
         }, function() {
-          // FAILURE.
+          // FAILED to load shoppinglist
         });
       } else {
         loadShoppingListPrivate();
       }
+    });
+
+    $rootScope.$on('userLoggedInOut', function() {
+      deferred = undefined;
+//      loadShoppingListPrivate();
     });
 
     $rootScope.$on('mealUpdated', function(evt, meal) {

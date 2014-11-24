@@ -11,7 +11,7 @@ angular.module('sldApp')
       inviteService.createInvite({
           inviter_name: user.name,
           invitee_email: $scope.email,
-          schedule: user.schedule,
+          schedule_id: user.schedule_id,
           expired: false
         });
     };

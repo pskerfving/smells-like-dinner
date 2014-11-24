@@ -30,8 +30,8 @@ User.find({}).remove(function() {
     name: 'Test User 1',
     email: 'test1@test.com',
     password: 'test1',
-    schedule: testUser1_schedule_id,
-    shoppinglist: testUser1_shoppinglist_id
+    schedule_id: testUser1_schedule_id,
+    own_schedule_id: testUser1_schedule_id
   }, {
     _id: testUser2_id,
     provider: 'local',
@@ -61,7 +61,7 @@ Invite.find({}).remove(function() {
   Invite.create({
       inviter_name: 'Test User 1',
       invitee_email: 'test2@test.com',
-      schedule: testUser1_schedule_id,
+      schedule_id: testUser1_schedule_id,
       expired: false
     }, function() {
     console.log('finished adding invites');
@@ -251,8 +251,9 @@ Schedule.find({}).remove(function () {
       }]
     }, {
     _id: testUser1_schedule_id,
-    name: "Mitt schema",
+    name: "Test User 1 schema",
     user_id: testUser1_id,
+    shoppinglist_id: testUser1_shoppinglist_id,
     config: {
       nbrDays: 14,
       days: [1, 2, 3, 4]

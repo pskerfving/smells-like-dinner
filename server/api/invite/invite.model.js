@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var InviteSchema = new Schema({
   inviter_name: String,
   invitee_email: String,
-  schedule: { type: Schema.ObjectId, ref: 'Schedule' },
+  schedule_id: { type: Schema.ObjectId, ref: 'Schedule' },
   expired: Boolean
 });
 
