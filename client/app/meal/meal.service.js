@@ -10,6 +10,7 @@ angular.module('sldApp')
 
     var Meal = $resource('/api/meals/:id', { id: '@_id'},
       { update: { method:'PUT' } });
+    var MealMe = $resource('/api/meals/me');
 
     this.loadMeals = function() {
       return loadMealsPrivate();
@@ -17,32 +18,30 @@ angular.module('sldApp')
 
     function loadMealsPrivate() {
 
-      var user_id = null;
-
       if (deferred) {
         return deferred.promise;
       }
       deferred = $q.defer();
+      var query;
       if (Auth.isLoggedIn()) {
-        user_id = Auth.getCurrentUser()._id;
+        query = MealMe.query().$promise;
+      } else {
+        query = Meal.query({ id: 'public' }).$promise;
       }
-      console.log('meal service load. user_id : ', user_id);
-      $q.all([ Meal.query({ user_id: user_id }), ingredientService.loadIngredients() ]).then(function(data) {
+      $q.all([ query, ingredientService.loadIngredients() ]).then(function(data) {
         // SUCCESS!
         console.log('recieved : ', data[0]);
-        data[0].$promise.then(function() {
-          if (cache) {
-            // This is not the first time we get the data.
-            emptyCache();
-            copyArray(cache, data[0]);
-          } else {
-            // First time, just assign.
-            cache = data[0];
-          }
-          ingredients = data[1];
-          mapToIngredients(cache, ingredients);
-          deferred.resolve(cache);
-        });
+        if (cache) {
+          // This is not the first time we get the data.
+          emptyCache();
+          copyArray(cache, data[0]);
+        } else {
+          // First time, just assign.
+          cache = data[0];
+        }
+        ingredients = data[1];
+        mapToIngredients(cache, ingredients);
+        deferred.resolve(cache);
       }, function(errResponse) {
         //FAILURE!
         console.log('something went wrong fetching the data. fallback to local.', errResponse);

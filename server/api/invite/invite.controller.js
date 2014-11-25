@@ -72,6 +72,7 @@ exports.accept = function(req, res) {
           if(err) { return handleError(res, err); }
           if (!invitee) { return res.send(404); }
           // Found both inviter and invitee
+          invitee.schedule_id = inviter.schedule_id;
           if (!inviter.friends_id) inviter.friends_id = [];
           if (!invitee.friends_id) invitee.friends_id = [];
           // TODO: Should not allow duplicates. Might not be a real problem, though.

@@ -6,17 +6,29 @@ var Meal = require('./meal.model');
 // Get list of meals
 exports.index = function(req, res) {
 
-  console.log('Express getting the meals');
-  console.log('user_id : ', req.query);
-  var user_id = null;
-  if (req.query.user_id) {
-    user_id = req.query.user_id;
-  }
+  if (!req.user) {
+    // Not logged in
+    Meal.find({ user_id: null }, function(err, meals) {
+      if(err) { return handleError(res, err); }
+      console.log('RETURNING PUBLIC MEALS : ', meals);
+      return res.json(200, meals);
+    });
+  } else {
+    // User is logged in
+    // Collect the friends and own meals
+    var owners = [];
+    owners.push(req.user._id); // Include own meals.
+    // Include meals of all friends.
+    for (var i = 0; i < req.user.friends_id.length; i++) {
+      owners.push(req.user.friends_id[i]);
+    }
 
-  Meal.find({ 'user_id': user_id }, function (err, meals) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, meals);
-  });
+    Meal.find().where('user_id').in(owners).exec(function (err, meals) {
+      if(err) { return handleError(res, err); }
+      console.log('RETURNING USER MEALS : ', meals);
+      return res.json(200, meals);
+    });
+  }
 };
 
 // Get a single meal
