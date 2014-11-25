@@ -6,8 +6,16 @@ angular.module('sldApp')
 
     var cache;
     var deferred;
-    var Invite = $resource('/api/invites/:id', { id: '@_id' }, { update: { method:'PUT' } });
+    var Invite = $resource('/api/invites/:id/:controller', { id: '@_id' }, {
+      accept: {
+        method: 'PUT',
+        params: {
+          controller:'accept'
+        }
+      },
+      update: { method:'PUT' } });
     var InviteMe = $resource('/api/invites/me');
+
 
     this.loadInvites = function() {
       return loadInvitesPrivate();
@@ -63,6 +71,17 @@ angular.module('sldApp')
         deferred.resolve();
       }, function(err) {
         // FAILED
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    };
+
+    this.acceptInvite = function(invite) {
+      var deferred = $q.defer();
+      Invite.accept(invite, function() {
+        deferred.resolve(invite);
+      }, function(err) {
+        // FAIL!
         deferred.reject(err);
       });
       return deferred.promise;

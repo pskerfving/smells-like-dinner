@@ -60,7 +60,9 @@ User.find({}).remove(function() {
 Invite.find({}).remove(function() {
   Invite.create({
       inviter_name: 'Test User 1',
+      inviter_id: testUser1_id,
       invitee_email: 'test2@test.com',
+      invitee_id: testUser2_id,
       schedule_id: testUser1_schedule_id,
       expired: false
     }, function() {
