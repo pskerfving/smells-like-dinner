@@ -26,15 +26,11 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   // TODO: Make sure the invite is unique.
   req.body.inviter_id = req.user._id;
-  User.findOne({ email: req.body.invitee_email }, function(err, user) {
+  req.body.schedule_id = req.user.schedule_id;  // Invite to the user's active schedule, not own. Right?
+  Invite.create(req.body, function(err, invite) {
     if(err) { return handleError(res, err); }
-    req.body.invitee_id = user._id;
-    Invite.create(req.body, function(err, invite) {
-      if(err) { return handleError(res, err); }
-      if(!user) { return res.send(404); }
-      // TODO: Send email to the invitee.
-      return res.json(201, invite);
-    });
+    // TODO: Send email to the invitee.
+    return res.json(201, invite);
   });
 };
 
@@ -68,7 +64,7 @@ exports.accept = function(req, res) {
       User.findById(invite.inviter_id, function(err, inviter) {
         if(err) { return handleError(res, err); }
         if (!inviter) { return res.send(404); }
-        User.findById(invite.invitee_id, function(err, invitee) {
+        User.findOne({ email: invite.invitee_email }, function(err, invitee) {
           if(err) { return handleError(res, err); }
           if (!invitee) { return res.send(404); }
           // Found both inviter and invitee
@@ -76,20 +72,20 @@ exports.accept = function(req, res) {
           if (!inviter.friends_id) inviter.friends_id = [];
           if (!invitee.friends_id) invitee.friends_id = [];
           // TODO: Should not allow duplicates. Might not be a real problem, though.
-          inviter.friends_id.push(invitee._id);
-          invitee.friends_id.push(inviter._id);
+          inviter.friends_id.push(invitee);
+          invitee.friends_id.push(inviter);
           inviter.save();
           invitee.save();
           // TODO: Handle errors when updating the users in the DB.
+          return res.json(200, invite);
         });
       });
-      return res.json(200, invite);
     });
   });
 };
 
 
-// Deletes a invite from the DB.
+// Deletes an invite from the DB.
 exports.destroy = function(req, res) {
   Invite.findById(req.params.id, function (err, invite) {
     if(err) { return handleError(res, err); }

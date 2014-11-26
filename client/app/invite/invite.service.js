@@ -79,6 +79,8 @@ angular.module('sldApp')
     this.acceptInvite = function(invite) {
       var deferred = $q.defer();
       Invite.accept(invite, function() {
+        var user = Auth.getCurrentUser();
+        user.schedule_id = invite.schedule_id;
         deferred.resolve(invite);
       }, function(err) {
         // FAIL!
