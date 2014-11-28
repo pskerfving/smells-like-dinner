@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var User = require('./user.model');
+var Schedule = require('../schedule/schedule.model');
+var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -43,11 +45,51 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
-  newUser.save(function(err, user) {
-    if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
+  var user_id = mongoose.Types.ObjectId();
+  newUser._id = user_id;
+  Schedule.create(getTemplate(user_id), function(err, schedule) {
+    if (err) { return handleError(res, err); }
+    newUser.schedule_id = schedule._id;
+    newUser.own_schedule_id = schedule._id;
+    newUser.save(function(err, user) {
+      if (err) return validationError(res, err);
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+      res.json({ token: token });
+    });
   });
+
+  function getTemplate(user_id) {
+    return {
+      name: "Middageschema",
+      user_id: user_id,
+      config: {
+        nbrDays: 7,
+        days: [1, 2, 3, 4, 5]
+      },
+      days: [{
+        mealid: null,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: true
+      }, {
+        mealid: null,
+        scheduled: false
+      }, {
+        mealid: null,
+        scheduled: false
+      }]
+    };
+  }
 };
 
 /**

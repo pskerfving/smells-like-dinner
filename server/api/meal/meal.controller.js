@@ -23,6 +23,7 @@ exports.index = function(req, res) {
     for (var i = 0; i < req.user.friends_id.length; i++) {
       owners.push(req.user.friends_id[i]);
     }
+    console.log('USER : ', req.user);
     Schedule.findById(req.user.schedule_id, function(err, schedule) {
       if(err) { return handleError(res, err); }
       var schedule_meals = [];
