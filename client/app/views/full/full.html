@@ -1,0 +1,115 @@
+<!-- Meal Section -->
+<section id="meals" class="container content-section">
+  <div class="row">
+    <div class="col-lg-2 text-center">
+      <div class="row">
+        <h1 class="big-step-number">1.</h1>
+      </div>
+      <div class="row">
+        <a href="#schedule" class="btn btn-circle page-scroll">
+          <i class="fa fa-angle-double-down animated"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-10">
+      <h2>Börja med att skriva in ett par maträtter alla i familjen gillar</h2>
+
+      <div ng-include="'app/mealList/meallist.html'"></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Schedule Section -->
+<section id="schedule" class="content-section">
+  <div class="schedule-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2 text-center">
+          <div class="row">
+            <h1 class="big-step-number">2.</h1>
+          </div>
+          <div class="row">
+            <a href="#ingredients" class="btn btn-circle page-scroll">
+              <i class="fa fa-angle-double-down animated"></i>
+            </a>
+          </div>
+
+        </div>
+        <div class="col-lg-8">
+          <h2>Sätt ihop ett rullande schema</h2>
+
+          <div ng-include="'app/schedule/schedule.html'"></div>
+
+
+
+          <!-- Add your site or application content here -->
+          <!--<div ng-view=""></div>-->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Ingredients List Section -->
+<section id="ingredients" class="container content-section">
+
+  <div class="row">
+    <div class="col-lg-2 text-center">
+      <div class="row">
+        <h1 class="big-step-number">3.</h1>
+      </div>
+      <div class="row">
+        <a href="#shoppinglist" class="btn btn-circle page-scroll">
+          <i class="fa fa-angle-double-down animated"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-10">
+      <h2>Skriv in allt som behövs för en lyckad middag</h2>
+      <div class="col-lg-6">
+        <div ng-include="'app/upcomingSchedule/upcomingSchedule.html'"></div>
+      </div>
+      <div class="col-lg-6">
+        <div ng-include="'app/meal/meal.html'"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Shopping List Section -->
+<section id="shoppinglist" class="content-section">
+  <div class="shoppinglist-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2 text-center">
+          <div class="row">
+            <h1 class="big-step-number">4.</h1>
+          </div>
+          <div class="row">
+            <a href="#meals" class="btn btn-circle page-scroll">
+              <i class="fa fa-angle-double-up animated"></i>
+            </a>
+          </div>
+
+        </div>
+        <div class="col-lg-10">
+          <h2>Dax att handla. Här är din handlingslista. Varsågod!</h2>
+          <p>Börja med att välja hur många dagar du vill handla för, skicka listan till din telefon och stryk de saker som du redan har hemma.</p>
+
+          <div ng-include="'app/shoppingList/shoppingList.html'"></div>
+
+          <!-- Add your site or application content here -->
+          <!--<div ng-view=""></div>-->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="invite" ng-show="isLoggedIn()">
+  <div ng-include="'app/invite/invite.html'"></div>
+</section>

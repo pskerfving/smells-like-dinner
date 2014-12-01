@@ -5,11 +5,6 @@ angular.module('sldApp')
     $scope.user = {};
     $scope.errors = {};
     $scope.signup = false;
-//    $scope.path = $location.path().match(/([^/]+$)/)[0];
-//    if (path) {
-//      $scope.signup = true;
-//    }
-//    $scope.signup = $location.path();
 
     $scope.login = function(form) {
       $scope.submitted = true;
@@ -27,7 +22,7 @@ angular.module('sldApp')
         })
         .then( function() {
           // Logged in, redirect to home
-
+            console.log('LOGGED IN!');
         })
         .catch( function(err) {
           $scope.errors.other = err.message;
