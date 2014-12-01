@@ -8,21 +8,10 @@ angular.module('sldApp')
         controller: 'ShoppingListViewCtrl'
       });
   })
-  .controller('ShoppingListViewCtrl', function($rootScope) {
-    $rootScope.navbar = $rootScope.navbar || {};
-    copyMenu();
-
-    function copyMenu() {
-      var menu = [
+  .controller('ShoppingListViewCtrl', function(menuService) {
+    menuService.setMenu([
         {
           title: 'Till fulla sajten',
           link: '/'
-        }];
-      while ($rootScope.navbar.menu.length > 0) {
-        $rootScope.navbar.menu.pop();
-      }
-      for (var i = 0; i < menu.length; i++) {
-        $rootScope.navbar.menu.push(menu[i]);
-      }
-    }
-  });
+        }]);
+      });

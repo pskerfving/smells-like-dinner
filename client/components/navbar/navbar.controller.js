@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('NavbarCtrl', function ($scope, $rootScope, $location, Auth) {
+  .controller('NavbarCtrl', function ($scope, $location, Auth, menuService) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -14,9 +14,7 @@ angular.module('sldApp')
         'link': '/shoppinglist'
       }];
 
-    $rootScope.navbar = $rootScope.navbar || {};
-    $rootScope.navbar.menu = $rootScope.navbar.menu || [];
-    $scope.menu = $rootScope.navbar.menu;
+    $scope.menu = menuService.menu;
 
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
