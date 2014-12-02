@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Controller: CategorylistCtrl', function () {
+describe('Controller: CategoryListCtrl', function () {
 
   // load the controller's module
   beforeEach(module('sldApp'));
 
-  var CategorylistCtrl, scope;
+  var CategoryListCtrl, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    CategorylistCtrl = $controller('CategorylistCtrl', {
+    CategoryListCtrl = $controller('CategoryListCtrl', {
       $scope: scope
     });
   }));

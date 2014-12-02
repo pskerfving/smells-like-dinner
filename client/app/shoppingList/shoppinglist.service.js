@@ -33,7 +33,7 @@ angular.module('sldApp')
             sList = collectShoppingList(cache.config.nbrDays);
 //          copyArray(sList, tmp);
             deferred.resolve(sList);
-          }, function() {
+          }, function(reason) {
             // FAILURE
             console.log('Loading ShoppingList failed : ' + reason);
             deferred.reject(reason);
@@ -48,6 +48,28 @@ angular.module('sldApp')
     }
 
     function loadShoppingListFromDB() {
+
+      function createNewUserShoppingList(user_id) {
+        var shoppinglist = getTemplate(user_id);
+        ShoppingList.save(shoppinglist, function (response) {
+          // If we get here cache must have some content.
+          shoppinglist._id = response._id;
+          user.schedule.shoppinglist_id = response._id;
+          scheduleService.setShoppingListId(response._id);
+          scheduleService.saveSchedule().then(function () {
+            // Success updating schedule with the new shoppinglist id
+            deepCopyShoppingList(cache, shoppinglist);
+            deferred.resolve(cache);
+          }, function () {
+            // Failed to update the user.
+            console.log('update user with the new shopping list id FAILED!');
+          });  // If this fails, it needs to be resolved on the next load.
+        }, function (err) {
+          console.log('failed to save new shopping list for user.');
+          deferred.reject(err);
+        });
+      }
+
       // This is not all correct, but should work since only called once.
       var deferred = $q.defer();
       var user;
@@ -76,26 +98,6 @@ angular.module('sldApp')
       });
       return deferred.promise;
 
-      function createNewUserShoppingList(user_id) {
-        var shoppinglist = getTemplate(user_id);
-        ShoppingList.save(shoppinglist, function (response) {
-          // If we get here cache must have some content.
-          shoppinglist._id = response._id;
-          user.schedule.shoppinglist_id = response._id;
-          scheduleService.setShoppingListId(response._id);
-          scheduleService.saveSchedule().then(function () {
-            // Success updating schedule with the new shoppinglist id
-            deepCopyShoppingList(cache, shoppinglist);
-            deferred.resolve(cache);
-          }, function () {
-            // Failed to update the user.
-            console.log('update user with the new shopping list id FAILED!');
-          });  // If this fails, it needs to be resolved on the next load.
-        }, function (err) {
-          console.log('failed to save new shopping list for user.');
-          deferred.reject(err);
-        });
-      }
     }
 
     function emptyArray(a) {

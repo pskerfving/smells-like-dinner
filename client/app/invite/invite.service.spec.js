@@ -1,14 +1,14 @@
 'use strict';
 
-describe('Service: invite', function () {
+describe('Service: inviteService', function () {
 
   // load the service's module
   beforeEach(module('sldApp'));
 
   // instantiate service
   var invite;
-  beforeEach(inject(function (_invite_) {
-    invite = _invite_;
+  beforeEach(inject(function (_inviteService_) {
+    invite = _inviteService_;
   }));
 
   it('should do something', function () {

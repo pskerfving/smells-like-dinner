@@ -11,7 +11,7 @@ angular.module('sldApp')
       { update: { method:'PUT' } });
 
     this.loadSchedule = function() {
-      return loadSchedulePrivate()
+      return loadSchedulePrivate();
     };
 
     function loadSchedulePrivate() {
@@ -47,6 +47,31 @@ angular.module('sldApp')
     }
 
     function loadScheduleFromDB() {
+
+      function createNewUserSchedule(user_id) {
+        console.log('User has no schedule. Creating new one.');
+        var schedule = getTemplate(user_id);
+        Schedule.save(schedule, function(response) {
+          // If we get here cache must have some content.
+          schedule._id = response._id;
+          user.schedule_id = response._id;
+          user.own_schedule_id = response._id;
+          user.schedule = schedule;
+          User.update(user, function() {
+            // Success updating user with the new schedule id
+            deepCopySchedule(cache, schedule);
+            $rootScope.$broadcast('scheduleChanged');
+            deferred.resolve(cache);
+          }, function() {
+            // Failed to update the user.
+            console.log('update user with the new schedule id FAILED!');
+          });  // If this fails, it needs to be resolved on the next load.
+        }, function(err) {
+          console.log('failed to save new schedule for user.');
+          deferred.reject(err);
+        });
+      }
+
       var deferred = $q.defer();
       var user;
       var id = 'anonymous';
@@ -80,29 +105,6 @@ angular.module('sldApp')
       });
       return deferred.promise;
 
-      function createNewUserSchedule(user_id) {
-        console.log('User has no schedule. Creating new one.');
-        var schedule = getTemplate(user_id);
-        Schedule.save(schedule, function(response) {
-          // If we get here cache must have some content.
-          schedule._id = response._id;
-          user.schedule_id = response._id;
-          user.own_schedule_id = response._id;
-          user.schedule = schedule;
-          User.update(user, function() {
-            // Success updating user with the new schedule id
-            deepCopySchedule(cache, schedule);
-            $rootScope.$broadcast('scheduleChanged');
-            deferred.resolve(cache);
-          }, function() {
-            // Failed to update the user.
-            console.log('update user with the new schedule id FAILED!');
-          });  // If this fails, it needs to be resolved on the next load.
-        }, function(err) {
-          console.log('failed to save new schedule for user.');
-          deferred.reject(err);
-        });
-      }
     }
 
     this.saveSchedule = function() {
@@ -235,7 +237,7 @@ angular.module('sldApp')
 
     function getTemplate(user) {
       return {
-        name: "Middageschema",
+        name: 'Middageschema',
         user_id: user,
         config: {
           nbrDays: 7,

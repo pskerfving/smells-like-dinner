@@ -62,5 +62,5 @@ angular.module('sldApp')
         return item.ingredient.category.rank;
       }
       return 0;
-    }
+    };
   });

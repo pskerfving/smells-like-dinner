@@ -26,7 +26,7 @@ angular.module('sldApp')
 //      $location.path('/login');
     };
 
-    $scope.isActive = function(route) {
+    $scope.isActive = function() {
       return false;
 //      return route === $location.path();
     };

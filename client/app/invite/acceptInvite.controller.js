@@ -21,6 +21,7 @@ angular.module('sldApp')
           $rootScope.$broadcast('userLoggedInOut');
         }, function(err) {
           // FAIL.
+        console.log(err);
         });
     };
   });

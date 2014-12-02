@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Controller: AcceptinviteCtrl', function () {
+describe('Controller: AcceptInviteCtrl', function () {
 
   // load the controller's module
   beforeEach(module('sldApp'));
 
-  var AcceptinviteCtrl, scope;
+  var AcceptInviteCtrl, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    AcceptinviteCtrl = $controller('AcceptinviteCtrl', {
+    AcceptInviteCtrl = $controller('AcceptInviteCtrl', {
       $scope: scope
     });
   }));

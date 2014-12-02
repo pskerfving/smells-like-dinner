@@ -27,12 +27,12 @@ exports.index = function(req, res) {
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   User.findById(req.params.id, function (err, user) {
-    if (err) { return handleError(res, err); }
+//    if (err) { return handleError(res, err); }
     if(!user) { return res.send(404); }
     var updated = _.merge(user, req.body);
     console.log('Storing updated user: ', updated);
     updated.save(function (err) {
-      if (err) { return handleError(res, err); }
+//      if (err) { return handleError(res, err); }
       return res.json(200, user);
     });
   });
@@ -48,7 +48,7 @@ exports.create = function (req, res, next) {
   var user_id = mongoose.Types.ObjectId();
   newUser._id = user_id;
   Schedule.create(getTemplate(user_id), function(err, schedule) {
-    if (err) { return handleError(res, err); }
+//    if (err) { return handleError(res, err); }
     newUser.schedule_id = schedule._id;
     newUser.own_schedule_id = schedule._id;
     newUser.save(function(err, user) {

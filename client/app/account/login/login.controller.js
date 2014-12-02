@@ -36,5 +36,5 @@ angular.module('sldApp')
 
     $scope.setSignup = function(state) {
       $scope.signup = state;
-    }
+    };
   });

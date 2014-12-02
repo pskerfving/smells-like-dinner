@@ -5,7 +5,7 @@ angular.module('sldApp')
 
     $scope.email = '';
 
-    $scope.invite = function(form) {
+    $scope.invite = function() {
       console.log('email: ', $scope.email);
       var user = Auth.getCurrentUser();
       inviteService.createInvite({
