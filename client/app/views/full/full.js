@@ -12,15 +12,19 @@ angular.module('sldApp')
     menuService.setMenu([
       {
         title: '1. Måltider',
-        link: '#meals'
+        link: 'meals',
+        anchor: true
       }, {
         title: '2. Schema',
-        link: '#shcdule'
+        link: 'schedule',
+        anchor: true
       }, {
         title: '3. Ingredienser',
-        link: '#ingredients'
+        link: 'ingredients',
+        anchor: true
       }, {
         title: '4. Inköp',
-        link: '#shoppinglist'
+        link: 'shoppinglist',
+        anchor: true
       }]);
     });

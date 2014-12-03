@@ -12,6 +12,7 @@ angular.module('sldApp')
     menuService.setMenu([
         {
           title: 'Till fulla sajten',
-          link: '/'
+          link: '/',
+          anchor: false
         }]);
       });

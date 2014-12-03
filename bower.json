@@ -17,8 +17,7 @@
     "lodash": "~2.4.1",
     "angular-socket-io": "~0.6.0",
     "ngDraggable": "*",
-    "ngSmoothScroll": "*",
-    "jquery-easing-original": "*"
+    "ngSmoothScroll": "*"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",
