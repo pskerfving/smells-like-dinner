@@ -48,6 +48,10 @@ angular.module('sldApp')
 
     function loadScheduleFromDB() {
 
+      var deferredDB = $q.defer();
+      var user;
+      var id = 'anonymous';
+
       function createNewUserSchedule(user_id) {
         console.log('User has no schedule. Creating new one.');
         var schedule = getTemplate(user_id);
@@ -61,50 +65,48 @@ angular.module('sldApp')
             // Success updating user with the new schedule id
             deepCopySchedule(cache, schedule);
             $rootScope.$broadcast('scheduleChanged');
-            deferred.resolve(cache);
+            deferredDB.resolve(cache);
           }, function() {
             // Failed to update the user.
             console.log('update user with the new schedule id FAILED!');
           });  // If this fails, it needs to be resolved on the next load.
         }, function(err) {
           console.log('failed to save new schedule for user.');
-          deferred.reject(err);
+          deferredDB.reject(err);
         });
       }
 
-      var deferred = $q.defer();
-      var user;
-      var id = 'anonymous';
-      if (Auth.isLoggedIn()) {
-        user = Auth.getCurrentUser();
-        id = user.schedule_id;
-        if (!id) {
-          // Create a new shcedule for the user.
-          createNewUserSchedule(user._id);
-          return deferred.promise;
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (loggedIn) {
+          user = Auth.getCurrentUser();
+          id = user.schedule_id;
+          if (!id) {
+            // Create a new shcedule for the user.
+            createNewUserSchedule(user._id);
+            return deferredDB.promise;
+          }
         }
-      }
-      console.log('schedule service load. id : ', id);
-      Schedule.get({ id: id }, function (data) {
-        // SUCCESS!
-        if (!cache) {
-          cache = data;
-        } else {
-          deepCopySchedule(cache, data);
-        }
-        if (user) {
-          user.schedule = cache;
-        }
-        $rootScope.$broadcast('scheduleChanged');
-        deferred.resolve(cache);
-      }, function(reason) {
-        // FAILURE!
-        console.log('Failed to load Schedule from DB : ' + reason);
-        console.log('no schedule entries returned, creating new template...');
-        deferred.reject(reason);
+        console.log('schedule service load. id : ', id);
+        Schedule.get({ id: id }, function (data) {
+          // SUCCESS!
+          if (!cache) {
+            cache = data;
+          } else {
+            deepCopySchedule(cache, data);
+          }
+          if (user) {
+            user.schedule = cache;
+          }
+          $rootScope.$broadcast('scheduleChanged');
+          deferredDB.resolve(cache);
+        }, function(reason) {
+          // FAILURE!
+          console.log('Failed to load Schedule from DB : ' + reason);
+          console.log('no schedule entries returned, creating new template...');
+          deferredDB.reject(reason);
+        });
       });
-      return deferred.promise;
-
+      return deferredDB.promise;
     }
 
     this.saveSchedule = function() {

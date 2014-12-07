@@ -76,6 +76,7 @@ angular.module('sldApp')
       var id = 'anonymous';
       if (Auth.isLoggedIn()) {
         user = Auth.getCurrentUser();
+        console.log('THE USER : ', user);
         id = user.schedule.shoppinglist_id;
         if (!id) {
           // The user has no shoppinglist. create one!

@@ -30,7 +30,7 @@ angular.module('sldApp')
       }
       $q.all([ query, ingredientService.loadIngredients() ]).then(function(data) {
         // SUCCESS!
-        console.log('recieved : ', data[0]);
+        console.log('Meals recieved : ', data[0]);
         if (cache) {
           // This is not the first time we get the data.
           emptyCache();
