@@ -28,7 +28,7 @@ exports.index = function(req, res) {
       if(err) { return handleError(res, err); }
       var schedule_meals = [];
       for (var j = 0; j < schedule.days.length; j++) {
-        schedule_meals.push(schedule.days[i].mealid);
+        schedule_meals.push(schedule.days[j].mealid);
       }
       Meal.find({ $or: [ { user_id: { $in: owners } }, { _id: { $in: schedule_meals } } ] }, function (err, meals) {
         if(err) { return handleError(res, err); }
