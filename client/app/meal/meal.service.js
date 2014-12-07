@@ -23,30 +23,32 @@ angular.module('sldApp')
       }
       deferred = $q.defer();
       var query;
-      if (Auth.isLoggedIn()) {
-        query = MealMe.query().$promise;
-      } else {
-        query = Meal.query({ id: 'public' }).$promise;
-      }
-      $q.all([ query, ingredientService.loadIngredients() ]).then(function(data) {
-        // SUCCESS!
-        console.log('Meals recieved : ', data[0]);
-        if (cache) {
-          // This is not the first time we get the data.
-          emptyCache();
-          copyArray(cache, data[0]);
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (loggedIn) {
+          query = MealMe.query().$promise;
         } else {
-          // First time, just assign.
-          cache = data[0];
+          query = Meal.query({ id: 'public' }).$promise;
         }
-        ingredients = data[1];
-        mapToIngredients(cache, ingredients);
-        deferred.resolve(cache);
-      }, function(errResponse) {
-        //FAILURE!
-        console.log('something went wrong fetching the data. fallback to local.', errResponse);
-        // TODO. Something is wrong with the error handling further up the line.
-        deferred.reject();
+        $q.all([ query, ingredientService.loadIngredients() ]).then(function(data) {
+          // SUCCESS!
+          console.log('Meals recieved : ', data[0]);
+          if (cache) {
+            // This is not the first time we get the data.
+            emptyCache();
+            copyArray(cache, data[0]);
+          } else {
+            // First time, just assign.
+            cache = data[0];
+          }
+          ingredients = data[1];
+          mapToIngredients(cache, ingredients);
+          deferred.resolve(cache);
+        }, function(errResponse) {
+          //FAILURE!
+          console.log('something went wrong fetching the data. fallback to local.', errResponse);
+          // TODO. Something is wrong with the error handling further up the line.
+          deferred.reject();
+        });
       });
       return deferred.promise;
     }
