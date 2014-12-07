@@ -49,6 +49,10 @@ angular.module('sldApp')
 
     function loadShoppingListFromDB() {
 
+      var deferred = $q.defer();
+      var user;
+      var id = 'anonymous';
+
       function createNewUserShoppingList(user_id) {
         var shoppinglist = getTemplate(user_id);
         ShoppingList.save(shoppinglist, function (response) {
@@ -71,34 +75,32 @@ angular.module('sldApp')
       }
 
       // This is not all correct, but should work since only called once.
-      var deferred = $q.defer();
-      var user;
-      var id = 'anonymous';
-      if (Auth.isLoggedIn()) {
-        user = Auth.getCurrentUser();
-        console.log('THE USER : ', user);
-        id = user.schedule.shoppinglist_id;
-        if (!id) {
-          // The user has no shoppinglist. create one!
-          createNewUserShoppingList(user._id);
-          return deferred.promise;
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (loggedIn) {
+          user = Auth.getCurrentUser();
+          id = user.schedule.shoppinglist_id;
+          if (!id) {
+            // The user has no shoppinglist. create one!
+            // This should never happen. Only if the user was not correctly created in the backend.
+            createNewUserShoppingList(user._id);
+            return deferred.promise;
+          }
         }
-      }
-      ShoppingList.get({ id: id }, function (data) {
-        // SUCCESS!
-        console.log('received the shoppinglist: ', data);
-        if (!cache) {
-          cache = data;
-        } else {
-          deepCopyShoppingList(cache, data);
-        }
-        deferred.resolve(cache);
-      }, function (reason) {
-        console.log('Failed to load ShoppingList from DB : ' + reason);
-        deferred.reject(reason);
+        ShoppingList.get({ id: id }, function (data) {
+          // SUCCESS!
+          console.log('received the shoppinglist: ', data);
+          if (!cache) {
+            cache = data;
+          } else {
+            deepCopyShoppingList(cache, data);
+          }
+          deferred.resolve(cache);
+        }, function (reason) {
+          console.log('Failed to load ShoppingList from DB : ' + reason);
+          deferred.reject(reason);
+        });
       });
       return deferred.promise;
-
     }
 
     function emptyArray(a) {
