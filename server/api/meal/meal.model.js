@@ -6,7 +6,7 @@ var mongoose = require('mongoose'),
 var MealSchema = new Schema({
   name: String,
   user_id: Schema.ObjectId,
-  ingredients: [ { ingredientid: Schema.ObjectId } ],
+  ingredients: [ { ingredientid: { type: Schema.ObjectId, ref: 'Ingredient' } } ],
   empty: Boolean
 });
 

@@ -347,8 +347,9 @@ angular.module('sldApp')
 
     this.updateShoppingList = function() {
       var deferred = $q.defer();
-      ShoppingList.update(cache, function() {
+      ShoppingList.update(cache, function(response) {
         // SUCCESS
+        if (response.__v) { cache.__v = response.__v; }
         deferred.resolve(cache);
         console.log('ShoppingList saved successfully');
       }, function(err) {

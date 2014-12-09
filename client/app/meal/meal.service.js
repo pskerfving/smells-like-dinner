@@ -97,9 +97,10 @@ angular.module('sldApp')
 
     this.updateMeal = function(meal) {
       var deferred = $q.defer();
-      Meal.update(meal, function() {
+      Meal.update(meal, function(response) {
         // SUCCESS
         $rootScope.$broadcast('mealUpdated', meal);
+        if (response.__v) { meal.__v = response.__v; }
         deferred.resolve(meal);
       }, function(err) {
         //FAILURE

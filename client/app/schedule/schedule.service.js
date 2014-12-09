@@ -112,8 +112,9 @@ angular.module('sldApp')
     this.saveSchedule = function() {
       var deferred = $q.defer();
       console.log('saving schedule');
-      Schedule.update(cache, function() {
+      Schedule.update(cache, function(response) {
         // SUCCESS
+        if (response.__v) { cache.__v = response.__v; }
         $rootScope.$broadcast('scheduleChanged'); // Should this fire even if the save was not successfull?
         deferred.resolve();
         console.log('Schedule saved successfully');
