@@ -36,9 +36,9 @@ exports.index = function(req, res) {
         // Remove all shopped-entries not related to the users current shoppinglist.
         meals.forEach(function(meal) {
           if (meal.shopped) {
-            meal.shopped = meal.shopped.filter(function(i) {
-              console.log('FILTER : ', i.shoppinglist_id, schedule.shoppinglist_id);
-              return i.shoppinglist_id === schedule.shoppinglist_id;
+            meal.shopped = meal.shopped.filter(function(item) {
+              var ret = (item.shoppinglist_id.toString() === schedule.shoppinglist_id.toString());
+              return ret;
             });
           }
         });
