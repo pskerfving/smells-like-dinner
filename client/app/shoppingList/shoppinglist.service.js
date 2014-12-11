@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, Auth) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, mealService, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;      // The shoppinglist data from DB. Removed items, extras, config.
@@ -341,6 +341,9 @@ angular.module('sldApp')
       cache.removed = [];
       cache.picked = [];
       cache.extras = [];
+      for (var i = 0; i < upcoming.length; i++) {
+        mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil);
+      }
       this.updateShoppingList();
       return collectShoppingList();
     };

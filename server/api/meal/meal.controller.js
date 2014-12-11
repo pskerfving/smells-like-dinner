@@ -97,6 +97,19 @@ exports.destroy = function(req, res) {
   });
 };
 
+exports.shopped = function(req, res) {
+  console.log('SHOPPED');
+  console.log(req.body);
+  Meal.findById(req.params.id, function(err, meal) {
+    if(err) { return handleError(res, err); }
+    if(!meal) { return res.send(404); }
+    meal.shopped.push(req.body.shopped[0]);
+    meal.save(function (err) {
+      return res.json(200, meal);
+    });
+  });
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

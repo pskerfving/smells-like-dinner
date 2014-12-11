@@ -12,6 +12,7 @@ router.get('/', controller.index);
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
+router.put('/:id/shopped', auth.isAuthenticated(), controller.shopped); // The user has closed a shoppinglist containing the meal.
 router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 

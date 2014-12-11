@@ -7,6 +7,7 @@ var MealSchema = new Schema({
   name: String,
   user_id: Schema.ObjectId,
   ingredients: [ { ingredientid: { type: Schema.ObjectId, ref: 'Ingredient' } } ],
+  shopped: [ { shoppinglist_id: { type: Schema.ObjectId, ref: 'Shoppinglist' }, date: Date } ],
   empty: Boolean
 });
 

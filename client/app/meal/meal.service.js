@@ -9,8 +9,11 @@ angular.module('sldApp')
     var deferred;
 
     var Meal = $resource('/api/meals/:id', { id: '@_id'},
-      { update: { method:'PUT' } });
-    var MealMe = $resource('/api/meals/me');
+      {
+        update: { method:'PUT'},
+        shopped: { method: 'PUT', url: '/api/meals/:id/shopped' }
+      });
+    var MealMe = $resource('/api/meals/me');  // TODO: Put this into the constructor call above.
 
     this.loadMeals = function() {
       return loadMealsPrivate();
@@ -117,6 +120,27 @@ angular.module('sldApp')
       }, function (err) {
         console.log('failed to delete meal: ', err);
         deferred.reject(err);
+      });
+      return deferred.promise;
+    };
+
+    this.shoppedMeal = function(meal, id, daysUntil) {
+      var deferred = $q.defer();
+      var prepDate  = new Date();
+      var shoppedObj = {
+        shoppinglist_id: id,
+        date: prepDate.setDate(prepDate.getDate() + daysUntil)
+      };
+      meal.shopped = [];  // A meal can only be shopped once. This could be a limitation.
+      meal.shopped.push(shoppedObj);
+      Meal.shopped(meal, function() {
+        // SUCCESS
+        console.log('Meal marked as shopped : ', meal.name);
+        deferred.resolve(meal);
+      }, function(err) {
+        console.log('Failed to mark meal as shopped : ', meal.name);
+        console.log('Error : ', err);
+        deferred.reject();
       });
       return deferred.promise;
     };
