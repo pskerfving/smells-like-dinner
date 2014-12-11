@@ -33,6 +33,15 @@ exports.index = function(req, res) {
       Meal.find({ $or: [ { user_id: { $in: owners } }, { _id: { $in: schedule_meals } } ] }, function (err, meals) {
         if(err) { return handleError(res, err); }
         console.log('FOUND THE MEALS : ', meals);
+        // Remove all shopped-entries not related to the users current shoppinglist.
+        meals.forEach(function(meal) {
+          if (meal.shopped) {
+            meal.shopped = meal.shopped.filter(function(i) {
+              console.log('FILTER : ', i.shoppinglist_id, schedule.shoppinglist_id);
+              return i.shoppinglist_id === schedule.shoppinglist_id;
+            });
+          }
+        });
         return res.json(200, meals);
       });
     });
