@@ -44,7 +44,14 @@ angular.module('sldApp')
             m.meal.empty = (m.meal.ingredients.length === 0);
           }
           m.daysUntil = i - todayIndex;  // How many days into the future is this meal?
-          upcoming.push(m);
+          // Only push the meal if it is not already shopped
+          if (!m.meal.shopped[0]) {
+            upcoming.push(m);
+          } else {
+            if (m.meal.shopped[0].date < new Date()) {
+              upcoming.push(m);
+            }
+          }
         }
       }
       if (!foundToday) { return schedule; }

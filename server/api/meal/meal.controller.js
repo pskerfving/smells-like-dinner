@@ -112,7 +112,12 @@ exports.shopped = function(req, res) {
   Meal.findById(req.params.id, function(err, meal) {
     if(err) { return handleError(res, err); }
     if(!meal) { return res.send(404); }
-    meal.shopped.push(req.body.shopped[0]);
+    var id = req.body.shopped[0];
+    // Remove any old stuff related to this shoppinglist
+    meal.shopped = meal.shopped.filter(function(item) {
+      return item.shoppinglist_id.toString !== id.shoppinglist_id.toString();
+    });
+    meal.shopped.push(id);
     meal.save(function (err) {
       return res.json(200, meal);
     });
