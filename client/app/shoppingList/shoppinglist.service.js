@@ -338,11 +338,16 @@ angular.module('sldApp')
     };
 
     this.clearShoppingList = function() {
+      // Keep stuff that has not been picked.
+      cache.extras = cache.extras.filter(function (item) {
+        return !isPicked(item.ingredientid);
+      });
       cache.removed = [];
       cache.picked = [];
-      cache.extras = [];
-      for (var i = 0; i < upcoming.length; i++) {
-        mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil);
+      if (upcoming.length > 0) {
+        for (var i = 0; upcoming[i].daysUntil < cache.config.nbrDays; i++) {
+          mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil);
+        }
       }
       this.updateShoppingList();
       return collectShoppingList();
