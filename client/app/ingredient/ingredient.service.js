@@ -15,7 +15,7 @@ angular.module('sldApp')
       $q.all(
         [ Ingredient.query(), categoryService.load() ]
       ).then(function(value) {
-        // SUCESS
+        // SUCCESS
         cache = value[0];
         categories = value[1];
         mapToCategories(cache, categories);

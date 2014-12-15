@@ -4,6 +4,7 @@ angular.module('sldApp')
   .controller('CategoryListCtrl', function ($scope, categoryService) {
 
     $scope.loading = true;
+    $scope.categories = [];
 
     categoryService.load().then(function (value) {
       // SUCCESS
@@ -22,6 +23,7 @@ angular.module('sldApp')
       $scope.categories.push(newCat);
       $scope.newCategoryName = '';
       categoryService.save(newCat);
+      return newCat;
     };
 
     $scope.removeCategory = function(cat) {
@@ -29,6 +31,7 @@ angular.module('sldApp')
       categoryService.remove(cat);
     };
 
+    // Should this be in the service instead of the controller? It is related to the view.
     $scope.onDropOnCategory = function(catTarget, catDropped) {
       // Recalculate ranking. Between the indexes.
       console.log('target : ', catTarget);

@@ -26,10 +26,16 @@ angular.module('sldApp')
     };
 
     this.save = function(cat) {
+      var deferred = $q.defer();
       console.log('saving category: ', cat.name);
       Category.save(cat, function(response) {
+        // SUCCESS
         cat._id = response._id;
+        deferred.resolve(cat);
+      }, function(err) {
+        console.log('saving category failed : ', err);
       });
+      return deferred.promise;
     };
 
     this.update = function(cat) {
@@ -38,7 +44,6 @@ angular.module('sldApp')
         // SUCCESS
         cat._id = response._id;
         deferred.resolve(cat);
-        console.log('saved category to DB successfully.');
       }, function(errResponse) {
         //FAILURE
         deferred.reject(errResponse);
@@ -49,15 +54,13 @@ angular.module('sldApp')
 
     this.remove = function(cat) {
       var deferred = $q.defer();
-      Category.delete({id: cat._id}, function(response) {
-        // SUCESS
+      Category.delete({id: cat._id}, function() {
+        // SUCCESS
         deferred.resolve();
-        console.log('success!', response);
       }, function(err) {
         // FAILURE
+        console.log('Failure to delete category in DB!', err);
         deferred.reject(err);
-        console.log('failure!', err);
-
       });
       return deferred.promise;
     };
