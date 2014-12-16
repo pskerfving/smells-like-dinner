@@ -52,8 +52,19 @@ angular.module('sldApp')
       return deferred.promise;
     };
 
+    this.add = function(name) {
+      var max = 0;
+      for (var i = 0; i < cache.length; i++) {
+        max = Math.max(max, cache[i].rank);
+      }
+      var newCat = { name: name, rank: max + 1 };
+      cache.push(newCat);
+      return this.save(newCat);
+    };
+
     this.remove = function(cat) {
       var deferred = $q.defer();
+      cache.splice(cache.indexOf(cat), 1);
       Category.delete({id: cat._id}, function() {
         // SUCCESS
         deferred.resolve();
@@ -64,4 +75,5 @@ angular.module('sldApp')
       });
       return deferred.promise;
     };
+
   });

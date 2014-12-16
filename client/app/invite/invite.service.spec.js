@@ -11,8 +11,9 @@ describe('Service: inviteService', function () {
     invite = _inviteService_;
   }));
 
-  it('should do something', function () {
-    expect(!!invite).toBe(true);
+  it('loadInvites() should return a promise', function () {
+    var promise = invite.loadInvites();
+    expect(promise.hasOwnProperty('then')).toBe(true);
   });
 
 });

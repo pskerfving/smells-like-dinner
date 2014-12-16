@@ -15,27 +15,17 @@ angular.module('sldApp')
     });
 
     $scope.addCategory = function(name) {
-      var max = 0;
-      for (var i = 0; i < $scope.categories.length; i++) {
-        max = Math.max(max, $scope.categories[i].rank);
-      }
-      var newCat = { name: name, rank: max + 1 };
-      $scope.categories.push(newCat);
       $scope.newCategoryName = '';
-      categoryService.save(newCat);
-      return newCat;
+      categoryService.add(name);
     };
 
     $scope.removeCategory = function(cat) {
-      $scope.categories.splice($scope.categories.indexOf(cat), 1);
       categoryService.remove(cat);
     };
 
     // Should this be in the service instead of the controller? It is related to the view.
     $scope.onDropOnCategory = function(catTarget, catDropped) {
       // Recalculate ranking. Between the indexes.
-      console.log('target : ', catTarget);
-      console.log('dropped : ', catDropped);
       var targetRank = catTarget.rank;
       var droppedRank = catDropped.rank;
       catDropped.rank = catTarget.rank;
@@ -43,11 +33,11 @@ angular.module('sldApp')
       for (var i = 0; i < $scope.categories.length; i++) {
         var rank = $scope.categories[i].rank;
         if (!((rank <= targetRank && rank <= droppedRank) || (rank >= targetRank && rank >= droppedRank))) {
-          $scope.categories[i].rank += Math.sign(droppedRank - targetRank);
+          $scope.categories[i].rank += ((droppedRank - targetRank) < 0 ? -1 : 1);
           categoryService.update($scope.categories[i]);
         }
       }
-      catTarget.rank += Math.sign(droppedRank - targetRank);
+      catTarget.rank += ((droppedRank - targetRank) < 0 ? -1 : 1);
       categoryService.update(catTarget);
     };
   });
