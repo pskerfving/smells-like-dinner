@@ -13,7 +13,7 @@ angular.module('sldApp')
       if (deferred) { return deferred.promise; }
       deferred = $q.defer();
       $q.all(
-        [ Ingredient.query(), categoryService.load() ]
+        [ Ingredient.query().$promise, categoryService.load() ]
       ).then(function(value) {
         // SUCCESS
         cache = value[0];
