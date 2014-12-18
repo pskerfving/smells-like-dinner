@@ -20,7 +20,6 @@ angular.module('sldApp')
         isArray: true
       }
     });
-    // var InviteMe = $resource('/api/invites/me');
 
 
     this.loadInvites = function() {
