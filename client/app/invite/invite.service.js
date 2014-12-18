@@ -13,8 +13,14 @@ angular.module('sldApp')
           controller:'accept'
         }
       },
-      update: { method:'PUT' } });
-    var InviteMe = $resource('/api/invites/me');
+      update: { method:'PUT' },
+      getMe: {
+        method: 'GET',
+        url: '/api/invites/me',
+        isArray: true
+      }
+    });
+    // var InviteMe = $resource('/api/invites/me');
 
 
     this.loadInvites = function() {
@@ -27,7 +33,7 @@ angular.module('sldApp')
         return deferred.promise;
       }
       deferred = $q.defer();
-      InviteMe.query(function(value) {
+      Invite.getMe(function(value) {
         console.log('INVITES : ', value);
         if (cache) {
           emptyCache();
