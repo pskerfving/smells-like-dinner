@@ -45,7 +45,7 @@ angular.module('sldApp')
           }
           m.daysUntil = i - todayIndex;  // How many days into the future is this meal?
           // Only push the meal if it is not already shopped
-          if (!m.meal.shopped[0]) {
+          if (!m.meal.shopped || !m.meal.shopped[0]) {
             upcoming.push(m);
           } else {
             if (m.meal.shopped[0].date < new Date()) {
