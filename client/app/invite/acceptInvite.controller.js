@@ -5,14 +5,14 @@ angular.module('sldApp')
 
     inviteService.loadInvites().then(function(value) {
       $scope.invites = value;
-      $scope.invited = false;
-      var user = Auth.getCurrentUser();
-      for (var i = 0; i < $scope.invites.length; i++) {
-        if ($scope.invites[i].invitee_email === user.email) {
-          $scope.invited = true;
-        }
-      }
     });
+
+    $scope.isInvited = function() {
+      if ($scope.invites) {
+        return $scope.invites.length > 0;
+      }
+      return false;
+    };
 
     $scope.acceptInvite = function(invite) {
       inviteService.acceptInvite(invite).then(function() {

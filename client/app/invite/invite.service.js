@@ -4,7 +4,7 @@ angular.module('sldApp')
   .service('inviteService', function ($q, $resource, $rootScope, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;
+    var cache = [];
     var deferred;
     var Invite = $resource('/api/invites/:id/:controller', { id: '@_id' }, {
       accept: {
@@ -32,17 +32,27 @@ angular.module('sldApp')
         return deferred.promise;
       }
       deferred = $q.defer();
-      Invite.getMe(function(value) {
-        console.log('INVITES : ', value);
-        if (cache) {
-          emptyCache();
-          copyInvites(value);
+      Auth.isLoggedInAsync(function(loggedIn) {
+        // Only load the invites if the user is logged in.
+        // Wait until the client has received a token.
+        if (loggedIn) {
+          Invite.getMe(function(value) {
+            console.log('INVITES : ', value);
+            if (cache) {
+              emptyCache();
+              copyInvites(value);
+            } else {
+              cache = value;
+            }
+            deferred.resolve(cache);
+          }, function(err) {
+            // FAILURE to get invites from backend.
+            console.log('Failed to get invites from : ', err);
+            deferred.reject(err);
+          });
         } else {
-          cache = value;
+          cache = [];
         }
-        deferred.resolve(cache);
-      }, function(err) {
-        deferred.reject(err);
       });
       return deferred.promise;
     }
@@ -95,12 +105,14 @@ angular.module('sldApp')
     };
 
     $rootScope.$on('userLoggedInOut', function() {
-      if (Auth.isLoggedIn()) {
-        deferred = undefined;
-        loadInvitesPrivate();
-      } else {
-        emptyCache();
-      }
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (loggedIn) {
+          deferred = undefined;
+          loadInvitesPrivate();
+        } else {
+          emptyCache();
+        }
+      });
     });
 
   });

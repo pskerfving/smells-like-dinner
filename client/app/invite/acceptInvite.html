@@ -1,5 +1,6 @@
-<div ng-controller="AcceptInviteCtrl">
-    <div class="container" ng-show="invites.length > 0">
+<div ng-controller="AcceptInviteCtrl" >
+    <div>{{isInvited()}}</div>
+    <div class="container" ng-show="isInvited()">
         <div class="row">
             <div class="col-lg-12">
                 <h3>Du har blivit inbjuden!</h3>
