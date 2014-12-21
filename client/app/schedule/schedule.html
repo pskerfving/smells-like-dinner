@@ -73,7 +73,7 @@
             <div ng-controller="MealListCtrl">
                 <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
                 <ul class="list-group top-buffer">
-                    <li class="list-group-item clearfix"
+                    <li class="list-group-item clearfix" ng-class="getItemClasses(meal)"
                         ng-repeat="meal in filtered = (meals | filter:filterStr | limitTo:10)">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
                         <span class="pull-right">
