@@ -41,12 +41,7 @@ angular.module('sldApp')
       var length = Math.ceil($scope.meals.length / $scope.nbrCol);
       var index = ci * length + i;
       var meal = $scope.meals[index];
-      meal.loading = true;
-      mealService.deleteMeal(meal).then(function() {
-        // SUCCESS
-      }, function() {
-        meal.error = 'Misslyckades att ta bort måltiden.'
-      });
+      $scope.deleteMeal(meal);
     };
 
     $scope.getItemClasses = function(meal) {
