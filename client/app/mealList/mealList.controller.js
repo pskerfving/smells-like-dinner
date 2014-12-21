@@ -28,16 +28,27 @@ angular.module('sldApp')
     };
 
     $scope.deleteMeal = function(meal) {
-      var index = $scope.meals.indexOf(meal);
-      mealService.deleteMeal(meal);
-      $scope.meals.splice(index, 1);
+      meal.loading = true;
+      mealService.deleteMeal(meal).then(function() {
+        // SUCCESS!
+        var index = $scope.meals.indexOf(meal);
+        $scope.meals.splice(index, 1);
+      }, function() {
+        // FAILURE!
+        meal.error = 'Misslyckades att ta bort måltiden.'
+      });
     };
 
     $scope.deleteColMeal = function(ci, i) {
       var length = Math.ceil($scope.meals.length / $scope.nbrCol);
       var index = ci * length + i;
-      mealService.deleteMeal($scope.meals[index]);
-      $scope.meals.splice(index, 1);
+      var meal = $scope.meals[index];
+      meal.loading = true;
+      mealService.deleteMeal(meal).then(function() {
+        $scope.meals.splice(index, 1);
+      }, function() {
+        meal.error = 'Misslyckades att ta bort måltiden.'
+      });
     };
 
     $scope.getItemClasses = function(meal) {
