@@ -18,7 +18,7 @@ angular.module('sldApp')
       inviteService.acceptInvite(invite).then(function() {
           // SUCCESS!
           $scope.invites.splice($scope.invites.indexOf(invite), 1);
-          $rootScope.$broadcast('userLoggedInOut');
+          $rootScope.$broadcast('userLoggedInOut'); // Just to get an update of all parts of the view.
         }, function(err) {
           // FAIL.
         console.log(err);

@@ -4,7 +4,7 @@ angular.module('sldApp')
   .service('inviteService', function ($q, $resource, $rootScope, Auth) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache = [];
+    var cache;
     var deferred;
     var Invite = $resource('/api/invites/:id/:controller', { id: '@_id' }, {
       accept: {
@@ -51,7 +51,12 @@ angular.module('sldApp')
             deferred.reject(err);
           });
         } else {
-          cache = [];
+          // The user logged out. Empty the cache.
+          if (cache) {
+            emptyCache();
+          } else {
+            cache = [];
+          }
         }
       });
       return deferred.promise;

@@ -14,11 +14,11 @@ angular.module('sldApp')
           email: $scope.user.email,
           password: $scope.user.password
         }, function() {
-          console.log('before broadcast : ', Auth.getCurrentUser());
-          Auth.getCurrentUser().$promise.then(function() {
+          $scope.user.password = '';
+          Auth.isLoggedInAsync(function() {
+            console.log('TRIGGERING LOG IN/OUT EVENT : ', Auth.getCurrentUser());
             $rootScope.$broadcast('userLoggedInOut');
           });
-          $scope.user.password = '';
         })
         .then( function() {
           // Logged in, redirect to home
