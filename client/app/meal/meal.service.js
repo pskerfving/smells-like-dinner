@@ -125,6 +125,7 @@ angular.module('sldApp')
       var deferred = $q.defer();
       Meal.delete({ id: meal._id }, function() {
         console.log('successfully deleted meal');
+        cache.splice(cache.indexOf(meal), 1);
         deferred.resolve();
       }, function (err) {
         console.log('failed to delete meal: ', err);

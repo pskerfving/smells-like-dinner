@@ -31,8 +31,6 @@ angular.module('sldApp')
       meal.loading = true;
       mealService.deleteMeal(meal).then(function() {
         // SUCCESS!
-        var index = $scope.meals.indexOf(meal);
-        $scope.meals.splice(index, 1);
       }, function() {
         // FAILURE!
         meal.error = 'Misslyckades att ta bort måltiden.'
@@ -45,7 +43,7 @@ angular.module('sldApp')
       var meal = $scope.meals[index];
       meal.loading = true;
       mealService.deleteMeal(meal).then(function() {
-        $scope.meals.splice(index, 1);
+        // SUCCESS
       }, function() {
         meal.error = 'Misslyckades att ta bort måltiden.'
       });
