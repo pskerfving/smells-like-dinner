@@ -46,9 +46,14 @@ angular.module('sldApp')
     this.createIngredient = function(ingredient) {
       var deferred = $q.defer();
       Ingredient.save(ingredient, function(response) {
+        // SUCCESS
         ingredient._id = response._id;
         console.log('setting _id: ', ingredient._id);
         deferred.resolve(ingredient);
+      }, function(err) {
+        // FAILURE
+        console.log('Ingredient service. Failed to create new ingredient : ', ingredient);
+        deferred.reject(err);
       });
       return deferred.promise;
     };

@@ -2,11 +2,11 @@
 
 angular.module('sldApp')
   .service('mealService', function ($q, $resource, $rootScope, ingredientService, Auth) {
-    // AngularJS will instantiate a singleton by calling "new" on this function
 
     var cache;
     var ingredients;
     var deferred;
+    var error;
 
     var Meal = $resource('/api/meals/:id', { id: '@_id'},
       {
@@ -49,6 +49,7 @@ angular.module('sldApp')
         }, function(errResponse) {
           //FAILURE!
           console.log('something went wrong fetching the data. fallback to local.', errResponse);
+          error = errResponse;
           // TODO. Something is wrong with the error handling further up the line.
           deferred.reject();
         });
@@ -82,9 +83,14 @@ angular.module('sldApp')
       }
     }
 
-    this.createMeal = function(meal) {
+    this.createMeal = function(name) {
       var deferred = $q.defer();
       var user_id = null;
+      var meal = {
+        name: name,
+        ingredients: [],
+        empty: true
+      };
       if (Auth.isLoggedIn()) {
         user_id = Auth.getCurrentUser()._id;
       }
@@ -95,7 +101,10 @@ angular.module('sldApp')
       }, function(err) {
         deferred.reject(err);
       });
-      return deferred.promise;
+      return {
+        meal: meal,
+        promise: deferred.promise
+      }
     };
 
     this.updateMeal = function(meal) {

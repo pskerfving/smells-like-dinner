@@ -30,7 +30,24 @@ angular.module('sldApp')
 
     $scope.addExtra = function(newItem) {
       console.log('shoppingList.addItem entered.');
-      shoppingListService.addExtra(newItem);
+      var res = shoppingListService.addExtra(newItem);
+      res.item.loading = true;
+      res.promise.then(function() {
+        // SUCCESS
+        res.item.loading = false;
+      }, function(err) {
+        // FAILURE
+        console.log('ShoppingListCtrl. Failed to addExtra to shoppinglist : ', err);
+        res.item.loading = false;
+        res.item.error = 'Något gick snett när handlindslistan skulle sparas på servern.';
+      });
+    };
+
+    $scope.getItemClasses = function(item) {
+      return [
+        item.loading ? 'loading' : '',
+        item.error ? 'error' : ''
+      ];
     };
 
     $scope.onSelect = function($item/*, $model, $label */) {

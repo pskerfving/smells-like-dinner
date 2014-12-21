@@ -31,7 +31,6 @@ angular.module('sldApp')
             console.log('SHOPPING LIST ALL LOADED', cache);
             emptyArray(sList);
             sList = collectShoppingList(cache.config.nbrDays);
-//          copyArray(sList, tmp);
             deferred.resolve(sList);
           }, function(reason) {
             // FAILURE
@@ -171,7 +170,7 @@ angular.module('sldApp')
 
     $rootScope.$on('userLoggedInOut', function() {
       deferred = undefined;
-//      loadShoppingListPrivate();
+      loadShoppingListPrivate();
     });
 
     $rootScope.$on('mealUpdated', function(evt, meal) {
@@ -255,33 +254,42 @@ angular.module('sldApp')
       }
       // Add the extras to sList
       for (i = 0; i < cache.extras.length; i++) {
-        // Does not exist, add.
-        sList.push({
-          ingredient: cache.extras[i].ingredient,
-          meals: [],
-          meal: null,
-          removed: false,
-          picked: isPicked(cache.extras[i].ingredient._id),
-          extra: true
-        });
+        if (cache.extras[i].extra) {
+          // The item has the properties and can just be added to the ShoppingList.
+          sList.push(cache.extras[i]);
+        } else {
+          // The item is just loaded from the DB and does not have all properties.
+          sList.push({
+            ingredient: cache.extras[i].ingredient,
+            meals: [],
+            meal: null,
+            removed: false,
+            picked: isPicked(cache.extras[i].ingredient._id),
+            extra: true
+          });
+        }
       }
       console.log('sList : ', sList);
       return sList;
     }
 
     this.addExtra = function(arg) {
-      // Find the
       var newItem = {
         ingredient: arg.ingredient,
         ingredientid: arg.ingredient._id,
         meals:[],
         meal: null,
         removed: false,
-        picked: false
+        picked: false,
+        extra: true
       };
-      cache.extras.push(newItem);
       sList = collectShoppingList(cache.config.nbrDays);
-      this.updateShoppingList();
+      cache.extras.push(newItem);
+      sList.push(newItem);
+      return {
+        item: newItem,
+        promise: this.updateShoppingList()
+      };
     };
 
     function isRemoved(id) {

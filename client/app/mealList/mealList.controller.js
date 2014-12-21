@@ -13,16 +13,18 @@ angular.module('sldApp')
     });
 
     $scope.addMeal = function(newMealTitle) {
-      // TODO: This is not the right place fot this.
-      var newMeal = {
-        name: newMealTitle,
-        ingredients: [],
-        sides: [],
-        empty: true
-      };
-      mealService.createMeal(newMeal);
-      $scope.meals.push(newMeal);
+      var ret = mealService.createMeal(newMealTitle);
+      $scope.meals.push(ret.meal);
       $scope.newMealTitle = ''; // Removes the name from the input field.
+      ret.meal.loading = true;
+      ret.promise.then(function() {
+        // SUCCESS
+        ret.meal.loading = false;
+      }, function(err) {
+        // FAILURE
+        ret.meal.loading = false;
+        ret.meal.error = err;
+      });
     };
 
     $scope.deleteMeal = function(meal) {
@@ -36,6 +38,13 @@ angular.module('sldApp')
       var index = ci * length + i;
       mealService.deleteMeal($scope.meals[index]);
       $scope.meals.splice(index, 1);
+    };
+
+    $scope.getItemClasses = function(meal) {
+      return [
+        meal.loading ? 'loading' : '',
+        meal.error ? 'error' : ''
+      ];
     };
 
   });

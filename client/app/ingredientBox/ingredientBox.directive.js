@@ -29,13 +29,16 @@ angular.module('sldApp')
             name: $scope.newItemName,
             category_id: null
           };
+          $scope.ingredients.push(newIngredient);
+          var newItem = {};
+          newItem.ingredient = newIngredient;
           ingredientService.createIngredient(newIngredient).then(function(result) {
             // SUCCESS!
-            var newItem = {};
-            newItem.ingredient = result;
             newItem.ingredientid = result._id;
-            $scope.ingredients.push(newItem);
-            $scope.callback(newItem);
+            $scope.callback(newItem); // Need to wait for the id of the ingredient before saving shoppinglist
+          }, function(err) {
+            // FAILURE
+            console.log('Creating Ingredient failed : ', err);
           });
           $scope.newItemName = '';
         };
