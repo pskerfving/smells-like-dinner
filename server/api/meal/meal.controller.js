@@ -11,7 +11,6 @@ exports.index = function(req, res) {
     // Not logged in
     Meal.find({ user_id: null }, function(err, meals) {
       if(err) { return handleError(res, err); }
-      console.log('RETURNING PUBLIC MEALS : ', meals);
       return res.json(200, meals);
     });
   } else {
@@ -23,7 +22,6 @@ exports.index = function(req, res) {
     for (var i = 0; i < req.user.friends_id.length; i++) {
       owners.push(req.user.friends_id[i]);
     }
-    console.log('USER : ', req.user);
     Schedule.findById(req.user.schedule_id, function(err, schedule) {
       if(err) { return handleError(res, err); }
       var schedule_meals = [];
@@ -32,7 +30,6 @@ exports.index = function(req, res) {
       }
       Meal.find({ $or: [ { user_id: { $in: owners } }, { _id: { $in: schedule_meals } } ] }, function (err, meals) {
         if(err) { return handleError(res, err); }
-        console.log('FOUND THE MEALS : ', meals);
         // Remove all shopped-entries not related to the users current shoppinglist.
         meals.forEach(function(meal) {
           if (meal.shopped) {
@@ -68,7 +65,6 @@ exports.create = function(req, res) {
 
 // Updates an existing meal in the DB.
 exports.update = function(req, res) {
-  console.log('storing meal - request: ', req.body);
   if(req.body._id) { delete req.body._id; }
   Meal.findById(req.params.id, function (err, meal) {
     if (err) { return handleError(res, err); }
