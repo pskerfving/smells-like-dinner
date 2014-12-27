@@ -38,9 +38,18 @@
         <div class="col-md-6" ng-hide="listMode != 'planning'" ng-controller="CategoryListCtrl">
             <h2>Kategorier</h2>
             <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
-            <ul class="list-group top-buffer">
+          <form name="catrgoryFilter">
+            <div class="input-group">
+              <input ng-model="filterStr" type="text" class="rec-search form-control" placeholder="Sök bland kategorier"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="filterStr = ''"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                        </span>
+            </div><!-- /input-group -->
+          </form>
+
+          <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="cat in categories | orderBy:'rank'"
+                    ng-repeat="cat in categories | filter:filterStr | orderBy:'rank'"
                     ng-drop="true" ng-drop-success="onDropOnCategory(cat, $data)">
                     <span ng-drag="true" ng-drag-data="cat">{{cat.name}}</span>
                         <span class="pull-right">
