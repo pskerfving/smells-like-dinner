@@ -19,13 +19,21 @@ angular.module('sldApp')
     };
 
     $scope.mainClkAction = function(item) {
+      var promise;
+      item.loading = true;
       if ($scope.listMode === 'planning') {
         item.removed = !item.removed;
-        shoppingListService.updateRemoved(item);
+        promise = shoppingListService.updateRemoved(item);
       } else {
         item.picked = !item.picked;
-        shoppingListService.updatePicked(item);
+        promise = shoppingListService.updatePicked(item);
       }
+      promise.then(function() {
+        item.loading = false;
+      }, function(err) {
+        item.loading = false;
+        item.error = err;
+      });
     };
 
     $scope.addExtra = function(newItem) {

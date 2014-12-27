@@ -328,7 +328,7 @@ angular.module('sldApp')
           }
         }
       }
-      this.updateShoppingList();
+      return this.updateShoppingList();
     };
 
     this.updatePicked = function(item) {
@@ -342,7 +342,7 @@ angular.module('sldApp')
           }
         }
       }
-      this.updateShoppingList();
+      return this.updateShoppingList();
     };
 
     this.clearShoppingList = function() {
