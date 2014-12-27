@@ -1,10 +1,15 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('AcceptInviteCtrl', function ($scope, $rootScope, inviteService, User, Auth) {
+  .controller('AcceptInviteCtrl', function ($scope, $rootScope, inviteService) {
 
     inviteService.loadInvites().then(function(value) {
+      // SUCCESS. Invites loaded.
       $scope.invites = value;
+    }, function() {
+      // FAILURE
+      console.log('AcceptInviteCtrl : Failed to load invites.');
+      $scope.invites = [];
     });
 
     $scope.isInvited = function() {

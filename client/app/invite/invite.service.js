@@ -57,6 +57,7 @@ angular.module('sldApp')
           } else {
             cache = [];
           }
+          deferred.resolve(cache);
         }
       });
       return deferred.promise;
