@@ -64,37 +64,68 @@ angular.module('sldApp')
     });
 
     $scope.clearScheduleDay = function (index) {
-      $scope.schedule.days[index].mealid = null;
-      $scope.schedule.days[index].meal = undefined;
-      scheduleService.saveSchedule();
+      var item = $scope.schedule.days[index];
+      item.mealid = null;
+      item.meal = undefined;
+      item.loading = true;
+      scheduleService.saveSchedule().then(function() {
+        item.loading = false;
+      }, function(err) {
+        item.loading = false;
+        item.error = err;
+      });
     };
 
     $scope.addDayToSchedule = function(index) {
-      $scope.schedule.days[index].scheduled = true;
-      scheduleService.saveSchedule();
+      var item = $scope.schedule.days[index];
+      item.scheduled = true;
+      item.loading = true;
+      scheduleService.saveSchedule().then(function() {
+        item.loading = false;
+      }, function(err) {
+        item.loading = false;
+        item.error = err;
+      });
     };
 
     $scope.removeDayFromSchedule = function(index) {
-      $scope.schedule.days[index].scheduled = false;
-      scheduleService.saveSchedule();
+      var item = $scope.schedule.days[index];
+      item.scheduled = false;
+      scheduleService.saveSchedule().then(function() {
+        item.loading = false;
+      }, function(err) {
+        item.loading = false;
+        item.error = err;
+      });
     };
 
     $scope.onDropComplete = function(index, data/*, evt*/){
+      var target = $scope.schedule.days[index];
       if (data.day) {
         var droppedMeal = data.meal;
         var droppedID = data.mealid;
-        var targetMeal = $scope.schedule.days[index].meal;
-        var targetID = $scope.schedule.days[index].mealid;
+        var targetMeal = target.meal;
+        var targetID = target.mealid;
+        data.loading = true;
+        target.loading = false;
         data.meal = targetMeal;
         data.mealid = targetID;
         $scope.schedule.days[index].meal = droppedMeal;
         $scope.schedule.days[index].mealid = droppedID;
       } else {
         //Dropped a meal from the meal list.
-        $scope.schedule.days[index].meal = data;
-        $scope.schedule.days[index].mealid = data._id;
+        target.loading = true;
+        target.meal = data;
+        target.mealid = data._id;
       }
-      scheduleService.saveSchedule();
+      scheduleService.saveSchedule().then(function() {
+        data.loading = false;
+        target.loading = false;
+      }, function(err) {
+        target.error = err;
+        target.loading = false;
+        data.loading = false;
+      });
     };
 
     $scope.open = function (size) {
@@ -113,7 +144,7 @@ angular.module('sldApp')
       modalInstance.result.then(function (result) {
         $scope.scheduleConfig.days = result;
         $log.info($scope.scheduleConfig.days.toString());
-        scheduleService.setupSchedule();
+          scheduleService.setupSchedule();
         scheduleService.saveSchedule();
       }, function () {
         $log.info('Modal dismissed at: ' + new Date());
