@@ -107,7 +107,7 @@ angular.module('sldApp')
         var targetMeal = target.meal;
         var targetID = target.mealid;
         data.loading = true;
-        target.loading = false;
+        target.loading = true;
         data.meal = targetMeal;
         data.mealid = targetID;
         $scope.schedule.days[index].meal = droppedMeal;
