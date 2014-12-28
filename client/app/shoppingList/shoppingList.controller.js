@@ -68,7 +68,13 @@ angular.module('sldApp')
     };
 
     $scope.clearShoppingList = function() {
-      shoppingListService.clearShoppingList();
+      $scope.loading = true;
+      shoppingListService.clearShoppingList().then(function() {
+        $scope.loading = false;
+      }, function(err) {
+        $scope.loading = false;
+        $scope.error = err;
+      });
     };
 
     $scope.onDropComplete = function(item, data) {

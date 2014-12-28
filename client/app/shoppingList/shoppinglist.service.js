@@ -115,7 +115,8 @@ angular.module('sldApp')
     }
 
     function deepCopyShoppingList(dest, src) {
-        dest._id = src._id;
+      dest._id = src._id;
+      dest.__v = src.__v;
       dest.user_id = src.user_id;
       if (!dest.config) {
         // This should never happen.
@@ -216,9 +217,16 @@ angular.module('sldApp')
       nbrDays = nbrDays || cache.config.nbrDays;
       var newItem;
       var items = {};
+      var shoppedItems;
       emptyShoppingList();
       for (var i = 0; i < upcoming.length; i++) {
         if (upcoming[i].daysUntil <  nbrDays) {
+          // Has the meal already been shopped?
+          shoppedItems = upcoming[i].meal.shopped.filter(function(m) {
+            // The shopped item is related to this shoppinglist and the date has not expired.
+            return (m.shoppinglist_id === cache._id) && (new Date() < m.date);
+          });
+          if (shoppedItems.length > 0) { break; }
           if (upcoming[i].meal.ingredients.length > 0) {
             // Loop over ingredients
             for (var j = 0; j < upcoming[i].meal.ingredients.length; j++) {
@@ -346,19 +354,22 @@ angular.module('sldApp')
     };
 
     this.clearShoppingList = function() {
+      var promises = [];
       // Keep stuff that has not been picked.
       cache.extras = cache.extras.filter(function (item) {
         return !isPicked(item.ingredientid);
       });
       cache.removed = [];
       cache.picked = [];
+      // Mark all meals which are within the shopping period as shopped.
       if (upcoming.length > 0) {
-        for (var i = 0; upcoming[i].daysUntil < cache.config.nbrDays; i++) {
-          mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil);
+        for (var i = 0; upcoming[i] && (upcoming[i].daysUntil < cache.config.nbrDays); i++) {
+          promises.push(mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil));
         }
       }
-      this.updateShoppingList();
-      return collectShoppingList();
+      promises.push(this.updateShoppingList());
+      collectShoppingList();
+      return $q.all(promises);
     };
 
     this.updateShoppingList = function() {

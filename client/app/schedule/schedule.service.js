@@ -140,6 +140,7 @@ angular.module('sldApp')
 
     function deepCopySchedule(dest, src) {
       dest._id = src._id;
+      dest.__v = src.__v;
       dest.name = src.name;
       dest.user_id = src.user_id;
       dest.shoppinglist_id = src.shoppinglist_id;
