@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('categoryService', function ($q, $resource) {
+  .service('categoryService', function ($q, $resource, socket) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;
+    var cache = [];
     var Category = $resource('/api/categories/:id', { id: '@_id' }, { update: { method:'PUT' } });
     var deferred;
+
+    socket.syncUpdates('category', cache);
 
     this.load = function() {
       console.log('loading categories');
@@ -27,9 +29,9 @@ angular.module('sldApp')
 
     this.save = function(cat) {
       var deferred = $q.defer();
-      console.log('saving category: ', cat.name);
       Category.save(cat, function(response) {
         // SUCCESS
+        console.log('saved category: ', cat.name);
         cat._id = response._id;
         deferred.resolve(cat);
       }, function(err) {

@@ -1,16 +1,22 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, mealService, Auth) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, mealService, Auth, socket) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;      // The shoppinglist data from DB. Removed items, extras, config.
+    var cache = {}; // The shoppinglist data from DB. Removed items, extras, config.
     var upcoming;   // Upcoming meals
     var sList = []; // The assembled shoppinglist, including extras
     var deferred;
 
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
+
+    socket.syncUpdatesObj('shoppinglist', cache, function() {
+      console.log('SHOPPINGLIST : Reload function called!!!');
+      deferred = undefined;
+      loadShoppingListPrivate();
+    });
 
     this.loadShoppingList = function() {
       return loadShoppingListPrivate();

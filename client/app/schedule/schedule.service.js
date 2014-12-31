@@ -1,14 +1,20 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('scheduleService', function ($resource, $q, mealService, $rootScope, Auth, User) {
+  .service('scheduleService', function ($resource, $q, mealService, $rootScope, Auth, User, socket) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
     var deferred;
-    var cache; // containing cache.config & cache.days
+    var cache = {}; // containing cache.config & cache.days
 
     var Schedule = $resource('/api/schedules/:id', { id: '@_id'},
       { update: { method:'PUT' } });
+
+    socket.syncUpdatesObj('schedule', cache, function() {
+      console.log('SCHEDULE : Reload function called!!!');
+      deferred = undefined;
+      loadSchedulePrivate();
+    });
 
     this.loadSchedule = function() {
       return loadSchedulePrivate();
