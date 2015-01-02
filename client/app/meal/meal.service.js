@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('mealService', function ($q, $resource, $rootScope, ingredientService, Auth) {
+  .service('mealService', function ($q, $resource, $rootScope, ingredientService, Auth, socket) {
 
-    var cache;
+    var cache = [];
     var ingredients;
     var deferred;
     var error;
@@ -14,6 +14,10 @@ angular.module('sldApp')
         shopped: { method: 'PUT', url: '/api/meals/:id/shopped' }
       });
     var MealMe = $resource('/api/meals/me');  // TODO: Put this into the constructor call above.
+
+    socket.syncUpdates('meal', cache, function() {
+      mapToIngredients(cache, ingredients);
+    });
 
     this.loadMeals = function() {
       return loadMealsPrivate();

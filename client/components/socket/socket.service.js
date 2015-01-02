@@ -48,7 +48,8 @@ angular.module('sldApp')
           // otherwise just add item to the collection
           if (oldItem) {
             console.log('OLD NEWS');
-            array.splice(index, 1, item);
+            angular.copy(item, array[index]);
+//            array.splice(index, 1, item);
             event = 'updated';
           } else {
             array.push(item);

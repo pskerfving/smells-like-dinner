@@ -1,13 +1,17 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('ingredientService', function ($resource, $q, categoryService) {
+  .service('ingredientService', function ($resource, $q, categoryService, socket, $rootScope) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;
+    var cache = [];
     var categories;
     var Ingredient = $resource('/api/ingredients/:id', { id: '@_id' }, { update: { method:'PUT' } });
     var deferred;
+
+    socket.syncUpdates('ingredient', cache, function() {
+      mapToCategories(cache, categories);
+    });
 
     this.loadIngredients = function() {
       if (deferred) { return deferred.promise; }
@@ -16,7 +20,7 @@ angular.module('sldApp')
         [ Ingredient.query().$promise, categoryService.load() ]
       ).then(function(value) {
         // SUCCESS
-        cache = value[0];
+        angular.copy(value[0], cache);
         categories = value[1];
         mapToCategories(cache, categories);
         deferred.resolve(cache);
