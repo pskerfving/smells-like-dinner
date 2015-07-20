@@ -1,31 +1,48 @@
 'use strict';
 
 angular.module('sldApp')
-  .service('shoppingListService', function ($resource, $q, scheduleService) {
+  .service('shoppingListService', function ($resource, $q, $rootScope, upcomingScheduleService, ingredientService, scheduleService, mealService, Auth, socket) {
     // AngularJS will instantiate a singleton by calling "new" on this function
 
-    var cache;
-    var sList;
-    var viewSchedule;
+    var cache = {}; // The shoppinglist data from DB. Removed items, extras, config.
+    var upcoming;   // Upcoming meals
+    var sList = []; // The assembled shoppinglist, including extras
+    var deferred;
 
     var ShoppingList = $resource('/api/shoppinglists/:id', { id: '@_id'},
       { update: { method:'PUT' } });
 
+    socket.syncUpdatesObj('shoppinglist', cache, function() {
+      console.log('SHOPPINGLIST : Reload function called!!!');
+      deferred = undefined;
+      loadShoppingListPrivate();
+    });
 
     this.loadShoppingList = function() {
-      if (sList && cache) {
-        console.log('HIT! ShoppingList cache');
-        return $q.when([sList, cache]);
+      return loadShoppingListPrivate();
+    };
+
+    function loadShoppingListPrivate() {
+      if (deferred) {
+        return deferred.promise;
       } else {
-        var deferred = $q.defer();
+        deferred = $q.defer();
         $q.all([
-          scheduleService.loadSchedule(), this.loadShoppingListFromDB()
+          upcomingScheduleService.calculateUpcoming(), ingredientService.loadIngredients()
         ]).then(function(value) {
-          // SUCCESS
-          cache = value[1];
-          viewSchedule = scheduleService.setupViewSchedule(cache.config.nbrDays);
-          sList = assembleShoppingList();
-          deferred.resolve([sList, cache]);  // TODO: Should we return the shoppinglist
+          loadShoppingListFromDB().then(function() {
+            // SUCCESS
+            upcoming = value[0];
+            mapIngredients(value[1]);
+            console.log('SHOPPING LIST ALL LOADED', cache);
+            emptyArray(sList);
+            sList = collectShoppingList(cache.config.nbrDays);
+            deferred.resolve(sList);
+          }, function(reason) {
+            // FAILURE
+            console.log('Loading ShoppingList failed : ' + reason);
+            deferred.reject(reason);
+          });
         }, function(reason) {
           // FAILURE
           console.log('Loading ShoppingList failed : ' + reason);
@@ -33,70 +50,366 @@ angular.module('sldApp')
         });
         return deferred.promise;
       }
-    };
+    }
 
-    this.loadShoppingListFromDB = function() {
-      if (cache) {
-        return $q.when(cache);
-      } else {
-        var deferred = $q.defer();
-        ShoppingList.query(function(data) {
+    function loadShoppingListFromDB() {
+
+      var deferred = $q.defer();
+      var user;
+      var id = 'anonymous';
+
+      function createNewUserShoppingList(user_id) {
+        var shoppinglist = getTemplate(user_id);
+        ShoppingList.save(shoppinglist, function (response) {
+          // If we get here cache must have some content.
+          shoppinglist._id = response._id;
+          user.schedule.shoppinglist_id = response._id;
+          scheduleService.setShoppingListId(response._id);
+          scheduleService.saveSchedule().then(function () {
+            // Success updating schedule with the new shoppinglist id
+            deepCopyShoppingList(cache, shoppinglist);
+            deferred.resolve(cache);
+          }, function () {
+            // Failed to update the user.
+            console.log('update user with the new shopping list id FAILED!');
+          });  // If this fails, it needs to be resolved on the next load.
+        }, function (err) {
+          console.log('failed to save new shopping list for user.');
+          deferred.reject(err);
+        });
+      }
+
+      // This is not all correct, but should work since only called once.
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (loggedIn) {
+          user = Auth.getCurrentUser();
+          id = user.schedule.shoppinglist_id;
+          if (!id) {
+            // The user has no shoppinglist. create one!
+            // This should never happen. Only if the user was not correctly created in the backend.
+            createNewUserShoppingList(user._id);
+            return deferred.promise;
+          }
+        }
+        ShoppingList.get({ id: id }, function (data) {
           // SUCCESS!
-          cache = data[0];
+          console.log('received the shoppinglist: ', data);
+          if (!cache) {
+            cache = data;
+          } else {
+            deepCopyShoppingList(cache, data);
+          }
           deferred.resolve(cache);
-        }, function(reason) {
-          // FAILURE!
+        }, function (reason) {
           console.log('Failed to load ShoppingList from DB : ' + reason);
           deferred.reject(reason);
         });
-        return deferred.promise;
+      });
+      return deferred.promise;
+    }
+
+    function emptyArray(a) {
+      while (a.length > 0) {
+        a.pop();
       }
-    };
+    }
 
-    this.updateShoppingList = function(nbrDays) {
-      cache.config.nbrDays = nbrDays;
-      console.log('calling update : ' + cache.config.nbrDays);
-      viewSchedule = scheduleService.setupViewSchedule(cache.config.nbrDays);
-      sList = assembleShoppingList();
-      return sList;
-    };
+    function copyArray(dest, src) {
+      for (var i = 0; i < src.length; i++) {
+        dest.push(src[i]);
+      }
+    }
 
-    var assembleShoppingList = function() {
-      var list = [];
-      if (cache && viewSchedule) {
-        var dupList = []; // Resulting shoppinglist (including any duplicates.)
-        for (var i = 0; i < viewSchedule.length; i++) {
-          var m = viewSchedule[i].meal;
-          if (m) {
-            for (var j = 0; j < m.ingredients.length; j++) {
-              dupList.push(m.ingredients[j]);
-            }
+    function deepCopyShoppingList(dest, src) {
+      dest._id = src._id;
+      dest.__v = src.__v;
+      dest.user_id = src.user_id;
+      if (!dest.config) {
+        // This should never happen.
+        dest.config = {};
+      }
+      dest.config.nbrDays = src.config.nbrDays;
+      dest.config.listMode = src.config.listMode;
+      if (!dest.removed) { dest.removed = []; }
+      emptyArray(dest.removed);
+      copyArray(dest.removed, src.removed);
+      if (!dest.picked) { dest.picked = []; }
+      emptyArray(dest.picked);
+      copyArray(dest.picked, src.picked);
+      if (!dest.extras) { dest.extras = []; }
+      emptyArray(dest.extras);
+      copyArray(dest.extras, src.extras);
+    }
+
+    function mapIngredients(iList) {
+      for (var i = 0; i < cache.extras.length; i++) {
+        for (var j = 0; j < iList.length; j++) {
+          if (cache.extras[i].ingredientid === iList[j]._id) {
+            cache.extras[i].ingredient = iList[j];
+            break;
           }
         }
-        // Add the extras
-        dupList = dupList.concat(cache.extras);
-        // Remove duplicates.
-        // TODO: Does this work????
-        list = dupList.filter( function(item, pos) {
-          return dupList.indexOf(item) == pos;
+      }
+    }
+
+    this.getConfig = function() {
+      return cache.config;
+    };
+
+    $rootScope.$on('scheduleChanged', function() {
+      console.log('SHOPPING LIST: schedule updated');
+      // This could be called before the shoppinglist has been called at all.
+      if (deferred) {
+        deferred.promise.then(function() {
+          upcomingScheduleService.calculateUpcoming().then(function() {
+            //SUCCESS
+            sList = collectShoppingList(cache.config.nbrDays);
+          }, function() {
+            // FAILURE. Could not calculate upcoming.
+          });
+        }, function() {
+          // FAILED to load shoppinglist
+        });
+      } else {
+        loadShoppingListPrivate();
+      }
+    });
+
+    $rootScope.$on('userLoggedInOut', function() {
+      deferred = undefined;
+      loadShoppingListPrivate();
+    });
+
+    $rootScope.$on('mealUpdated', function(evt, meal) {
+      console.log('SHOPPING LIST: meal updated');
+      if (mealInShoppingList(meal)) {
+        upcomingScheduleService.calculateUpcoming().then(function() {
+          //SUCCESS
+          sList = collectShoppingList(cache.config.nbrDays);
+        }, function() {
+          // FAILURE.
         });
       }
-      return list;
+    });
+
+    function mealInShoppingList(meal) {
+      var nbrDays = cache.config.nbrDays;
+      for (var i = 0; i < upcoming.length; i++) {
+        if (nbrDays === 0) {
+          break;
+        }
+        if (upcoming[i].meal._id === meal._id) {
+          return true;
+        }
+        nbrDays--;
+      }
+      return false;
+    }
+
+    function emptyShoppingList() {
+      while (sList.length > 0) {
+        sList.pop();
+      }
+    }
+
+    function collectShoppingList(nbrDays) {
+      // 0. Empty list.
+      // 1. Find today in schedule
+      // 2. Loop through the upcoming meals in the schedule.
+      // 3. Add each ingredient to the shoppinglist if it does not already exist or is in the list of removed
+      //    Each item in the list is an object with:
+      //      listname (ingredient or meal), type (ingredient of meal), reference to the ingredient and an array of meals for which it is needed.
+      // 4. If a meal has no ingredients. A meal will be referenced.
+      nbrDays = nbrDays || cache.config.nbrDays;
+      var newItem;
+      var items = {};
+      var shoppedItems;
+      emptyShoppingList();
+      for (var i = 0; i < upcoming.length; i++) {
+        if (upcoming[i].daysUntil <  nbrDays) {
+          // Has the meal already been shopped?
+          shoppedItems = upcoming[i].meal.shopped.filter(function(m) {
+            // The shopped item is related to this shoppinglist and the date has not expired.
+            return (m.shoppinglist_id === cache._id) && (new Date() < m.date);
+          });
+          if (shoppedItems.length > 0) { break; }
+          if (upcoming[i].meal.ingredients.length > 0) {
+            // Loop over ingredients
+            for (var j = 0; j < upcoming[i].meal.ingredients.length; j++) {
+              // Does ingredient already exist?
+              var item = items[upcoming[i].meal.ingredients[j].ingredientid];
+              if (!item) {
+                // Does not exist, add.
+                newItem = {
+                  ingredient: upcoming[i].meal.ingredients[j].ingredient,
+                  meals: [ upcoming[i].meal ],
+                  meal: null,
+                  removed: isRemoved(upcoming[i].meal.ingredients[j].ingredientid),
+                  picked: isPicked(upcoming[i].meal.ingredients[j].ingredientid)
+                };
+                items[upcoming[i].meal.ingredients[j].ingredientid] = newItem;
+                sList.push(newItem);
+              } else {
+                // Already exists, add to the meal list.
+                item.meals.push(upcoming[i].meal);
+              }
+            }
+          } else {
+            // No igredients add meal.
+            sList.push({
+              meal: upcoming[i].meal,
+              ingredient: null,
+              meals: []
+            });
+          }
+        } else {
+          break;
+        }
+      }
+      // Add the extras to sList
+      for (i = 0; i < cache.extras.length; i++) {
+        if (cache.extras[i].extra) {
+          // The item has the properties and can just be added to the ShoppingList.
+          sList.push(cache.extras[i]);
+        } else {
+          // The item is just loaded from the DB and does not have all properties.
+          sList.push({
+            ingredient: cache.extras[i].ingredient,
+            meals: [],
+            meal: null,
+            removed: false,
+            picked: isPicked(cache.extras[i].ingredient._id),
+            extra: true
+          });
+        }
+      }
+      console.log('sList : ', sList);
+      return sList;
+    }
+
+    this.addExtra = function(arg) {
+      var newItem = {
+        ingredient: arg.ingredient,
+        ingredientid: arg.ingredient._id,
+        meals:[],
+        meal: null,
+        removed: false,
+        picked: false,
+        extra: true
+      };
+      sList = collectShoppingList(cache.config.nbrDays);
+      cache.extras.push(newItem);
+      sList.push(newItem);
+      return {
+        item: newItem,
+        promise: this.updateShoppingList()
+      };
     };
 
-/*
-    $scope.addItemName = function(newName) {
-      var newItem = { name: newName };
-      $scope.ingredients.push(newItem);
-      $scope.addItem(newItem);
-      $scope.newIngredient = "";
-      // TODO: Check that the ingredient is unique
-      mealService.createIngredient(newItem);
+    function isRemoved(id) {
+      for (var i = 0; i < cache.removed.length; i++) {
+        if (cache.removed[i].ingredientid === id) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function isPicked(id) {
+      for (var i = 0; i < cache.picked.length; i++) {
+        if (cache.picked[i].ingredientid === id) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    this.updateRemoved = function(item) {
+      if (item.extra) {
+        for (var index = 0; index < cache.extras.length; index++) {
+          if (cache.extras[index].ingredientid === item.ingredient._id) { break; }
+        }
+        cache.extras.splice(index, 1);
+        sList.splice(sList.indexOf(item), 1);
+      }
+      if (item.removed) {
+        // Add to list
+        cache.removed.push({ ingredientid: item.ingredient._id });
+      } else {
+        for (var i = 0; i < cache.removed.length; i++) {
+          if (cache.removed[i].ingredientid === item.ingredient._id) {
+            cache.removed.splice(i, 1);
+          }
+        }
+      }
+      return this.updateShoppingList();
     };
 
-    $scope.addItem = function (newItem) {
-      $scope.shoppingList.push(newItem);
+    this.updatePicked = function(item) {
+      if (item.picked) {
+        // Add to list
+        cache.picked.push({ ingredientid: item.ingredient._id });
+      } else {
+        for (var i = 0; i < cache.picked.length; i++) {
+          if (cache.picked[i].ingredientid === item.ingredient._id) {
+            cache.picked.splice(i, 1);
+          }
+        }
+      }
+      return this.updateShoppingList();
     };
-*/
+
+    this.clearShoppingList = function() {
+      var promises = [];
+      // Keep stuff that has not been picked.
+      cache.extras = cache.extras.filter(function (item) {
+        return !isPicked(item.ingredientid);
+      });
+      cache.removed = [];
+      cache.picked = [];
+      // Mark all meals which are within the shopping period as shopped.
+      if (upcoming.length > 0) {
+        for (var i = 0; upcoming[i] && (upcoming[i].daysUntil < cache.config.nbrDays); i++) {
+          promises.push(mealService.shoppedMeal(upcoming[i].meal, cache._id, upcoming[i].daysUntil));
+        }
+      }
+      promises.push(this.updateShoppingList());
+      collectShoppingList();
+      return $q.all(promises);
+    };
+
+    this.updateShoppingList = function() {
+      var deferred = $q.defer();
+      ShoppingList.update(cache, function(response) {
+        // SUCCESS
+        if (response.__v) { cache.__v = response.__v; }
+        deferred.resolve(cache);
+        console.log('ShoppingList saved successfully');
+      }, function(err) {
+        // FAILURE
+        deferred.reject(err);
+        console.log(err);
+      });
+      return deferred.promise;
+    };
+
+    this.setNbrDays = function(nbrDays) {
+      cache.config.nbrDays = nbrDays;
+      sList = collectShoppingList();
+      this.updateShoppingList();
+    };
+
+    function getTemplate(user) {
+      return {
+        user_id: user,
+        config: {
+          nbrDays: 2,
+          listMode: 'planning'
+        },
+        removed: [],
+        picked: [],
+        extras: []
+      };
+    }
 
   });

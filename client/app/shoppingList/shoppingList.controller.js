@@ -1,55 +1,97 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('ShoppingListCtrl', function ($scope, $q, scheduleService, ingredientService, mealService, shoppingListService) {
+  .controller('ShoppingListCtrl', function ($scope, scheduleService, ingredientService, mealService, shoppingListService) {
 
-    console.log('Entering ShopplingList Controller');
-
+    $scope.loading = true;
     $scope.shoppingList = []; // The complete list, two parts calculated from schedule and additional stuff.
-    $scope.additionals = []; // The stuff that is stored in the shopping list in the DB.
-    $scope.listMode = "planning";
+    $scope.listMode = 'planning';
 
-    $q.all([
-      ingredientService.loadIngredients(), shoppingListService.loadShoppingList()
-    ]).then(function(value) {
+    shoppingListService.loadShoppingList().then(function(value) {
       // Success!
-      $scope.ingredients = value[0];
-      $scope.shoppingList = value[1][0];
-      $scope.timeframe = value[1][1].config.nbrDays;
-      $scope.listMode = value[1][1].config.listMode;
+      $scope.loading = false;
+      $scope.shoppingList = value;
+      $scope.config = shoppingListService.getConfig();
     });
 
     $scope.toggleListMode = function() {
-      $scope.listMode = ($scope.listMode == "planning" ? "picking" : "planning");
+      $scope.listMode = ($scope.listMode === 'planning' ? 'picking' : 'planning');
     };
 
-    $scope.mainClkAction = function(index) {
-      if ($scope.listMode == "planning") {
-        $scope.shoppingList.splice(index, 1);
+    $scope.mainClkAction = function(item) {
+      var promise;
+      item.loading = true;
+      if ($scope.listMode === 'planning') {
+        item.removed = !item.removed;
+        promise = shoppingListService.updateRemoved(item);
       } else {
-        $scope.shoppingList[index].picked = true;
+        item.picked = !item.picked;
+        promise = shoppingListService.updatePicked(item);
       }
+      promise.then(function() {
+        item.loading = false;
+      }, function(err) {
+        item.loading = false;
+        item.error = err;
+      });
     };
 
-    $scope.addItemName = function(newName) {
-      var newItem = { name: newName };
-      $scope.ingredients.push(newItem);
-      $scope.addItem(newItem);
-      $scope.newIngredient = "";
-      // TODO: Check that the ingredient is unique
-      mealService.createIngredient(newItem);
+    $scope.addExtra = function(newItem) {
+      console.log('shoppingList.addItem entered.');
+      var res = shoppingListService.addExtra(newItem);
+      res.item.loading = true;
+      res.promise.then(function() {
+        // SUCCESS
+        res.item.loading = false;
+      }, function(err) {
+        // FAILURE
+        console.log('ShoppingListCtrl. Failed to addExtra to shoppinglist : ', err);
+        res.item.loading = false;
+        res.item.error = 'Något gick snett när handlindslistan skulle sparas på servern.';
+      });
     };
 
-    $scope.addItem = function (newItem) {
-      $scope.shoppingList.push(newItem);
+    $scope.getItemClasses = function(item) {
+      return [
+        item.loading ? 'loading' : '',
+        item.error ? 'error' : ''
+      ];
     };
 
-    $scope.onSelect = function($item, $model, $label) {
+    $scope.onSelect = function($item/*, $model, $label */) {
       $scope.addItem($item);
     };
 
     $scope.setTimeframe = function(nbrDays) {
-      $scope.timeframe = nbrDays;
-      $scope.shoppingList = shoppingListService.updateShoppingList(nbrDays);
+      $scope.config.nbrDays = nbrDays;
+      shoppingListService.setNbrDays(nbrDays);
+    };
+
+    $scope.clearShoppingList = function() {
+      $scope.loading = true;
+      shoppingListService.clearShoppingList().then(function() {
+        $scope.loading = false;
+      }, function(err) {
+        $scope.loading = false;
+        $scope.error = err;
+      });
+    };
+
+    $scope.onDropComplete = function(item, data) {
+      // Drop is only applicable for ingredients, not entire meals. This should never happen.
+      if (!item.meal) {
+        var ingredient = item.ingredient;
+        ingredient.category_id = data._id;
+        ingredient.category = data;
+        ingredientService.updateIngredient(ingredient);
+      }
+    };
+
+    $scope.categoryOrderFn = function(item) {
+      // Needed to get the uncatgorized items at the top of the shoppinglist.
+      if (item.ingredient && item.ingredient.category) {
+        return item.ingredient.category.rank;
+      }
+      return 0;
     };
   });

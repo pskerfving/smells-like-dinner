@@ -7,7 +7,8 @@ angular.module('sldApp', [
   'ngRoute',
   'btford.socket-io',
   'ngDraggable',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'smoothScroll'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
@@ -33,7 +34,7 @@ angular.module('sldApp', [
       // Intercept 401s and redirect you to login
       responseError: function(response) {
         if(response.status === 401) {
-          $location.path('/login');
+//          $location.path('/login');
           // remove any stale tokens
           $cookieStore.remove('token');
           return $q.reject(response);

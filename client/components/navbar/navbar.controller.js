@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sldApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('NavbarCtrl', function ($scope, $location, Auth, menuService) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -14,6 +14,8 @@ angular.module('sldApp')
         'link': '/shoppinglist'
       }];
 
+    $scope.menu = menuService.menu;
+
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
@@ -21,10 +23,11 @@ angular.module('sldApp')
 
     $scope.logout = function() {
       Auth.logout();
-      $location.path('/login');
+//      $location.path('/login');
     };
 
-    $scope.isActive = function(route) {
-      return route === $location.path();
+    $scope.isActive = function() {
+      return false;
+//      return route === $location.path();
     };
   });

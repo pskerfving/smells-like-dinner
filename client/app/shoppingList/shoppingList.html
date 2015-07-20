@@ -1,14 +1,10 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
-
-<div class="container" ng-controller="ShoppingListCtrl">
-    <h1>Min inköpslista</h1>
-    <p>Här kan du välja hur många dagar du vill handla för. Och lägga till de där extra grejorna som bara behövs.</p>
+<div ng-controller="ShoppingListCtrl">
 
     <div class="btn-toolbar">
         <div class="btn-group" data-toggles="buttons" ng-show="listMode == 'planning'">
-            <label class="btn btn-default" ng-click="setTimeframe(1)">Idag</label>
-            <label class="btn btn-default" ng-click="setTimeframe(2)">2 dagar</label>
-            <label class="btn btn-default" ng-click="setTimeframe(7)">En vecka</label>
+            <label class="btn btn-default" ng-click="setTimeframe(1)" ng-class="config.nbrDays == 1 ? 'active' : ''">Idag</label>
+            <label class="btn btn-default" ng-click="setTimeframe(2)" ng-class="config.nbrDays == 2 ? 'active' : ''">2 dagar</label>
+            <label class="btn btn-default" ng-click="setTimeframe(7)" ng-class="config.nbrDays == 7 ? 'active' : ''">En vecka</label>
             <label class="btn btn-default" ng-click="setTimeframe(7)">...</label>
         </div>
         <div class="btn-group pull-right" data-toggles="buttons">
@@ -17,39 +13,65 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            <ul class="list-group">
+        <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
+        <div ng-class="listMode == 'planning' ? 'col-md-6' : 'col-md-12'">
+            <ul class="list-group top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-click="active = !active"
-                    ng-class="active ? 'active' : ''"
-                    ng-repeat="ingredient in shoppingList">
-                    {{ingredient.name}}
+                    ng-repeat="item in shoppingList | orderBy:categoryOrderFn"
+                    ng-class="{'removed': item.removed, 'meal': item.meal, 'picked': listMode != 'planning' && item.picked, 'loading': item.loading, 'error': item.error }"
+                    ng-hide="(listMode != 'planning') && item.removed"
+                    ng-drop="!item.meal" ng-drop-success="onDropComplete(item, $data, $event)">
+                    {{item.ingredient ? item.ingredient.name : item.meal.name}}
+                    <span class="meal" ng-repeat="meal in item.meals">{{meal.name}}</span>
                     <span class="pull-right">
-                        <button class="btn btn-xs btn-warning" ng-click="mainClkAction($index)">
+                        <button class="btn btn-xs btn-info" ng-if="item.ingredient && item.ingredient.category">
+                            {{item.ingredient.category.name}}
+                        </button>
+                        <button class="btn btn-xs btn-info" ng-click="mainClkAction(item)">
                             <span class="glyphicon" ng-class="listMode == 'planning' ? 'glyphicon-remove' : 'glyphicon-ok'"></span>
                         </button>
                     </span>
                 </li>
             </ul>
-            <form name="newItem">
+            <div ingredient-box adder="addExtra"></div>
+        </div>
+        <div class="col-md-6" ng-hide="listMode != 'planning'" ng-controller="CategoryListCtrl">
+            <h2>Kategorier</h2>
+            <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
+          <form name="catrgoryFilter">
+            <div class="input-group">
+              <input ng-model="filterStr" type="text" class="rec-search form-control" placeholder="Sök bland kategorier"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="filterStr = ''"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                        </span>
+            </div><!-- /input-group -->
+          </form>
+
+          <ul class="list-group top-buffer">
+                <li class="list-group-item clearfix"
+                    ng-repeat="cat in categories | filter:filterStr | orderBy:'rank'"
+                    ng-drop="true" ng-drop-success="onDropOnCategory(cat, $data)">
+                    <span ng-drag="true" ng-drag-data="cat">{{cat.name}}</span>
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-info" ng-click="removeCategory(cat)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </span>
+                </li>
+            </ul>
+            <form name="newCategory">
                 <div class="input-group">
-                    <input type="text" class="form-control" ng-model="newIngredient" placeholder="Skriv något du behöver handla"
-                           typeahead="i as ingredient.name for ingredient in ingredients | filter:$viewValue | limitTo:8" class="form-control"
-                           typeahead-on-select="onSelect($item, $model, $label)"/>
+                    <input type="text" class="form-control" ng-minlength="4" ng-model="newCategoryName" placeholder="Namn på ny ketegori">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit" ng-click="addItemName(newIngredient)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                        <button class="btn btn-default" type="submit" ng-disabled="newCategory.$invalid" ng-click="addCategory(newCategoryName)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
                     </span>
                 </div><!-- /input-group -->
             </form>
         </div>
     </div>
-
-    <ul class="list-group">
-        <li class="list-group-item" ng-repeat="meal in meals">
-            <a ng-href="#/meal/{{meal._id}}">{{meal.name}}</a>
-            <button type="btn btn-xs btn-warning pull-right" ng-click="deleteMeal($index)" class="close"><span class="glyphicon glyphicon-trash"></span></button>
-        </li>
-    </ul>
+    <div class="row top-buffer">
+        <button class="btn btn-default btn-lg" ng-class="{'loading': loading, 'error': error}" ng-click="clearShoppingList()">Jag har handlat!</button>
+    </div>
 
 </div> <!-- end Angular controller -->
 

@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 
 var IngredientSchema = new Schema({
   name: String,
-  active: Boolean
+  category_id: Schema.ObjectId
 });
 
 module.exports = mongoose.model('Ingredient', IngredientSchema);

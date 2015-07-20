@@ -1,0 +1,30 @@
+<div ng-controller="MealListCtrl">
+    <div ng-show="error">{{error}}</div>
+    <div class="row">
+        <form name="newMeal">
+            <div class="input-group">
+                <input type="text" class="form-control" ng-minlength="4" ng-model="newMealTitle" placeholder="Namn på ny måltid">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit" ng-disabled="newMeal.$invalid" ng-click="addMeal(newMealTitle)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                </span>
+            </div><!-- /input-group -->
+        </form>
+    </div>
+    <div class="row top-buffer">
+        <div class="row">
+            <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
+            <div class="col-md-4" ng-repeat="col in meals | columnize:nbrCol | orderBy:name">
+                <ul class="list-group">
+                    <li class="list-group-item clearfix" ng-class="getItemClasses(meal)" ng-repeat="meal in col">
+                        <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-info" ng-click="deleteColMeal($parent.$index, $index)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,6 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
-
 <div ng-controller="ScheduleCtrl" class="container">
     <div class="row">
-        <div class="col-md-8">
-            <h1>Mitt matschema...</h1>
+        <div class="col-md-6">
             <div class="btn-toolbar">
                 <div class="btn-group" data-toggles="buttons">
                     <label class="btn btn-default" ng-click="scheduleConfig.nbrDays = 14" ng-class="scheduleConfig.nbrDays == 14 ? 'active' : ''">2 veckor</label>
@@ -27,17 +24,36 @@
                     </div>
                 </script>
                 <label class="btn btn-default" ng-click="open('sm')">...</label>
+                <div class="btn-group pull-right" data-toggles="buttons">
+                    <label class="btn btn-default" ng-class="{ 'active': setTodayMode}" ng-click="setTodayMode = !setTodayMode">Sätt idag</label>
+                </div>
+
             </div>
-            <ul class="list-group schedule-list">
+            <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
+            <ul class="list-group schedule-list top-buffer">
                 <li class="list-group-item clearfix"
-                    ng-repeat="day in viewSchedule"
-                    ng-drop="true" ng-drop-success="onDropComplete($index, $data,$event)">
+                    ng-repeat="day in schedule.days"
+                    ng-drop="true" ng-drop-success="onDropComplete($index, $data, $event)"
+                    ng-class="{'today': day.today, 'unscheduled': !day.scheduled, 'loading': day.loading, 'error': day.error}">
                     <div>
                         <span>{{days[(day.day - 1) % 7].abbr}} - </span>
                         <span ng-drag="true" ng-drag-data="day">{{day.meal.name}}</span>
-                    <span class="pull-right">
-                        <button class="btn btn-xs btn-warning" ng-click="clearScheduleDay($index)">
+                    <span class="pull-right" ng-if="setTodayMode" ng-click="setToday($index)">
+                        <button class="btn btn-xs btn-info" ng-if="setTodayMode" ng-click="setToday($index)">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </span>
+                    <span class="pull-right" ng-if="!setTodayMode && day.scheduled">
+                        <button class="btn btn-xs btn-info" ng-click="clearScheduleDay($index)">
                             <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button class="btn btn-xs btn-info" ng-click="removeDayFromSchedule($index)">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </span>
+                    <span class="pull-right" ng-if="!setTodayMode && !day.scheduled">
+                        <button class="btn btn-xs btn-info" ng-click="addDayToSchedule($index)">
+                            <span class="glyphicon glyphicon-plus"></span>
                         </button>
                     </span>
                     </div>
@@ -45,34 +61,29 @@
             </ul>
         </div>
         <div class="col-md-4">
-            <h2>Mina måltider</h2>
             <p>Dra recepten till ditt schema för att planera en läcker måltid.</p>
-            <form class="form-inline">
-                <input type="text" class="rec-search form-control" placeholder="Sök bland recept"/><button type="btn" class="close" data-dismiss="rec-search"></button>
+            <form name="mealFilter">
+                <div class="input-group">
+                    <input ng-model="filterStr" type="text" class="rec-search form-control" placeholder="Sök bland recept"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="filterStr = ''"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                        </span>
+                </div><!-- /input-group -->
             </form>
             <div ng-controller="MealListCtrl">
-                <ul class="list-group">
-                    <li class="list-group-item clearfix"
-                        ng-repeat="meal in meals">
+                <img src="/assets/images/spiffygif_20x20.gif" ng-show="loading"/>
+                <ul class="list-group top-buffer">
+                    <li class="list-group-item clearfix" ng-class="getItemClasses(meal)"
+                        ng-repeat="meal in filtered = (meals | filter:filterStr | limitTo:10)">
                         <span ng-drag="true" ng-drag-data="meal">{{meal.name}}</span>
-                    <span class="pull-right">
-                        <button class="btn btn-xs btn-warning" ng-click="editMeal($index)">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </button>
-                        <button class="btn btn-xs btn-warning" ng-click="deleteMeal($index)">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </span>
-                    </li>
-                </ul>
-                <form name="newMeal">
-                    <div class="input-group">
-                        <input type="text" class="form-control" ng-minlength="4" ng-model="newMealTitle" placeholder="Namn på ny måltid">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit" ng-disabled="newMeal.$invalid" ng-click="addMeal(newMealTitle)"><span class="glyphicon glyphicon glyphicon-plus-sign"></span></button>
+                        <span class="pull-right">
+                            <button class="btn btn-xs btn-info" ng-click="deleteMeal(meal)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
                         </span>
-                    </div><!-- /input-group -->
-                </form>
+                    </li>
+                    <li class="list-group-item clearfix" ng-if="filtered.length >= 10">...</li>
+                </ul>
             </div>
         </div>
     </div>

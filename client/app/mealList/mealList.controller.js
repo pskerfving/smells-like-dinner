@@ -3,26 +3,52 @@
 angular.module('sldApp')
   .controller('MealListCtrl', function ($scope, $location, mealService) {
 
+    $scope.loading = true;
+
     mealService.loadMeals().then(function(value) {
       // Success!
       $scope.meals = value;
+      $scope.nbrCol = 3;
+      $scope.loading = false;
     });
 
     $scope.addMeal = function(newMealTitle) {
-      var newMeal = { name: newMealTitle };
-      mealService.createMeal(newMeal);
-      $scope.meals.push(newMeal);
-      $scope.newMealTitle = ""; // Removes the name from the input field.
+      var ret = mealService.createMeal(newMealTitle);
+      $scope.meals.push(ret.meal);
+      $scope.newMealTitle = ''; // Removes the name from the input field.
+      ret.meal.loading = true;
+      ret.promise.then(function() {
+        // SUCCESS
+        ret.meal.loading = false;
+      }, function(err) {
+        // FAILURE
+        ret.meal.loading = false;
+        ret.meal.error = err;
+      });
     };
 
-    $scope.deleteMeal = function(index) {
-      mealService.deleteMeal($scope.meals[index]);
-      $scope.meals.splice(index, 1);
+    $scope.deleteMeal = function(meal) {
+      meal.loading = true;
+      mealService.deleteMeal(meal).then(function() {
+        // SUCCESS!
+      }, function() {
+        // FAILURE!
+        meal.error = 'Misslyckades att ta bort måltiden.'
+      });
     };
 
-    $scope.editMeal = function(index) {
-      var path = "/meal/" + $scope.meals[index]._id;
-      $location.path(path);
-    }
+    $scope.deleteColMeal = function(ci, i) {
+      var length = Math.ceil($scope.meals.length / $scope.nbrCol);
+      var index = ci * length + i;
+      var meal = $scope.meals[index];
+      $scope.deleteMeal(meal);
+    };
+
+    $scope.getItemClasses = function(meal) {
+      return [
+        meal.loading ? 'loading' : '',
+        meal.error ? 'error' : ''
+      ];
+    };
 
   });

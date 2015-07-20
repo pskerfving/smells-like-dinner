@@ -5,7 +5,13 @@ var Schedule = require('./schedule.model');
 
 // Get list of schedules
 exports.index = function(req, res) {
-  Schedule.find(function (err, schedules) {
+  console.log('Express getting the schedule');
+  console.log('user_id : ', req.query);
+  var user_id = null;
+  if (req.query.user_id) {
+    user_id = req.query.user_id;
+  }
+  Schedule.find({ 'user_id': user_id }, function (err, schedules) {
     if(err) { return handleError(res, err); }
     return res.json(200, schedules);
   });
@@ -14,6 +20,15 @@ exports.index = function(req, res) {
 // Get a single schedule
 exports.show = function(req, res) {
   Schedule.findById(req.params.id, function (err, schedule) {
+    if(err) { return handleError(res, err); }
+    if(!schedule) { return res.send(404); }
+    return res.json(schedule);
+  });
+};
+
+// Get a single schedule
+exports.showAnonymous = function(req, res) {
+  Schedule.findOne({ user_id: null }, function (err, schedule) {
     if(err) { return handleError(res, err); }
     if(!schedule) { return res.send(404); }
     return res.json(schedule);
@@ -32,9 +47,19 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   Schedule.findById(req.params.id, function (err, schedule) {
-    if (err) { return handleError(res, err); }
+    if (err) {
+      console.log(err);
+      return handleError(res, err);
+    }
     if(!schedule) { return res.send(404); }
-    var updated = _.merge(schedule, req.body);
+    var updated = _.merge(schedule, req.body, function(a, b) {
+      return _.isArray(b) ? b : undefined;
+    });
+    console.log(updated);
+    // Strip trailing mealid = null before saving to db.
+    while (updated.days.length > 0 && updated.days[updated.days.length - 1].mealid === null) {
+      updated.days.pop();
+    }
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.json(200, schedule);

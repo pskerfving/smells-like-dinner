@@ -7,27 +7,103 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <base href="/">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+
+    <title>Smells Like Dinner</title>
+    <meta name="description" content="A site for getting the planning and shopping for dinner organized.">
+    <meta name="author" content="Petter Skerfving">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
       <!-- endbower -->
     <!-- endbuild -->
+
+
+      <!-- Custom Fonts -->
+      <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+      <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+      <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
     <!-- build:css({.tmp,client}) app/app.css -->
     <link rel="stylesheet" href="app/app.css">
       <!-- injector:css -->
+      <link rel="stylesheet" href="app/grayscale.css">
       <!-- endinjector -->
     <!-- endbuild -->
   </head>
-  <body ng-app="sldApp">
+  <body ng-app="sldApp" id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" ng-controller="NavbarCtrl">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <!-- Add your site or application content here -->
-    <div ng-view=""></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a ng-hide="isLoggedIn()" class="navbar-brand page-scroll" href="#page-top">
+                    <i class="fa fa-play-circle"></i>  <span class="light">Smells Like</span> Dinner
+                </a>
+                <a ng-show="isLoggedIn()" class="navbar-brand page-scroll" ng-click="logout()">
+                    {{ getCurrentUser().name }}
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                  <li ng-repeat="item in menu" ng-class="{active: isActive(item.link)}">
+                    <a ng-if="item.anchor" href="#" scroll-to="{{item.link}}">{{item.title}}</a>
+                    <a ng-if="!item.anchor" ng-href="{{item.link}}">{{item.title}}</a>
+                  </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+      <!-- Intro Header -->
+      <header class="intro">
+        <div class="intro-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <h1 class="brand-heading">smells like dinner</h1>
+                <p class="intro-text">Få styr på familjens vardagsmiddagar. Sätt upp ett rullande schema.<br>Allt i 4 enkla steg.</p>
+                <a href="#meals" class="btn btn-circle page-scroll">
+                  <i class="fa fa-angle-double-down animated"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="register" ng-hide="isLoggedIn()">
+        <div ng-include="'app/account/login/login.html'"></div>
+      </section>
+
+      <section id="invites">
+        <div ng-include="'app/invite/acceptInvite.html'"></div>
+      </section>
+
+    <div ng-view></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>Copyright &copy; Your Website 2014</p>
+        </div>
+    </footer>
+
+
+
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
@@ -55,6 +131,7 @@
       <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-socket-io/socket.js"></script>
+      <script src="bower_components/ngSmoothScroll/angular-smooth-scroll.js"></script>
       <!-- endbower -->
       <script src="socket.io-client/socket.io.js"></script>
     <!-- endbuild -->
@@ -62,30 +139,42 @@
     <script src="bower_components/ngDraggable/ngDraggable.js"></script>
 
 
-        <!-- build:js({.tmp,client}) app/app.js -->
+
+    <!-- build:js({.tmp,client}) app/app.js -->
         <script src="app/app.js"></script>
           <!-- injector:js -->
-          <script src="app/account/account.js"></script>
           <script src="app/account/login/login.controller.js"></script>
           <script src="app/account/settings/settings.controller.js"></script>
           <script src="app/account/signup/signup.controller.js"></script>
           <script src="app/admin/admin.controller.js"></script>
           <script src="app/admin/admin.js"></script>
+          <script src="app/category/category.service.js"></script>
+          <script src="app/category/categoryList.controller.js"></script>
           <script src="app/ingredient/ingredient.service.js"></script>
+          <script src="app/ingredientBox/ingredientBox.directive.js"></script>
+          <script src="app/invite/acceptInvite.controller.js"></script>
+          <script src="app/invite/invite.controller.js"></script>
+          <script src="app/invite/invite.service.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
           <script src="app/meal/meal.controller.js"></script>
-          <script src="app/meal/meal.js"></script>
           <script src="app/meal/meal.service.js"></script>
+          <script src="app/mealList/columnize/columnize.filter.js"></script>
           <script src="app/mealList/mealList.controller.js"></script>
+          <script src="app/menu/menu.service.js"></script>
           <script src="app/schedule/schedule.controller.js"></script>
-          <script src="app/schedule/schedule.js"></script>
           <script src="app/schedule/schedule.service.js"></script>
           <script src="app/shoppingList/shoppingList.controller.js"></script>
-          <script src="app/shoppingList/shoppingList.js"></script>
           <script src="app/shoppingList/shoppinglist.service.js"></script>
+          <script src="app/uniqMeals/uniqMeals.filter.js"></script>
+          <script src="app/upcomingSchedule/upcomingSchedule.controller.js"></script>
+          <script src="app/upcomingSchedule/upcomingScheduleService/upcomingScheduleService.service.js"></script>
+          <script src="app/views/full/full.js"></script>
+          <script src="app/views/shoppinglist/shoppinglist.js"></script>
           <script src="components/auth/auth.service.js"></script>
           <script src="components/auth/user.service.js"></script>
+          <script src="components/grayscale/bootstrap.js"></script>
+          <script src="components/grayscale/grayscale.js"></script>
           <script src="components/modal/modal.service.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>

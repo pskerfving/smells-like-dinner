@@ -16,7 +16,12 @@ var UserSchema = new Schema({
   provider: String,
   salt: String,
   facebook: {},
-  github: {}
+  github: {},
+  // The user's stuff
+  friends_id: [{ type: Schema.ObjectId, ref: 'User'}],
+  meals_id: [{ type: Schema.ObjectId, ref: 'Meal'}],
+  schedule_id: { type: Schema.ObjectId, ref: 'Schedule' },
+  own_schedule_id: { type: Schema.ObjectId, ref: 'Schedule' }
 });
 
 /**

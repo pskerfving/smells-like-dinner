@@ -5,8 +5,10 @@ var mongoose = require('mongoose'),
 
 var MealSchema = new Schema({
   name: String,
-  ingredients: [ { name: String } ],
-  sides: [ { name: String } ]
+  user_id: { type: Schema.ObjectId, ref: 'User' },
+  ingredients: [ { ingredientid: { type: Schema.ObjectId, ref: 'Ingredient' } } ],
+  shopped: [ { shoppinglist_id: { type: Schema.ObjectId, ref: 'Shoppinglist' }, date: Date } ],
+  empty: Boolean
 });
 
 module.exports = mongoose.model('Meal', MealSchema);
